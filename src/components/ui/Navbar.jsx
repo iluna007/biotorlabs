@@ -63,11 +63,11 @@ export function Navbar() {
         borderBottom: '1px solid rgba(139,195,74,0.1)',
         background: 'rgba(10,15,7,0.82)',
       }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <Link to="/" className="nav-logo-link" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0, minWidth: 0 }}>
           <img
+            className="nav-logo"
             src="/images/logo-slogan.png"
             alt="Biotor Labs"
-            style={{ height: '44px', width: 'auto', filter: 'brightness(0) invert(1)' }}
             onError={e => {
               e.target.style.display = 'none'
               e.target.nextSibling.style.display = 'block'

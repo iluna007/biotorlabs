@@ -17,21 +17,17 @@ export function Footer() {
         maxWidth: '1100px', margin: '0 auto',
         marginBottom: '3rem',
       }}>
-        <div style={{ gridColumn: 'span 1' }}>
+        <div className="footer-brand-col">
           <Link to="/" style={{ display: 'inline-block', marginBottom: '1rem' }}>
             <img
+              className="footer-logo"
               src="/images/logo-slogan.png"
               alt="Biotor Labs"
-              style={{
-                height: '58px', width: 'auto',
-                filter: 'brightness(0) invert(1)',
-                opacity: 0.9,
-              }}
             />
           </Link>
           <p style={{
-            fontSize: '0.8rem', color: '#4a6a40',
-            lineHeight: 1.7, maxWidth: '200px',
+            fontSize: 'clamp(0.75rem, 2vw, 0.8rem)', color: '#4a6a40',
+            lineHeight: 1.7, maxWidth: 'min(280px, 100%)',
             marginBottom: '0.8rem',
           }}>
             {footer.tagline}
