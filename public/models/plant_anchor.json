@@ -1,0 +1,41 @@
+{
+  "_comment": "TrichoMax+ Plant Anchor — Biotor Labs. Importar en Rhino para referenciar posición y escala del modelo de planta.",
+  "_units": "meters (1 unit = 1 meter)",
+  "_date": "2025",
+
+  "pivot": [0.0, 0.0, 0.0],
+  "up_vector": [0.0, 1.0, 0.0],
+  "forward_vector": [0.0, 0.0, -1.0],
+
+  "bounding_box": {
+    "min": [-0.6, 0.0, -0.6],
+    "max": [ 0.6, 2.8,  0.6],
+    "center": [0.0, 1.4, 0.0]
+  },
+
+  "key_points": {
+    "soil_surface":   [0.0,  0.00, 0.0],
+    "stem_mid":       [0.0,  1.20, 0.0],
+    "stem_top":       [0.0,  2.40, 0.0],
+    "leaf_spread_max":[0.60, 1.60, 0.0],
+    "camera_target":  [0.0,  0.80, 0.0]
+  },
+
+  "export_target": {
+    "file": "plant_trichomax.glb",
+    "destination": "/public/models/plant_trichomax.glb",
+    "format": "glTF Binary (.glb)",
+    "coordinate_system": "Y-up (Three.js compatible)",
+    "scale_if_modeled_in_mm": 0.001
+  },
+
+  "rhino_workflow": {
+    "step_1": "Importar este JSON como referencia visual (usa Grasshopper o crea caja de bounding box manualmente)",
+    "step_2": "Crear caja de referencia: ancho 1.2m, alto 2.8m, profundidad 1.2m, con base en (0,0,0)",
+    "step_3": "Modelar la planta (caña de azúcar joven sugerida) dentro de esa caja",
+    "step_4": "Asegurarse que el punto (0,0,0) coincide con la BASE del tallo al nivel del suelo",
+    "step_5": "Export > Save As > glTF Binary (.glb) con Y-Up activado",
+    "step_6": "Copiar el .glb a /public/models/plant_trichomax.glb en el proyecto",
+    "step_7": "En PlantAboveGround.jsx: comentar bloque MAQUETA, descomentar bloque GLTFLoader"
+  }
+}

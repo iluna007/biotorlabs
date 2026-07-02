@@ -1,0 +1,129 @@
+:root {
+  --color-bg: #0a0f07;
+  --color-soil-dark: #1a1208;
+  --color-soil-mid: #2d1f0a;
+  --color-soil-light: #4a3218;
+  --color-root-primary: #7ecb6e;
+  --color-root-glow: #a8f58e;
+  --color-root-tip: #d4ffba;
+  --color-accent: #5bcc3e;
+  --color-text-primary: #f0ede8;
+  --color-text-muted: #8a9f82;
+  --color-product-gold: #d4a832;
+
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --section-height: 120vh;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-soil-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+
+#root-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page-content {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  pointer-events: none;
+}
+
+.page-content nav,
+.page-content .section--interactive,
+.page-content a,
+.page-content button {
+  pointer-events: all;
+}
+
+.section {
+  min-height: var(--section-height);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.section--interactive {
+  pointer-events: all;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-height: 100vh;
+  }
+
+  nav {
+    padding: 1rem 1.5rem !important;
+  }
+
+  nav > div:last-child > a:not([href='#buy']) {
+    display: none;
+  }
+
+  .section {
+    padding: 0 1.5rem !important;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 8vw, 4rem) !important;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .plan-grid {
+    flex-direction: column !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
