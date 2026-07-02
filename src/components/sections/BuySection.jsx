@@ -211,7 +211,7 @@ function ProductCard({ product, isActive, style, ui }) {
 }
 
 export function BuySection() {
-  const { products, brand, footer, ui, buyCarousel } = useContent()
+  const { products, ui, buyCarousel } = useContent()
   const [active, setActive] = useState(0)
   const [animating, setAnimating] = useState(false)
   const cardRef = useRef(null)
@@ -472,34 +472,6 @@ export function BuySection() {
                 lineHeight: 1.2,
               }}>{p.name}</span>
             </button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{
-        marginTop: '4rem', paddingTop: '2rem',
-        borderTop: '1px solid rgba(139,195,74,0.1)',
-        width: '100%', maxWidth: '860px',
-        display: 'flex', justifyContent: 'space-between',
-        alignItems: 'center', flexWrap: 'wrap', gap: '1rem',
-      }}>
-        <div>
-          <p style={{ fontSize: '0.75rem', color: '#3a5a30' }}>{footer.copyright}</p>
-          <p style={{ fontSize: '0.68rem', color: '#2a4a22', marginTop: '0.2rem' }}>
-            {brand.location}
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '1.2rem' }}>
-          {Object.entries(brand.social).map(([key, url]) => (
-            <a key={key} href={url} target="_blank" rel="noopener noreferrer"
-              style={{
-                color: '#3a5a30', fontSize: '0.72rem', textDecoration: 'none',
-                textTransform: 'capitalize', letterSpacing: '0.04em',
-                transition: 'color 0.3s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#8bc34a' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#3a5a30' }}
-            >{key}</a>
           ))}
         </div>
       </div>

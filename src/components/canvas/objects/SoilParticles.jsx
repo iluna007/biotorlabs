@@ -1,7 +1,7 @@
 import { useRef, useLayoutEffect, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 
-const PARTICLE_COUNT = 8000
+const PARTICLE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? 3000 : 8000
 
 export function SoilParticles({ scene, scrollProgress = 0 }) {
   const pointsRef = useRef(null)

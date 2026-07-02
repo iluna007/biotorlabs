@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useContent } from '../context/SitePreferencesContext'
+import { Footer } from '../components/ui/Footer'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -456,6 +457,7 @@ export default function AboutPage() {
           </div>
         </FadeInBlock>
       </section>
+      <Footer />
     </div>
   )
 }

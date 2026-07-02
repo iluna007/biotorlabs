@@ -10,31 +10,40 @@ export function LightingRig({ scene, scrollProgress, ambientIntensity, sunIntens
 
   useLayoutEffect(() => {
     if (!scene) return
-    if (ambientRef.current) return
+    if (scene.getObjectByName('BiotorLightingRig')) return
+
+    const rig = new THREE.Group()
+    rig.name = 'BiotorLightingRig'
 
     const ambient = new THREE.AmbientLight('#1a2a14', 0.8)
-    scene.add(ambient)
+    rig.add(ambient)
     ambientRef.current = ambient
 
     const sun = new THREE.DirectionalLight('#d4f0c0', 2.2)
     sun.position.set(5, 10, 5)
     sun.castShadow = true
     sun.shadow.mapSize.set(2048, 2048)
-    scene.add(sun)
+    rig.add(sun)
     sunRef.current = sun
 
     const rootGlow = new THREE.PointLight('#5bcc3e', 0, 8)
     rootGlow.position.set(0, -6, 0)
-    scene.add(rootGlow)
+    rig.add(rootGlow)
     rootGlowRef.current = rootGlow
 
     const rim = new THREE.DirectionalLight('#2a5a1a', 0.5)
     rim.position.set(-3, -5, -3)
-    scene.add(rim)
+    rig.add(rim)
     rimRef.current = rim
 
+    scene.add(rig)
+
     return () => {
-      ;[ambient, sun, rootGlow, rim].forEach((l) => scene.remove(l))
+      scene.remove(rig)
+      ambientRef.current = null
+      sunRef.current = null
+      rootGlowRef.current = null
+      rimRef.current = null
     }
   }, [scene])
 

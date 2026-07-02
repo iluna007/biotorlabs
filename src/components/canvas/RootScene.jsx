@@ -20,20 +20,21 @@ export function RootScene({ scrollProgress }) {
   const camTargetLookAt = useRef(new THREE.Vector3(0.0, 0.8, 0.0))
   const camCurrentLookAt = useRef(new THREE.Vector3(0.0, 0.8, 0.0))
 
-  const [sceneReady, setSceneReady] = useState(false)
+  const [glScene, setGlScene] = useState(null)
   const [objectState, setObjectState] = useState(() => deriveObjectState(0))
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current
     if (!canvas || rendererRef.current) return
 
+    const isMobile = window.innerWidth < 768
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !isMobile,
       alpha: false,
       powerPreference: 'high-performance',
     })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2))
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -46,6 +47,7 @@ export function RootScene({ scrollProgress }) {
     scene.background = new THREE.Color('#0d1a09')
     scene.fog = new THREE.FogExp2('#0d1a09', 0.018)
     sceneRef.current = scene
+    setGlScene(scene)
 
     const camera = new THREE.PerspectiveCamera(
       52,
@@ -85,8 +87,6 @@ export function RootScene({ scrollProgress }) {
     }
     window.addEventListener('resize', onResize)
 
-    setSceneReady(true)
-
     return () => {
       cancelAnimationFrame(rafId)
       window.removeEventListener('resize', onResize)
@@ -94,7 +94,7 @@ export function RootScene({ scrollProgress }) {
       rendererRef.current = null
       sceneRef.current = null
       cameraRef.current = null
-      setSceneReady(false)
+      setGlScene(null)
     }
   }, [])
 
@@ -134,38 +134,36 @@ export function RootScene({ scrollProgress }) {
     setObjectState(deriveObjectState(scrollProgress))
   }, [scrollProgress])
 
-  const scene = sceneRef.current
-
   return (
     <>
       <canvas id="root-canvas" ref={canvasRef} />
 
-      {sceneReady && scene && (
+      {glScene && (
         <>
           <LightingRig
-            scene={scene}
+            scene={glScene}
             scrollProgress={scrollProgress}
             ambientIntensity={objectState.ambientIntensity}
             sunIntensity={objectState.sunIntensity}
           />
 
-          <PlantAboveGround scene={scene} opacity={objectState.plantOpacity} />
+          <PlantAboveGround scene={glScene} opacity={objectState.plantOpacity} />
 
-          <SoilSurface scene={scene} cameraY={objectState.cameraY} />
+          <SoilSurface scene={glScene} cameraY={objectState.cameraY} />
 
-          <SoilStrata scene={scene} opacity={objectState.strataOpacity} />
+          <SoilStrata scene={glScene} opacity={objectState.strataOpacity} />
 
-          <SoilParticles scene={scene} scrollProgress={scrollProgress} />
+          <SoilParticles scene={glScene} scrollProgress={scrollProgress} />
 
-          <RootSystem scene={scene} growthProgress={objectState.rootProgress} />
+          <RootSystem scene={glScene} growthProgress={objectState.rootProgress} />
 
           <MyceliumParticles
-            scene={scene}
+            scene={glScene}
             opacity={objectState.myceliumOpacity}
             rootProgress={objectState.rootProgress}
           />
 
-          <ProductBottle scene={scene} visible={objectState.productVisible} />
+          <ProductBottle scene={glScene} visible={objectState.productVisible} />
         </>
       )}
     </>

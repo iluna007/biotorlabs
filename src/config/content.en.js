@@ -20,11 +20,60 @@ export const CONTENT_EN = {
 
   // ── HERO ────────────────────────────────────────────────────────────────
   hero: {
-    eyebrow:  'Biotor Labs — Premium Biological Control',
-    title:    ['The evolution of', 'living soil'],
-    titleAccent: 'starts down here',
-    subtitle: 'TrichoMax+ activates the exclusive Trichoderma asperellum Ta.13 strain, specially designed for Rice, Sugarcane, and Peanut. More roots, more protection, more yield.',
-    cta:      'Discover the Science ↓',
+    eyebrow:     'Biological solutions · Central America',
+    title:       ['Biologicals that', 'prove'],
+    titleAccent: 'their value in the field.',
+    subtitle:    'Biotor Labs develops biotechnological solutions with selected strains, scientifically validated and backed by real field data — for growers and distributors who demand more.',
+    cta:         'Discover the Science ↓',
+    ctaSecondary: 'Become a distributor',
+    trustBadges: [
+      'Selected and exclusive strains',
+      'Field validation with real data',
+      'Technical support close to the grower',
+      'Presence in 5 Central American countries',
+    ],
+  },
+
+  statsBar: {
+    stats: [
+      { num: '6',   label: 'Bioproducts',              suffix: '' },
+      { num: '5',   label: 'Central American countries', suffix: '' },
+      { num: '100', label: 'Strains in culture collection', suffix: '+' },
+      { num: '48',  label: 'Specialized professionals', suffix: '' },
+    ],
+  },
+
+  whyBiotor: {
+    eyebrow:     'Why Biotor?',
+    title:       'The difference is',
+    titleAccent: 'in the strain.',
+    body:        'In a market full of promises, Biotor Labs stands out for one thing: measurable results. Every product went through a rigorous selection process. Every strain was chosen for performance, not price.',
+    differentiators: [
+      {
+        title: 'Scientific strain selection',
+        body:  'We do not work with generic strains. Each microorganism was selected and validated for its ability to adapt to Central American soils and deliver consistent results.',
+        icon:  '🔬',
+      },
+      {
+        title: 'Field validation, not on paper',
+        body:  'Our products are not approved by marketing — they are approved in real trials, with real crops and real growers. Data is available for distributors and agronomists.',
+        icon:  '📊',
+      },
+      {
+        title: 'Technical support that stays',
+        body:  'Behind every product is a technical team that understands the crop, the soil, and the grower. We do not sell and disappear. We follow every application closely.',
+        icon:  '🤝',
+      },
+    ],
+  },
+
+  distributorCTA: {
+    eyebrow:    'Distributor Network',
+    title:      'Want to build market with biologicals that actually work?',
+    body:       'We seek strategic distributors in Central America who share our technical philosophy and commitment to growers.',
+    cta:        'Apply as distributor',
+    ctaMailSubject: 'Apply as Biotor distributor',
+    secondaryLink: 'Learn more about Biotor →',
   },
 
   // ── SCIENCE / MECHANISMS ────────────────────────────────────────────────
@@ -199,8 +248,40 @@ export const CONTENT_EN = {
 
   // ── FOOTER ──────────────────────────────────────────────────────────────
   footer: {
-    copyright: '© 2025 Biotor Labs. All rights reserved.',
-    tagline:   'Microbiology at the service of agriculture.',
+    tagline:   'Biological solutions with real results.',
+    copyright: '© 2026 Biotor Labs. All rights reserved.',
+    location:  'Km 109.5 Pan-American Highway, Sébaco – San Isidro, Nicaragua',
+    countries: 'Nicaragua · Guatemala · El Salvador · Honduras · Costa Rica',
+    columns: [
+      {
+        heading: 'Company',
+        links: [
+          { label: 'Our Science',   href: '/#science' },
+          { label: 'How It Works',  href: '/#how-it-works' },
+          { label: 'About Us',      href: '/nosotros', internal: true },
+        ],
+      },
+      {
+        heading: 'Products',
+        links: [
+          { label: 'TrichoMax+',  href: 'https://www.biotorlabs.com/trichomax-1' },
+          { label: 'TrichoMax',   href: 'https://www.biotorlabs.com/trichomax' },
+          { label: 'Klamic',      href: 'https://www.biotorlabs.com/klamic' },
+          { label: 'Cronox Plus', href: 'https://www.biotorlabs.com/cronox' },
+          { label: 'Atropos',     href: 'https://www.biotorlabs.com/atropos' },
+          { label: 'Invictus',    href: 'https://www.biotorlabs.com/invictus' },
+        ],
+      },
+      {
+        heading: 'Contact',
+        links: [
+          { label: 'info@biotorlabs.com', href: 'mailto:info@biotorlabs.com' },
+          { label: 'LinkedIn',   href: 'https://www.linkedin.com/company/biotorlabs/' },
+          { label: 'Instagram',  href: 'https://www.instagram.com/biotorlabs/' },
+          { label: 'Facebook',   href: 'https://www.facebook.com/Biotorlabs' },
+        ],
+      },
+    ],
   },
 
   products: [

@@ -7,16 +7,20 @@ import App from './App.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import './index.css'
 
+// NOTA: StrictMode removido intencionalmente.
+// React 19 StrictMode ejecuta useLayoutEffect dos veces,
+// lo que llama a renderer.dispose() en el canvas WebGL
+// antes de que Three.js pueda re-inicializarlo correctamente,
+// dejando el canvas en blanco permanentemente.
+
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <SitePreferencesProvider>
-      <BrowserRouter>
-        <AccessToolbar />
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/nosotros" element={<AboutPage />} />
-        </Routes>
-      </BrowserRouter>
-    </SitePreferencesProvider>
-  </React.StrictMode>,
+  <SitePreferencesProvider>
+    <BrowserRouter>
+      <AccessToolbar />
+      <Routes>
+        <Route path="/"         element={<App />} />
+        <Route path="/nosotros" element={<AboutPage />} />
+      </Routes>
+    </BrowserRouter>
+  </SitePreferencesProvider>
 )

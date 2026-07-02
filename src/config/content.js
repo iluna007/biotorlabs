@@ -20,11 +20,63 @@ export const CONTENT = {
 
   // ── HERO ────────────────────────────────────────────────────────────────
   hero: {
-    eyebrow:  'Biotor Labs — Control Biológico Premium',
-    title:    ['La evolución del', 'suelo vivo'],
-    titleAccent: 'empieza aquí abajo',
-    subtitle: 'TrichoMax+ activa la cepa exclusiva Trichoderma asperellum Ta.13, diseñada especialmente para Arroz, Caña de Azúcar y Maní. Más raíces, más protección, más cosecha.',
-    cta:      'Descubre la Ciencia ↓',
+    eyebrow:     'Soluciones biológicas · Centroamérica',
+    title:       ['Biológicos que', 'demuestran'],
+    titleAccent: 'su valor en campo.',
+    subtitle:    'Biotor Labs desarrolla soluciones biotecnológicas con cepas seleccionadas, validadas científicamente y respaldadas con datos reales de campo — para productores y distribuidores que exigen más.',
+    cta:         'Descubre la Ciencia ↓',
+    ctaSecondary: 'Quiero ser distribuidor',
+    trustBadges: [
+      'Cepas seleccionadas y exclusivas',
+      'Validación en campo con datos reales',
+      'Soporte técnico cercano al productor',
+      'Presencia en 5 países de Centroamérica',
+    ],
+  },
+
+  // ── STATS BAR ───────────────────────────────────────────────────────────
+  statsBar: {
+    stats: [
+      { num: '6',   label: 'Bioproductos',               suffix: '' },
+      { num: '5',   label: 'Países en Centroamérica',    suffix: '' },
+      { num: '100', label: 'Cepas en cepario',           suffix: '+' },
+      { num: '48',  label: 'Profesionales especializados', suffix: '' },
+    ],
+  },
+
+  // ── ¿POR QUÉ BIOTOR? ────────────────────────────────────────────────────
+  whyBiotor: {
+    eyebrow:     '¿Por qué Biotor?',
+    title:       'La diferencia está',
+    titleAccent: 'en la cepa.',
+    body:        'En un mercado lleno de promesas, Biotor Labs se distingue por una sola cosa: resultados que se pueden medir. Cada producto pasó por un proceso de selección riguroso. Cada cepa fue elegida por su desempeño, no por su precio.',
+    differentiators: [
+      {
+        title: 'Selección científica de cepas',
+        body:  'No trabajamos con cepas genéricas. Cada microorganismo fue seleccionado y validado por su capacidad de adaptarse a los suelos centroamericanos y generar resultados consistentes.',
+        icon:  '🔬',
+      },
+      {
+        title: 'Validación en campo, no en papel',
+        body:  'Nuestros productos no se aprueban por marketing — se aprueban en ensayos reales, con cultivos reales y productores reales. Los datos están disponibles para distribuidores y agrónomos.',
+        icon:  '📊',
+      },
+      {
+        title: 'Soporte técnico que acompaña',
+        body:  'Detrás de cada producto hay un equipo técnico que entiende el cultivo, el suelo y el productor. No vendemos y desaparecemos. Seguimos de cerca cada aplicación.',
+        icon:  '🤝',
+      },
+    ],
+  },
+
+  // ── CTA DISTRIBUIDORES ──────────────────────────────────────────────────
+  distributorCTA: {
+    eyebrow:    'Red de Distribuidores',
+    title:      '¿Querés construir mercado con biológicos que realmente funcionan?',
+    body:       'Buscamos distribuidores estratégicos en Centroamérica que compartan nuestra filosofía técnica y compromiso con el productor.',
+    cta:        'Aplicar como distribuidor',
+    ctaMailSubject: 'Aplicar como distribuidor Biotor',
+    secondaryLink: 'Conocer más sobre Biotor →',
   },
 
   // ── CIENCIA / MECANISMOS ────────────────────────────────────────────────
@@ -199,8 +251,40 @@ export const CONTENT = {
 
   // ── FOOTER ──────────────────────────────────────────────────────────────
   footer: {
-    copyright: '© 2025 Biotor Labs. Todos los derechos reservados.',
-    tagline:   'Microbiología al servicio de la agricultura.',
+    tagline:   'Soluciones biológicas con resultados reales.',
+    copyright: '© 2026 Biotor Labs. Todos los derechos reservados.',
+    location:  'Km 109.5 Carretera Panamericana, Sébaco – San Isidro, Nicaragua',
+    countries: 'Nicaragua · Guatemala · El Salvador · Honduras · Costa Rica',
+    columns: [
+      {
+        heading: 'Empresa',
+        links: [
+          { label: 'Nuestra Ciencia', href: '/#science' },
+          { label: 'Cómo Funciona',   href: '/#how-it-works' },
+          { label: 'Sobre Nosotros',  href: '/nosotros', internal: true },
+        ],
+      },
+      {
+        heading: 'Productos',
+        links: [
+          { label: 'TrichoMax+',  href: 'https://www.biotorlabs.com/trichomax-1' },
+          { label: 'TrichoMax',   href: 'https://www.biotorlabs.com/trichomax' },
+          { label: 'Klamic',      href: 'https://www.biotorlabs.com/klamic' },
+          { label: 'Cronox Plus', href: 'https://www.biotorlabs.com/cronox' },
+          { label: 'Atropos',     href: 'https://www.biotorlabs.com/atropos' },
+          { label: 'Invictus',    href: 'https://www.biotorlabs.com/invictus' },
+        ],
+      },
+      {
+        heading: 'Contacto',
+        links: [
+          { label: 'info@biotorlabs.com', href: 'mailto:info@biotorlabs.com' },
+          { label: 'LinkedIn',   href: 'https://www.linkedin.com/company/biotorlabs/' },
+          { label: 'Instagram',  href: 'https://www.instagram.com/biotorlabs/' },
+          { label: 'Facebook',   href: 'https://www.facebook.com/Biotorlabs' },
+        ],
+      },
+    ],
   },
 
   products: [

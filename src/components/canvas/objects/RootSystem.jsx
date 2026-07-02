@@ -11,6 +11,10 @@ export function RootSystem({ scene, growthProgress = 0 }) {
 
   useLayoutEffect(() => {
     if (!scene) return
+    if (scene.getObjectByName('RootSystem')) {
+      materialRef.current = scene.children.find(c => c.name === 'RootSystem')?.material ?? null
+      return
+    }
     if (materialRef.current) return
 
     const vertexShader = `
@@ -52,8 +56,9 @@ export function RootSystem({ scene, growthProgress = 0 }) {
       }
     `
 
+    const rootCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 8 : 14
     const rootData = generateRootSystem({
-      rootCount: 14,
+      rootCount,
       maxDepth: 4,
       maxLength: 7,
       spreadAngle: 0.65,
@@ -104,6 +109,7 @@ export function RootSystem({ scene, growthProgress = 0 }) {
       })
       sharedMaterial.dispose()
       meshesRef.current = []
+      materialRef.current = null
     }
   }, [scene])
 

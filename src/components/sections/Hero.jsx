@@ -38,7 +38,7 @@ export function Hero() {
   return (
     <section id="hero" className="section" style={{
       height: '120vh', flexDirection: 'column',
-      justifyContent: 'center', padding: '0 4rem',
+      justifyContent: 'center', padding: `0 var(--pad-x)`,
       position: 'relative',
     }}>
       <div style={{ maxWidth: '680px' }}>
@@ -73,12 +73,12 @@ export function Hero() {
           {hero.subtitle}
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
           <a href="#science" style={{
             background: 'transparent',
             border: '1px solid #8bc34a', color: '#8bc34a',
-            padding: '0.95rem 2.5rem', fontSize: '0.82rem',
-            letterSpacing: '0.1em', textTransform: 'uppercase',
+            padding: '0.95rem 1.8rem', fontSize: '0.8rem',
+            letterSpacing: '0.08em', textTransform: 'uppercase',
             cursor: 'pointer', borderRadius: '2px',
             transition: 'all 0.3s', pointerEvents: 'all',
             textDecoration: 'none', display: 'inline-block',
@@ -87,18 +87,33 @@ export function Hero() {
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8bc34a' }}
           >{hero.cta}</a>
 
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-            padding: '0.5rem 1rem',
-            border: '1px solid rgba(139,195,74,0.2)',
-            borderRadius: '2px',
-            background: 'rgba(139,195,74,0.05)',
-          }}>
-            <span style={{ fontSize: '0.6rem', color: '#8bc34a' }}>●</span>
-            <span style={{ fontSize: '0.68rem', color: '#7a9f6a', letterSpacing: '0.05em' }}>
-              {ui.strainBadge}
-            </span>
-          </div>
+          <button
+            type="button"
+            onClick={() => window.open('mailto:info@biotorlabs.com?subject=Quiero ser distribuidor', '_blank')}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(139,195,74,0.3)',
+              color: '#7a9f6a',
+              padding: '0.95rem 1.8rem',
+              fontSize: '0.8rem', letterSpacing: '0.08em', textTransform: 'uppercase',
+              cursor: 'pointer', borderRadius: '2px',
+              transition: 'all 0.3s', pointerEvents: 'all',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#8bc34a'; e.currentTarget.style.color = '#d4ffba' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(139,195,74,0.3)'; e.currentTarget.style.color = '#7a9f6a' }}
+          >{hero.ctaSecondary}</button>
+        </div>
+
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.2rem',
+          maxWidth: '520px',
+        }}>
+          {hero.trustBadges.map(badge => (
+            <div key={badge} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <span style={{ color: '#8bc34a', fontSize: '0.7rem' }}>✓</span>
+              <span style={{ fontSize: '0.72rem', color: '#5a7a4a', letterSpacing: '0.04em' }}>{badge}</span>
+            </div>
+          ))}
         </div>
       </div>
 
