@@ -1,27 +1,9 @@
 import { SectionOverlay } from '../ui/SectionOverlay'
-
-const TESTIMONIALS = [
-  {
-    quote:
-      'En dos semanas vi el doble de raíces en mis tomates. RootForce cambió mi forma de fertilizar.',
-    author: 'María G.',
-    role: 'Agricultora, Jalisco',
-  },
-  {
-    quote:
-      'Mis rosales nunca habían enraizado tan rápido. El producto se paga solo en la primera cosecha.',
-    author: 'Carlos R.',
-    role: 'Viverista, Valencia',
-  },
-  {
-    quote:
-      'Lo uso en café y cacao. Menos estrés hídrico y plantas más vigorosas desde el trasplante.',
-    author: 'Ana L.',
-    role: 'Productora, Antioquia',
-  },
-]
+import { useContent } from '../../context/SitePreferencesContext'
 
 export function Testimonials() {
+  const { testimonials } = useContent()
+
   return (
     <section
       id="testimonials"
@@ -43,7 +25,7 @@ export function Testimonials() {
             marginBottom: '1.2rem',
           }}
         >
-          Testimonios
+          {testimonials.eyebrow}
         </p>
 
         <h2
@@ -56,13 +38,11 @@ export function Testimonials() {
             marginBottom: '2rem',
           }}
         >
-          Lo que dicen
-          <br />
-          los cultivadores
+          {testimonials.title[0]}<br />{testimonials.title[1]}
         </h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {TESTIMONIALS.map((t) => (
+          {testimonials.items.map((t) => (
             <blockquote
               key={t.author}
               style={{

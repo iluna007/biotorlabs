@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { CONTENT } from '../../config/content'
-
-const { hero } = CONTENT
+import { useContent } from '../../context/SitePreferencesContext'
 
 export function Hero() {
+  const { hero, ui } = useContent()
   const titleRef = useRef(null)
   const subtitleRef = useRef(null)
   const scrollHintRef = useRef(null)
@@ -97,7 +96,7 @@ export function Hero() {
           }}>
             <span style={{ fontSize: '0.6rem', color: '#8bc34a' }}>●</span>
             <span style={{ fontSize: '0.68rem', color: '#7a9f6a', letterSpacing: '0.05em' }}>
-              Cepa Ta.13 (BCC-101) — Exclusiva Biotor
+              {ui.strainBadge}
             </span>
           </div>
         </div>
@@ -110,7 +109,7 @@ export function Hero() {
       }}>
         <div style={{ width: '1px', height: '50px', background: 'linear-gradient(180deg, transparent, #8bc34a)' }} />
         <p style={{ fontSize: '0.62rem', letterSpacing: '0.3em', color: '#8bc34a', textTransform: 'uppercase' }}>
-          Scroll
+          {ui.scroll}
         </p>
       </div>
     </section>

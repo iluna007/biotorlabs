@@ -5,9 +5,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { CONTENT } from '../../config/content'
-
-const { products, brand, footer } = CONTENT
+import { useContent } from '../../context/SitePreferencesContext'
 
 function ProductImage({ product }) {
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -76,7 +74,7 @@ function ProductImage({ product }) {
   )
 }
 
-function ProductCard({ product, isActive, style }) {
+function ProductCard({ product, isActive, style, ui }) {
   return (
     <div style={{
       display: 'flex',
@@ -115,7 +113,7 @@ function ProductCard({ product, isActive, style }) {
               padding: '0.2rem 0.6rem', borderRadius: '2px',
               background: product.color,
               color: '#0a0f07',
-            }}>★ Premium</span>
+            }}>{ui.premium}</span>
           )}
         </div>
 
@@ -147,7 +145,7 @@ function ProductCard({ product, isActive, style }) {
 
         {product.crops.length > 0 && (
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.8rem' }}>
-            <span style={{ fontSize: '0.7rem', color: '#5a7a4a', alignSelf: 'center' }}>Cultivos:</span>
+            <span style={{ fontSize: '0.7rem', color: '#5a7a4a', alignSelf: 'center' }}>{ui.cropsLabel}</span>
             {product.crops.map(crop => (
               <span key={crop} style={{
                 fontSize: '0.68rem', padding: '0.2rem 0.6rem',
@@ -179,7 +177,7 @@ function ProductCard({ product, isActive, style }) {
               e.currentTarget.style.transform = 'translateY(0)'
               e.currentTarget.style.boxShadow = 'none'
             }}
-          >Solicitar Info</button>
+          >{ui.requestInfo}</button>
 
           <a
             href={product.url}
@@ -205,7 +203,7 @@ function ProductCard({ product, isActive, style }) {
               e.currentTarget.style.borderColor = product.color + '40'
               e.currentTarget.style.color = product.color
             }}
-          >Ver más ↗</a>
+          >{ui.learnMore}</a>
         </div>
       </div>
     </div>
@@ -213,6 +211,7 @@ function ProductCard({ product, isActive, style }) {
 }
 
 export function BuySection() {
+  const { products, brand, footer, ui, buyCarousel } = useContent()
   const [active, setActive] = useState(0)
   const [animating, setAnimating] = useState(false)
   const cardRef = useRef(null)
@@ -304,7 +303,7 @@ export function BuySection() {
           fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase',
           color: '#8bc34a', marginBottom: '0.8rem',
         }}>
-          Portafolio Biotor Labs
+          {buyCarousel.eyebrow}
         </p>
         <h2 style={{
           fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
@@ -312,15 +311,14 @@ export function BuySection() {
           letterSpacing: '-0.04em', lineHeight: 1.0,
           marginBottom: '0.8rem',
         }}>
-          Elige tu <span style={{
+          {buyCarousel.titlePrefix} <span style={{
             background: `linear-gradient(135deg, ${current.color}, ${current.accentColor})`,
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             transition: 'all 0.4s',
-          }}>presentación</span>
+          }}>{buyCarousel.titleAccent}</span>
         </h2>
         <p style={{ fontSize: '0.88rem', color: '#6a8a5a', maxWidth: '480px', margin: '0 auto' }}>
-          Soluciones biológicas con cepas seleccionadas y exclusivas de Biotor Labs.
-          Elige el producto ideal para tu cultivo.
+          {buyCarousel.subtitle}
         </p>
       </div>
 
@@ -329,7 +327,7 @@ export function BuySection() {
         position: 'relative',
       }}>
         <div ref={cardRef} style={{ width: '100%' }}>
-          <ProductCard product={current} isActive={true} />
+          <ProductCard product={current} isActive={true} ui={ui} />
         </div>
 
         <div style={{
@@ -362,7 +360,7 @@ export function BuySection() {
               e.currentTarget.style.background = 'transparent'
               e.currentTarget.style.borderColor = current.color + '40'
             }}
-            aria-label="Producto anterior"
+            aria-label={ui.prevProduct}
           >←</button>
 
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -381,7 +379,7 @@ export function BuySection() {
                   padding: 0,
                   pointerEvents: 'all',
                 }}
-                aria-label={`Ir a ${p.name}`}
+                aria-label={ui.goToProduct(p.name)}
               />
             ))}
           </div>
@@ -408,7 +406,7 @@ export function BuySection() {
               e.currentTarget.style.background = 'transparent'
               e.currentTarget.style.borderColor = current.color + '40'
             }}
-            aria-label="Producto siguiente"
+            aria-label={ui.nextProduct}
           >→</button>
         </div>
 

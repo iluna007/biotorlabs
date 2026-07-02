@@ -1,9 +1,8 @@
 import { SectionOverlay } from '../ui/SectionOverlay'
-import { CONTENT } from '../../config/content'
-
-const { science } = CONTENT
+import { useContent } from '../../context/SitePreferencesContext'
 
 export function Science() {
+  const { science } = useContent()
   return (
     <section id="science" className="section" style={{
       minHeight: '140vh', flexDirection: 'column',

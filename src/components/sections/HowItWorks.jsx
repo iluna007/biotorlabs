@@ -1,9 +1,8 @@
 import { SectionOverlay } from '../ui/SectionOverlay'
-import { CONTENT } from '../../config/content'
-
-const { howItWorks } = CONTENT
+import { useContent } from '../../context/SitePreferencesContext'
 
 export function HowItWorks() {
+  const { howItWorks } = useContent()
   return (
     <section id="how-it-works" className="section" style={{
       minHeight: '140vh', flexDirection: 'column',

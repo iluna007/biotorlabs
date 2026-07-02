@@ -5,111 +5,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useContent } from '../context/SitePreferencesContext'
 
 gsap.registerPlugin(ScrollTrigger)
-
-const ABOUT = {
-  philosophy: {
-    eyebrow: 'Nuestra Filosofía',
-    title: 'Cepas seleccionadas y exclusivas',
-    intro: 'En Biotor aislamos de la naturaleza microorganismos benéficos para las plantas. Cada microorganismo, incluso de una misma especie, presenta diferentes características y cualidades que definen sus potencialidades. Basamos nuestro éxito en el estudio y selección de cada cepa, asegurando los máximos estándares de calidad.',
-    soilTitle: 'El suelo: un ecosistema vivo',
-    soilBody: 'El suelo no es un elemento estático, por el contrario, es todo un ecosistema vivo y dinámico compuesto por materia orgánica y seres vivos de todo tipo. El reto es alcanzar una productividad agrícola óptima manteniendo un equilibrio biológico que garantice un suelo vivo y saludable.',
-    soilFact: 'Según la FAO, el 95% de nuestros alimentos se producen directa o indirectamente en los suelos.',
-    problemTitle: 'El problema: degradación del equilibrio microbiano',
-    problemBody: 'Con el fin de asegurar una alta producción y rentabilidad, la agricultura intensiva ha dado lugar al uso excesivo de sustancias agroquímicas. Este sistema conduce a la pérdida de biodiversidad microbiana, generando un desequilibrio a favor de microorganismos oportunistas y patógenos, acelerando la reducción de la actividad microbiana y las propiedades del suelo.',
-    problemItems: [
-      'Menor retorno de materia orgánica y nutrientes',
-      'Aumento de microorganismos oportunistas y patógenos',
-      'Menor diversidad microbiana y rendimiento de cultivos',
-    ],
-    solutionTitle: 'Nuestra solución: microorganismos benéficos',
-    solutionBody: 'Los microorganismos beneficiosos son los compañeros ideales de las plantas: transforman materia orgánica y minerales en nutrientes, controlan plagas y enfermedades, y mejoran la absorción de agua. Biotor propone una estrategia centrada en el uso de microorganismos seleccionados y exclusivos como agentes de control biológico y bioestimulantes.',
-    solutionFootnote: 'Según la FAO, los suelos saludables contribuyen a mitigar el cambio climático al mantener o aumentar su contenido de carbono.',
-  },
-
-  who: {
-    eyebrow: 'Quiénes Somos',
-    title: 'Biotecnología agrícola de alto desempeño',
-    intro: 'En Biotor somos expertos en investigación, desarrollo y producción de soluciones biológicas innovadoras para la agricultura. Ayudamos a los agricultores a potenciar el rendimiento de sus cultivos y superar el reto de la sostenibilidad.',
-    vision: {
-      label: 'Visión',
-      text: 'Ser líderes en el sector de la Biotecnología Agrícola a través de soluciones innovadoras y apoyo técnico para satisfacer las necesidades del agricultor.',
-    },
-    mission: {
-      label: 'Misión',
-      text: 'Desarrollar y producir Bioproductos para la agricultura, a partir de cepas seleccionadas y exclusivas por su efectividad y excelente adaptabilidad, brindando el respaldo técnico y científico a nuestros distribuidores exclusivos.',
-    },
-    teamTitle: 'Nuestro Equipo',
-    teamBody: 'Contamos con un equipo de 48 profesionales altamente calificados, liderados por Ingenieros Agrónomos, Masters en Administración de Empresas y Doctores en Ciencias Agrícolas, especializados en desarrollo comercial e investigación agrícola.',
-    teamNote: 'En Biotor crecemos gracias al trabajo y compromiso de nuestro capital humano. Somos una compañía con valores sólidos y nos esforzamos por atraer y retener el talento para buscar siempre la excelencia.',
-    team: [
-      {
-        name: 'Ing. Luis Fernando Torres MBA',
-        role: 'Gerente General',
-        img: 'https://static.wixstatic.com/media/144032_63ea1dd3231945a082961b6d6e2f971f~mv2.jpg/v1/fill/w_193,h_194,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/Foto%20Luis%20v2.jpg',
-      },
-      {
-        name: 'Ing. Milton Pineda',
-        role: 'Gerente Comercial',
-        img: 'https://static.wixstatic.com/media/144032_03c0086c8be0463fb3c2509e9d341f04~mv2.jpg/v1/fill/w_193,h_194,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/Foto%20Milton%20v2.jpg',
-      },
-    ],
-    presenceTitle: 'Presencia Internacional',
-    presenceBody: 'Biotor comparte su experiencia en el ámbito internacional a través de sus socios comerciales.',
-    countries: ['Nicaragua', 'Costa Rica', 'Panamá', 'República Dominicana', 'Honduras', 'Perú', 'México'],
-    commitment: 'Biotor se encuentra comprometido con el desarrollo local. Fomentamos el uso de agentes de control microbiano en una agricultura sostenible, aumentando la confianza en los bioproductos como factores claves en mercados con estándares cada vez más altos.',
-  },
-
-  what: {
-    eyebrow: 'Áreas de Especialidad Biológica',
-    title: 'De la investigación a la cosecha',
-    intro: 'Biotor se centra en comprender los mecanismos de los microorganismos como formas de control natural de plagas y promotores del crecimiento de las plantas y sus raíces.',
-    cepario: 'Mediante aislamientos microbianos dirigidos, contamos con un cepario de más de 100 microorganismos seleccionados de diversos ecosistemas.',
-    steps: [
-      {
-        num: '01',
-        title: 'Investigar',
-        body: 'Realizamos una exhaustiva prospección y selección de los microorganismos que, por sus características, pueden ayudar a los agricultores a maximizar sus cosechas.',
-        icon: '🔬',
-      },
-      {
-        num: '02',
-        title: 'Desarrollar',
-        body: 'Según las necesidades del mercado, se estudian y prueban los candidatos en nuestro Departamento de Innovación y Desarrollo de Soluciones (IDS). El resultado es una cepa competitiva y exclusiva que se convierte en una solución biotecnológica.',
-        icon: '🧬',
-      },
-      {
-        num: '03',
-        title: 'Producir',
-        body: 'Los resultados de nuestras investigaciones son los productos que desarrollamos, evaluamos y producimos en nuestras instalaciones, bajo un estricto control de calidad que asegura la consistencia.',
-        icon: '🏭',
-      },
-      {
-        num: '04',
-        title: 'Comercializar',
-        body: 'Nuestro Equipo IDS, con el soporte de nuestro Laboratorio de Diagnóstico, brinda apoyo especializado al agricultor y distribuidor exclusivo en cada mercado.',
-        icon: '🌍',
-      },
-    ],
-    specialties: [
-      { label: 'Biofungicidas', color: '#8bc34a', desc: 'Control de hongos fitopatógenos del suelo' },
-      { label: 'Bionematicidas', color: '#e8a020', desc: 'Control de nematodos fitoparásitos' },
-      { label: 'Bioinsecticidas', color: '#e76f51', desc: 'Control de insectos plaga del suelo y follaje' },
-      { label: 'Bioestimulantes', color: '#2a9d8f', desc: 'Estimulación del crecimiento y absorción de nutrientes' },
-    ],
-  },
-
-  contact: {
-    address: 'Kilómetro 109.5 Carretera Panamericana, Sébaco – San Isidro, Nicaragua',
-    email: 'info@biotorlabs.com',
-    social: {
-      LinkedIn: 'https://www.linkedin.com/company/biotorlabs/',
-      Instagram: 'https://www.instagram.com/biotorlabs/',
-      Facebook: 'https://www.facebook.com/Biotorlabs',
-    },
-  },
-}
 
 function FadeInBlock({ children, delay = 0, style = {} }) {
   const ref = useRef(null)
@@ -223,6 +121,8 @@ const S = {
 
 export default function AboutPage() {
   const navigate = useNavigate()
+  const { about: ABOUT } = useContent()
+  const { page } = ABOUT
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -251,7 +151,7 @@ export default function AboutPage() {
             padding: '0.4rem 0',
           }}
         >
-          ← Volver al inicio
+          {page.backHome}
         </button>
         <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#d4ffba', letterSpacing: '-0.01em' }}>
           BIOTOR<span style={{ color: '#8bc34a' }}>LABS</span>
@@ -272,34 +172,28 @@ export default function AboutPage() {
           pointerEvents: 'none',
         }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <p style={{ ...S.eyebrow, marginBottom: '1.2rem' }}>Biotor Labs</p>
+          <p style={{ ...S.eyebrow, marginBottom: '1.2rem' }}>{page.heroEyebrow}</p>
           <h1 style={{
             fontSize: 'clamp(2.8rem, 6vw, 5rem)',
             fontWeight: 900, lineHeight: 0.95,
             letterSpacing: '-0.05em', marginBottom: '1.5rem',
             color: '#edf0e8',
           }}>
-            Microbiología<br />
+            {page.heroLine1}<br />
             <span style={{
               background: 'linear-gradient(135deg, #8bc34a, #d4ffba)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>al servicio</span><br />
-            de la agricultura
+            }}>{page.heroAccent}</span><br />
+            {page.heroLine2}
           </h1>
           <p style={{ ...S.body, margin: '0 auto', textAlign: 'center', maxWidth: '560px' }}>
-            Empresa de biotecnología agrícola especializada en soluciones biológicas de alto desempeño.
-            Innovación, ciencia y sostenibilidad al servicio del agricultor.
+            {page.heroSubtitle}
           </p>
           <div style={{
             display: 'flex', gap: '3rem', justifyContent: 'center',
             marginTop: '3rem', flexWrap: 'wrap',
           }}>
-            {[
-              { num: '48', label: 'Profesionales' },
-              { num: '100+', label: 'Cepas en cepario' },
-              { num: '7', label: 'Países' },
-              { num: '6', label: 'Bioproductos' },
-            ].map(stat => (
+            {page.stats.map(stat => (
               <div key={stat.label} style={{ textAlign: 'center' }}>
                 <div style={{
                   fontSize: '2.2rem', fontWeight: 900,
@@ -456,7 +350,7 @@ export default function AboutPage() {
         </div>
 
         <FadeInBlock delay={0.1}>
-          <p style={{ ...S.eyebrow, marginBottom: '1.2rem' }}>Áreas de especialidad</p>
+          <p style={{ ...S.eyebrow, marginBottom: '1.2rem' }}>{page.specialtiesEyebrow}</p>
           <div style={S.grid2}>
             {ABOUT.what.specialties.map(spec => (
               <div key={spec.label} style={{
@@ -483,7 +377,7 @@ export default function AboutPage() {
 
       <section style={S.section}>
         <FadeInBlock>
-          <p style={S.eyebrow}>Nuestro Equipo</p>
+          <p style={S.eyebrow}>{page.teamEyebrow}</p>
           <h2 style={S.h2}>{ABOUT.who.teamTitle}</h2>
           <p style={{ ...S.body, marginBottom: '0.8rem' }}>{ABOUT.who.teamBody}</p>
           <p style={{ ...S.body, fontSize: '0.85rem', color: '#5a7a4a', marginBottom: '2.5rem' }}>
@@ -524,8 +418,8 @@ export default function AboutPage() {
 
       <section style={{ ...S.section, borderBottom: 'none' }}>
         <FadeInBlock>
-          <p style={S.eyebrow}>Contacto</p>
-          <h2 style={{ ...S.h2, marginBottom: '2rem' }}>Hablemos</h2>
+          <p style={S.eyebrow}>{page.contactEyebrow}</p>
+          <h2 style={{ ...S.h2, marginBottom: '2rem' }}>{page.contactTitle}</h2>
         </FadeInBlock>
 
         <FadeInBlock delay={0.1}>
@@ -536,19 +430,19 @@ export default function AboutPage() {
             gap: '2.5rem', alignItems: 'flex-start',
           }}>
             <div style={{ flex: '1 1 260px' }}>
-              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Ubicación</p>
+              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{page.locationLabel}</p>
               <p style={{ fontSize: '0.9rem', color: '#8a9f7a', lineHeight: 1.7 }}>
                 {ABOUT.contact.address}
               </p>
             </div>
             <div style={{ flex: '1 1 200px' }}>
-              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
+              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{page.emailLabel}</p>
               <a href={`mailto:${ABOUT.contact.email}`} style={{ fontSize: '0.9rem', color: '#8bc34a', textDecoration: 'none' }}>
                 {ABOUT.contact.email}
               </a>
             </div>
             <div style={{ flex: '1 1 160px' }}>
-              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Redes</p>
+              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>{page.socialLabel}</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {Object.entries(ABOUT.contact.social).map(([name, url]) => (
                   <a key={name} href={url} target="_blank" rel="noopener noreferrer"

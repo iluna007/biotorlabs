@@ -143,8 +143,58 @@ export const CONTENT = {
   nav: {
     brand: 'BIOTOR',
     brandAccent: 'LABS',
-    links: ['La Ciencia', 'Cómo Funciona', 'Resultados'],
+    links: [
+      { label: 'La Ciencia', href: '#science' },
+      { label: 'Cómo Funciona', href: '#how-it-works' },
+      { label: 'Resultados', href: '#results' },
+    ],
+    about: 'Sobre Nosotros',
     cta:   'Solicitar Info',
+  },
+
+  ui: {
+    scroll: 'Scroll',
+    strainBadge: 'Cepa Ta.13 (BCC-101) — Exclusiva Biotor',
+    cropsLabel: 'Cultivos:',
+    requestInfo: 'Solicitar Info',
+    learnMore: 'Ver más ↗',
+    premium: '★ Premium',
+    prevProduct: 'Producto anterior',
+    nextProduct: 'Producto siguiente',
+    goToProduct: (name) => `Ir a ${name}`,
+    grayscaleOn: 'Restaurar color',
+    grayscaleOff: 'Escala de grises',
+    languageToggle: 'Cambiar idioma',
+    accessToolbarLabel: 'Accesibilidad e idioma',
+  },
+
+  buyCarousel: {
+    eyebrow: 'Portafolio Biotor Labs',
+    titlePrefix: 'Elige tu',
+    titleAccent: 'presentación',
+    subtitle: 'Soluciones biológicas con cepas seleccionadas y exclusivas de Biotor Labs. Elige el producto ideal para tu cultivo.',
+  },
+
+  testimonials: {
+    eyebrow: 'Testimonios',
+    title: ['Lo que dicen', 'los productores'],
+    items: [
+      {
+        quote: 'En dos semanas vi el doble de raíces en mis tomates. TrichoMax+ cambió mi forma de fertilizar.',
+        author: 'María G.',
+        role: 'Agricultora, Jalisco',
+      },
+      {
+        quote: 'Mis cultivos nunca habían enraizado tan rápido. El producto se paga solo en la primera cosecha.',
+        author: 'Carlos R.',
+        role: 'Productor, Valencia',
+      },
+      {
+        quote: 'Lo uso en café y cacao. Menos estrés hídrico y plantas más vigorosas desde el trasplante.',
+        author: 'Ana L.',
+        role: 'Productora, Antioquia',
+      },
+    ],
   },
 
   // ── FOOTER ──────────────────────────────────────────────────────────────

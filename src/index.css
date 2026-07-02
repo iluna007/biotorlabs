@@ -70,8 +70,34 @@ body {
 .page-content nav,
 .page-content .section--interactive,
 .page-content a,
-.page-content button {
+.page-content button,
+.access-toolbar,
+.access-toolbar button {
   pointer-events: all;
+}
+
+html.grayscale-mode {
+  filter: grayscale(1);
+}
+
+.access-toolbar {
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .access-toolbar {
+    left: 0.5rem;
+    top: auto;
+    bottom: 1.5rem;
+    transform: none;
+  }
 }
 
 .section {

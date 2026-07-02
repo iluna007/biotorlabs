@@ -1,10 +1,9 @@
 import { SectionOverlay } from '../ui/SectionOverlay'
 import { StatCounter } from '../ui/StatCounter'
-import { CONTENT } from '../../config/content'
-
-const { results } = CONTENT
+import { useContent } from '../../context/SitePreferencesContext'
 
 export function Results() {
+  const { results } = useContent()
   return (
     <section id="results" className="section" style={{
       minHeight: '130vh', flexDirection: 'column',

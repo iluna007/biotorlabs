@@ -1,20 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { gsap } from 'gsap'
-import { CONTENT } from '../../config/content'
-
-const { nav } = CONTENT
-
-const LINK_HREFS = {
-  'La Ciencia': '#science',
-  'Cómo Funciona': '#how-it-works',
-  'Resultados': '#results',
-}
+import { useContent } from '../../context/SitePreferencesContext'
 
 export function Navbar() {
   const ref = useRef(null)
   const location = useLocation()
   const isAbout = location.pathname === '/nosotros'
+  const { nav } = useContent()
 
   useEffect(() => {
     gsap.fromTo(ref.current,
@@ -40,14 +33,14 @@ export function Navbar() {
 
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         {!isAbout && nav.links.map(link => (
-          <a key={link} href={LINK_HREFS[link] ?? '#'} style={{
+          <a key={link.href} href={link.href} style={{
             color: '#7a9f6a', textDecoration: 'none',
             fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase',
             transition: 'color 0.3s',
           }}
           onMouseEnter={e => { e.currentTarget.style.color = '#d4ffba' }}
           onMouseLeave={e => { e.currentTarget.style.color = '#7a9f6a' }}
-          >{link}</a>
+          >{link.label}</a>
         ))}
 
         <Link to="/nosotros" style={{
@@ -60,7 +53,7 @@ export function Navbar() {
         onMouseEnter={e => { e.currentTarget.style.color = '#d4ffba' }}
         onMouseLeave={e => { e.currentTarget.style.color = isAbout ? '#8bc34a' : '#7a9f6a' }}
         >
-          Sobre Nosotros
+          {nav.about}
         </Link>
 
         <button

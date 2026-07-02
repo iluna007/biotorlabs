@@ -1,0 +1,124 @@
+export const ABOUT_EN = {
+  philosophy: {
+    eyebrow: 'Our Philosophy',
+    title: 'Selected and exclusive strains',
+    intro: 'At Biotor, we isolate beneficial microorganisms for plants from nature. Each microorganism, even within the same species, exhibits different characteristics and qualities that define its potential. We base our success on the study and selection of each strain, ensuring the highest quality standards.',
+    soilTitle: 'Soil: a living ecosystem',
+    soilBody: 'Soil is not a static element — on the contrary, it is a living, dynamic ecosystem composed of organic matter and all kinds of living organisms. The challenge is to achieve optimal agricultural productivity while maintaining a biological balance that ensures healthy, living soil.',
+    soilFact: 'According to the FAO, 95% of our food is produced directly or indirectly from soils.',
+    problemTitle: 'The problem: degradation of microbial balance',
+    problemBody: 'In pursuit of high production and profitability, intensive agriculture has led to the excessive use of agrochemicals. This system results in the loss of microbial biodiversity, creating an imbalance that favors opportunistic microorganisms and pathogens, accelerating the decline of microbial activity and soil properties.',
+    problemItems: [
+      'Reduced return of organic matter and nutrients',
+      'Increase in opportunistic microorganisms and pathogens',
+      'Lower microbial diversity and crop yield',
+    ],
+    solutionTitle: 'Our solution: beneficial microorganisms',
+    solutionBody: 'Beneficial microorganisms are the ideal companions for plants: they transform organic matter and minerals into nutrients, control pests and diseases, and improve water uptake. Biotor proposes a strategy focused on the use of selected and exclusive microorganisms as biological control agents and biostimulants.',
+    solutionFootnote: 'According to the FAO, healthy soils help mitigate climate change by maintaining or increasing their carbon content.',
+  },
+
+  who: {
+    eyebrow: 'Who We Are',
+    title: 'High-performance agricultural biotechnology',
+    intro: 'At Biotor, we are experts in research, development, and production of innovative biological solutions for agriculture. We help farmers boost crop performance and overcome the challenge of sustainability.',
+    vision: {
+      label: 'Vision',
+      text: 'To be leaders in the Agricultural Biotechnology sector through innovative solutions and technical support to meet the needs of the farmer.',
+    },
+    mission: {
+      label: 'Mission',
+      text: 'To develop and produce Bioproducts for agriculture from strains selected and exclusive for their effectiveness and excellent adaptability, providing technical and scientific support to our exclusive distributors.',
+    },
+    teamTitle: 'Our Team',
+    teamBody: 'We have a team of 48 highly qualified professionals, led by Agricultural Engineers, MBAs, and Doctors in Agricultural Sciences, specialized in commercial development and agricultural research.',
+    teamNote: 'At Biotor, we grow thanks to the work and commitment of our human capital. We are a company with solid values and we strive to attract and retain talent in the pursuit of excellence.',
+    team: [
+      {
+        name: 'Ing. Luis Fernando Torres MBA',
+        role: 'General Manager',
+        img: 'https://static.wixstatic.com/media/144032_63ea1dd3231945a082961b6d6e2f971f~mv2.jpg/v1/fill/w_193,h_194,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/Foto%20Luis%20v2.jpg',
+      },
+      {
+        name: 'Ing. Milton Pineda',
+        role: 'Commercial Manager',
+        img: 'https://static.wixstatic.com/media/144032_03c0086c8be0463fb3c2509e9d341f04~mv2.jpg/v1/fill/w_193,h_194,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/Foto%20Milton%20v2.jpg',
+      },
+    ],
+    presenceTitle: 'International Presence',
+    presenceBody: 'Biotor shares its expertise internationally through its commercial partners.',
+    countries: ['Nicaragua', 'Costa Rica', 'Panama', 'Dominican Republic', 'Honduras', 'Peru', 'Mexico'],
+    commitment: 'Biotor is committed to local development. We promote the use of microbial control agents in sustainable agriculture, building confidence in bioproducts as key factors in markets with increasingly high standards.',
+  },
+
+  what: {
+    eyebrow: 'Biological Specialty Areas',
+    title: 'From research to harvest',
+    intro: 'Biotor focuses on understanding the mechanisms of microorganisms as natural forms of pest control and promoters of plant and root growth.',
+    cepario: 'Through targeted microbial isolations, we maintain a culture collection of more than 100 microorganisms selected from diverse ecosystems.',
+    steps: [
+      {
+        num: '01',
+        title: 'Research',
+        body: 'We conduct exhaustive prospecting and selection of microorganisms that, by their characteristics, can help farmers maximize their harvests.',
+        icon: '🔬',
+      },
+      {
+        num: '02',
+        title: 'Develop',
+        body: 'According to market needs, candidates are studied and tested in our Innovation and Solutions Development Department (IDS). The result is a competitive and exclusive strain that becomes a biotechnological solution.',
+        icon: '🧬',
+      },
+      {
+        num: '03',
+        title: 'Produce',
+        body: 'The results of our research become the products we develop, evaluate, and produce at our facilities, under strict quality control that ensures consistency.',
+        icon: '🏭',
+      },
+      {
+        num: '04',
+        title: 'Commercialize',
+        body: 'Our IDS Team, with the support of our Diagnostic Laboratory, provides specialized assistance to the farmer and exclusive distributor in each market.',
+        icon: '🌍',
+      },
+    ],
+    specialties: [
+      { label: 'Biofungicides', color: '#8bc34a', desc: 'Control of soil-borne phytopathogenic fungi' },
+      { label: 'Bionematicides', color: '#e8a020', desc: 'Control of phytoparasitic nematodes' },
+      { label: 'Bioinsecticides', color: '#e76f51', desc: 'Control of soil and foliage insect pests' },
+      { label: 'Biostimulants', color: '#2a9d8f', desc: 'Stimulation of growth and nutrient uptake' },
+    ],
+  },
+
+  contact: {
+    address: 'Kilometer 109.5 Carretera Panamericana, Sébaco – San Isidro, Nicaragua',
+    email: 'info@biotorlabs.com',
+    social: {
+      LinkedIn: 'https://www.linkedin.com/company/biotorlabs/',
+      Instagram: 'https://www.instagram.com/biotorlabs/',
+      Facebook: 'https://www.facebook.com/Biotorlabs',
+    },
+  },
+
+  page: {
+    backHome: '← Back to home',
+    heroEyebrow: 'Biotor Labs',
+    heroLine1: 'Microbiology',
+    heroAccent: 'at the service',
+    heroLine2: 'of agriculture',
+    heroSubtitle: 'Agricultural biotechnology company specialized in high-performance biological solutions. Innovation, science, and sustainability at the service of the farmer.',
+    stats: [
+      { num: '48', label: 'Professionals' },
+      { num: '100+', label: 'Strains in collection' },
+      { num: '7', label: 'Countries' },
+      { num: '6', label: 'Bioproducts' },
+    ],
+    specialtiesEyebrow: 'Areas of specialty',
+    teamEyebrow: 'Our Team',
+    contactEyebrow: 'Contact',
+    contactTitle: 'Let\'s talk',
+    locationLabel: 'Location',
+    emailLabel: 'Email',
+    socialLabel: 'Social',
+  },
+}
