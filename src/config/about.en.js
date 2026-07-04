@@ -83,7 +83,7 @@ export const ABOUT_EN = {
       },
     ],
     specialties: [
-      { label: 'Biofungicides', color: '#8bc34a', desc: 'Control of soil-borne phytopathogenic fungi' },
+      { label: 'Biofungicides', color: '#A8E063', desc: 'Control of soil-borne phytopathogenic fungi' },
       { label: 'Bionematicides', color: '#e8a020', desc: 'Control of phytoparasitic nematodes' },
       { label: 'Bioinsecticides', color: '#e76f51', desc: 'Control of soil and foliage insect pests' },
       { label: 'Biostimulants', color: '#2a9d8f', desc: 'Stimulation of growth and nutrient uptake' },

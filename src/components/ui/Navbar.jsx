@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { useContent } from '../../context/SitePreferencesContext'
+import { ASSETS } from '../../config/assets'
 
 export function Navbar() {
   const ref = useRef(null)
@@ -19,62 +20,37 @@ export function Navbar() {
 
   useEffect(() => { setMenuOpen(false) }, [location.pathname])
 
-  const linkStyle = (active) => ({
-    color: active ? '#8bc34a' : '#7a9f6a',
-    textDecoration: 'none', fontSize: '0.8rem',
-    letterSpacing: '0.06em', textTransform: 'uppercase',
-    fontWeight: active ? 700 : 400, transition: 'color 0.3s',
-  })
-
   const links = (
     <>
       {!isAbout && nav.links.map(link => (
-        <a key={link.href} href={link.href} style={linkStyle(false)}
-          onMouseEnter={e => { e.currentTarget.style.color = '#d4ffba' }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#7a9f6a' }}
+        <a key={link.href} href={link.href} className="nav-link"
           onClick={() => setMenuOpen(false)}
         >{link.label}</a>
       ))}
-      <Link to="/nosotros" style={linkStyle(isAbout)}
-        onMouseEnter={e => { e.currentTarget.style.color = '#d4ffba' }}
-        onMouseLeave={e => { e.currentTarget.style.color = isAbout ? '#8bc34a' : '#7a9f6a' }}
-      >{nav.about}</Link>
-      <button type="button"
+      <Link to="/nosotros" className={`nav-link${isAbout ? ' nav-link--active' : ''}`}>
+        {nav.about}
+      </Link>
+      <button type="button" className="nav-cta-btn"
         onClick={() => { window.open('mailto:info@biotorlabs.com', '_blank'); setMenuOpen(false) }}
-        style={{
-          background: 'linear-gradient(135deg, #4a7c2a, #8bc34a)',
-          color: '#0a0f07', border: 'none',
-          padding: '0.6rem 1.4rem', borderRadius: '2px',
-          fontWeight: 700, fontSize: '0.76rem', letterSpacing: '0.08em',
-          textTransform: 'uppercase', cursor: 'pointer',
-        }}
       >{nav.cta}</button>
     </>
   )
 
   return (
     <>
-      <nav ref={ref} style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        height: 'var(--nav-h)',
-        padding: '0 var(--pad-x)',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        backdropFilter: 'blur(14px)',
-        borderBottom: '1px solid rgba(139,195,74,0.1)',
-        background: 'rgba(10,15,7,0.82)',
-      }}>
+      <nav ref={ref} className="site-nav">
         <Link to="/" className="nav-logo-link" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0, minWidth: 0 }}>
           <img
             className="nav-logo"
-            src="/images/logo-slogan.png"
+            src={ASSETS.brand.symbolWhite}
             alt="Biotor Labs"
             onError={e => {
               e.target.style.display = 'none'
               e.target.nextSibling.style.display = 'block'
             }}
           />
-          <span style={{ display: 'none', fontWeight: 800, fontSize: '1.1rem', color: '#d4ffba' }}>
-            BIOTOR<span style={{ color: '#8bc34a' }}>LABS</span>
+          <span style={{ display: 'none', fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: '0.85rem', color: 'var(--cream)', letterSpacing: '0.15em' }}>
+            BIOTOR<span style={{ color: 'var(--lime)' }}>LABS</span>
           </span>
         </Link>
 
@@ -95,7 +71,7 @@ export function Navbar() {
           {[0, 1, 2].map(i => (
             <span key={i} style={{
               display: 'block', width: '22px', height: '2px',
-              background: '#8bc34a', borderRadius: '1px',
+              background: 'var(--lime)', borderRadius: '1px',
               transition: 'all 0.3s',
               transform: menuOpen
                 ? i === 0 ? 'rotate(45deg) translate(5px, 5px)'

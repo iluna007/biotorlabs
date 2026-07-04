@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useContent } from '../../context/SitePreferencesContext'
+import { ASSETS } from '../../config/assets'
 
 export function Footer() {
   const { footer } = useContent()
@@ -7,9 +8,9 @@ export function Footer() {
   return (
     <footer style={{
       position: 'relative', zIndex: 10,
-      background: 'rgba(5,8,4,0.97)',
+      background: 'rgba(10, 42, 26, 0.97)',
       backdropFilter: 'blur(20px)',
-      borderTop: '1px solid rgba(139,195,74,0.12)',
+      borderTop: '1px solid var(--color-border)',
       padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem) 2rem',
       pointerEvents: 'all',
     }}>
@@ -21,52 +22,40 @@ export function Footer() {
           <Link to="/" style={{ display: 'inline-block', marginBottom: '1rem' }}>
             <img
               className="footer-logo"
-              src="/images/logo-slogan.png"
+              src={ASSETS.brand.symbolWhite}
               alt="Biotor Labs"
             />
           </Link>
           <p style={{
-            fontSize: 'clamp(0.75rem, 2vw, 0.8rem)', color: '#4a6a40',
+            fontSize: 'clamp(0.75rem, 2vw, 0.8rem)', color: 'var(--green-light)',
             lineHeight: 1.7, maxWidth: 'min(280px, 100%)',
             marginBottom: '0.8rem',
           }}>
             {footer.tagline}
           </p>
-          <p style={{ fontSize: '0.68rem', color: '#3a5030', lineHeight: 1.6 }}>
+          <p style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.65rem', color: 'var(--color-text-muted)', lineHeight: 1.6,
+          }}>
             {footer.countries}
           </p>
         </div>
 
         {footer.columns.map(col => (
           <div key={col.heading}>
-            <p style={{
-              fontSize: '0.62rem', letterSpacing: '0.25em',
-              textTransform: 'uppercase', color: '#8bc34a',
-              fontWeight: 700, marginBottom: '1.2rem',
-            }}>
+            <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>
               {col.heading}
             </p>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {col.links.map(link => (
                 <li key={link.label}>
                   {link.internal ? (
-                    <Link to={link.href} style={{
-                      fontSize: '0.82rem', color: '#5a7a4a',
-                      textDecoration: 'none', transition: 'color 0.3s',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#8bc34a' }}
-                    onMouseLeave={e => { e.currentTarget.style.color = '#5a7a4a' }}
-                    >{link.label}</Link>
+                    <Link to={link.href} className="footer-link">{link.label}</Link>
                   ) : (
                     <a href={link.href}
+                      className="footer-link"
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel="noopener noreferrer"
-                      style={{
-                        fontSize: '0.82rem', color: '#5a7a4a',
-                        textDecoration: 'none', transition: 'color 0.3s',
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.color = '#8bc34a' }}
-                      onMouseLeave={e => { e.currentTarget.style.color = '#5a7a4a' }}
                     >{link.label}</a>
                   )}
                 </li>
@@ -79,13 +68,19 @@ export function Footer() {
       <div style={{
         maxWidth: '1100px', margin: '0 auto',
         paddingTop: '1.5rem',
-        borderTop: '1px solid rgba(139,195,74,0.08)',
+        borderTop: '1px solid var(--color-border)',
         display: 'flex', flexWrap: 'wrap',
         justifyContent: 'space-between', alignItems: 'center',
         gap: '0.8rem',
       }}>
-        <p style={{ fontSize: '0.72rem', color: '#2d4428' }}>{footer.copyright}</p>
-        <p style={{ fontSize: '0.68rem', color: '#2a3a24' }}>{footer.location}</p>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.68rem', color: 'var(--color-text-muted)',
+        }}>{footer.copyright}</p>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.65rem', color: 'var(--color-text-muted)',
+        }}>{footer.location}</p>
       </div>
     </footer>
   )

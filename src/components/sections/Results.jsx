@@ -10,12 +10,9 @@ export function Results() {
       justifyContent: 'center', padding: '10vh 3rem',
     }}>
       <SectionOverlay triggerSection="#results" align="left">
-        <p style={{ fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: '#8bc34a', marginBottom: '1.2rem' }}>
-          {results.eyebrow}
-        </p>
-        <h2 style={{
-          fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 800,
-          lineHeight: 1.1, color: '#edf0e8', letterSpacing: '-0.03em', marginBottom: '2rem',
+        <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>{results.eyebrow}</p>
+        <h2 className="section-title" style={{
+          fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '2rem',
         }}>
           {results.title[0]}<br />{results.title[1]}
         </h2>
@@ -24,10 +21,12 @@ export function Results() {
           {results.crops.map(crop => (
             <span key={crop} style={{
               padding: '0.3rem 0.8rem',
-              border: '1px solid rgba(139,195,74,0.3)',
-              borderRadius: '2px', fontSize: '0.72rem',
-              color: '#8bc34a', letterSpacing: '0.08em',
-              background: 'rgba(139,195,74,0.06)',
+              border: '1px solid var(--color-border-strong)',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.68rem',
+              color: 'var(--lime)', letterSpacing: '0.08em',
+              background: 'rgba(168, 224, 99, 0.08)',
             }}>
               {crop}
             </span>
@@ -49,8 +48,9 @@ export function Results() {
         </div>
 
         <p style={{
-          fontSize: '0.75rem', color: '#4a6a40', lineHeight: 1.6,
-          borderLeft: '2px solid #2a4a1a', paddingLeft: '1rem',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.72rem', color: 'var(--green-light)', lineHeight: 1.6,
+          borderLeft: '2px solid var(--green-accent)', paddingLeft: '1rem',
         }}>
           {results.disclaimer}
         </p>

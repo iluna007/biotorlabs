@@ -11,7 +11,7 @@ export function useThreeScene(canvasRef, options = {}) {
     if (!canvas) return
 
     const {
-      background = '#0a0f07',
+      background = '#0A2A1A',
       fogDensity = 0.02,
       fov = 55,
       toneMappingExposure = 1.2,

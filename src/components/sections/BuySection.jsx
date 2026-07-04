@@ -13,8 +13,8 @@ function ProductImage({ product }) {
 
   return (
     <div style={{
-      width: '200px',
-      height: '320px',
+      width: 'clamp(160px, 28vw, 240px)',
+      height: 'clamp(260px, 42vw, 380px)',
       position: 'relative',
       flexShrink: 0,
     }}>
@@ -76,7 +76,7 @@ function ProductImage({ product }) {
 
 function ProductCard({ product, isActive, style, ui }) {
   return (
-    <div style={{
+    <div className="product-card-inner" style={{
       display: 'flex',
       gap: '2.5rem',
       alignItems: 'center',
@@ -112,7 +112,7 @@ function ProductCard({ product, isActive, style, ui }) {
               textTransform: 'uppercase', fontWeight: 700,
               padding: '0.2rem 0.6rem', borderRadius: '2px',
               background: product.color,
-              color: '#0a0f07',
+              color: 'var(--green-dark)',
             }}>{ui.premium}</span>
           )}
         </div>
@@ -132,7 +132,7 @@ function ProductCard({ product, isActive, style, ui }) {
         }}>{product.tagline}</p>
 
         <p style={{
-          fontSize: '0.75rem', color: '#5a7a4a',
+          fontSize: '0.75rem', color: 'var(--green-light)',
           fontStyle: 'italic', marginBottom: '1rem',
           fontFamily: 'monospace', lineHeight: 1.5,
         }}>{product.organism}</p>
@@ -145,7 +145,7 @@ function ProductCard({ product, isActive, style, ui }) {
 
         {product.crops.length > 0 && (
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.8rem' }}>
-            <span style={{ fontSize: '0.7rem', color: '#5a7a4a', alignSelf: 'center' }}>{ui.cropsLabel}</span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--green-light)', alignSelf: 'center' }}>{ui.cropsLabel}</span>
             {product.crops.map(crop => (
               <span key={crop} style={{
                 fontSize: '0.68rem', padding: '0.2rem 0.6rem',
@@ -162,7 +162,7 @@ function ProductCard({ product, isActive, style, ui }) {
             onClick={() => window.open(product.contactUrl, '_blank')}
             style={{
               background: `linear-gradient(135deg, ${product.color}cc, ${product.color})`,
-              border: 'none', color: '#0a0f07',
+              border: 'none', color: 'var(--green-dark)',
               padding: '0.8rem 1.8rem', borderRadius: '3px',
               fontWeight: 700, fontSize: '0.8rem',
               letterSpacing: '0.06em', textTransform: 'uppercase',
@@ -299,16 +299,12 @@ export function BuySection() {
       onTouchEnd={onTouchEnd}
     >
       <div className="carousel-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <p style={{
-          fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase',
-          color: '#8bc34a', marginBottom: '0.8rem',
-        }}>
+        <p className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>
           {buyCarousel.eyebrow}
         </p>
-        <h2 style={{
+        <h2 className="section-title" style={{
           fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
-          fontWeight: 900, color: '#edf0e8',
-          letterSpacing: '-0.04em', lineHeight: 1.0,
+          letterSpacing: '-0.02em', lineHeight: 1.0,
           marginBottom: '0.8rem',
         }}>
           {buyCarousel.titlePrefix} <span style={{
@@ -317,7 +313,7 @@ export function BuySection() {
             transition: 'all 0.4s',
           }}>{buyCarousel.titleAccent}</span>
         </h2>
-        <p style={{ fontSize: '0.88rem', color: '#6a8a5a', maxWidth: '480px', margin: '0 auto' }}>
+        <p className="section-body" style={{ fontSize: '0.88rem', maxWidth: '480px', margin: '0 auto' }}>
           {buyCarousel.subtitle}
         </p>
       </div>
@@ -410,9 +406,7 @@ export function BuySection() {
           >→</button>
         </div>
 
-        <div style={{
-          display: 'flex', gap: '0.6rem',
-          justifyContent: 'center', flexWrap: 'wrap',
+        <div className="product-thumbnails-grid" style={{
           marginTop: '1.8rem',
         }}>
           {products.map((p, i) => (
@@ -420,10 +414,11 @@ export function BuySection() {
               key={p.id}
               type="button"
               onClick={() => goTo(i, i > active ? 1 : -1)}
+              className="product-thumb-btn"
               style={{
                 display: 'flex', flexDirection: 'column',
-                alignItems: 'center', gap: '0.3rem',
-                padding: '0.6rem 0.9rem',
+                alignItems: 'center', gap: '0.35rem',
+                padding: '0.55rem 0.75rem',
                 border: i === active
                   ? `1px solid ${p.color}80`
                   : '1px solid rgba(255,255,255,0.08)',
@@ -449,20 +444,16 @@ export function BuySection() {
               }}
               aria-label={p.name}
             >
-              <svg width="22" height="32" viewBox="0 0 22 32" fill="none" aria-hidden="true">
-                <rect x="3" y="7" width="16" height="21" rx="1.5"
-                  fill={i === active ? p.color + '30' : 'transparent'}
-                  stroke={i === active ? p.color : p.color + '50'}
-                  strokeWidth="1.2" />
-                <rect x="3" y="5" width="16" height="4" rx="1"
-                  fill={i === active ? p.color + '50' : p.color + '20'}
-                  stroke={i === active ? p.color : p.color + '40'}
-                  strokeWidth="1" />
-                <rect x="5" y="12" width="12" height="9" rx="0.8"
-                  fill={i === active ? p.color + '25' : p.color + '12'} />
-                <rect x="3" y="26" width="16" height="3" rx="1"
-                  fill={i === active ? p.color + '35' : p.color + '15'} />
-              </svg>
+              <img
+                src={p.imageUrl}
+                alt=""
+                style={{
+                  height: '44px', width: 'auto', maxWidth: '52px',
+                  objectFit: 'contain',
+                  opacity: i === active ? 1 : 0.65,
+                  transition: 'opacity 0.25s',
+                }}
+              />
               <span style={{
                 fontSize: '0.58rem', letterSpacing: '0.04em',
                 color: i === active ? p.color : '#4a6a40',

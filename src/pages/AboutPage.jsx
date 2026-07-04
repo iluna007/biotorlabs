@@ -30,9 +30,9 @@ function TeamMember({ member }) {
 
   return (
     <div style={{
-      border: '1px solid rgba(139,195,74,0.14)',
-      borderRadius: '8px',
-      background: 'rgba(15,22,10,0.6)',
+      border: '1px solid var(--color-border)',
+      borderRadius: 'var(--radius-md)',
+      background: 'rgba(10, 42, 26, 0.6)',
       backdropFilter: 'blur(12px)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', textAlign: 'center',
@@ -41,8 +41,8 @@ function TeamMember({ member }) {
       <div style={{
         width: '80px', height: '80px', borderRadius: '50%',
         overflow: 'hidden', marginBottom: '1rem',
-        border: '2px solid rgba(139,195,74,0.3)',
-        background: 'rgba(139,195,74,0.08)',
+        border: '2px solid var(--color-border-strong)',
+        background: 'rgba(168, 224, 99, 0.08)',
         flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: '1.8rem',
@@ -58,10 +58,10 @@ function TeamMember({ member }) {
           <span aria-hidden="true">👤</span>
         )}
       </div>
-      <p style={{ fontSize: '0.6rem', color: '#8bc34a', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+      <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--lime)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
         {member.role}
       </p>
-      <p style={{ fontSize: '0.88rem', fontWeight: 700, color: '#d4ffba', lineHeight: 1.3 }}>
+      <p style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--cream)', lineHeight: 1.3 }}>
         {member.name}
       </p>
     </div>
@@ -70,10 +70,10 @@ function TeamMember({ member }) {
 
 const S = {
   page: {
-    background: '#0a0f07',
-    color: '#edf0e8',
+    background: 'var(--green-dark)',
+    color: 'var(--cream)',
     minHeight: '100vh',
-    fontFamily: 'Inter, system-ui, sans-serif',
+    fontFamily: 'var(--font-body)',
   },
   hero: {
     minHeight: '55vh',
@@ -81,7 +81,7 @@ const S = {
     alignItems: 'center', justifyContent: 'center',
     textAlign: 'center',
     padding: '120px 2rem 4rem',
-    borderBottom: '1px solid rgba(139,195,74,0.12)',
+    borderBottom: '1px solid var(--color-border)',
     position: 'relative',
     overflow: 'hidden',
   },
@@ -89,28 +89,30 @@ const S = {
     maxWidth: '1000px',
     margin: '0 auto',
     padding: '6rem 2rem',
-    borderBottom: '1px solid rgba(139,195,74,0.08)',
+    borderBottom: '1px solid var(--color-border)',
   },
   eyebrow: {
-    fontSize: '0.65rem', letterSpacing: '0.4em',
-    textTransform: 'uppercase', color: '#8bc34a',
-    marginBottom: '1rem', fontWeight: 600,
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.65rem', letterSpacing: '0.25em',
+    textTransform: 'uppercase', color: 'var(--lime)',
+    marginBottom: '1rem', fontWeight: 500,
   },
   h2: {
+    fontFamily: 'var(--font-display)',
     fontSize: 'clamp(2rem, 4.5vw, 3.4rem)',
-    fontWeight: 900, lineHeight: 1.05,
-    color: '#edf0e8', letterSpacing: '-0.04em',
+    fontWeight: 400, lineHeight: 1.05,
+    color: 'var(--cream)', letterSpacing: '-0.02em',
     marginBottom: '1.5rem',
   },
   body: {
-    fontSize: '0.96rem', color: '#7a9f6a',
+    fontSize: '0.96rem', color: 'var(--color-text-muted)',
     lineHeight: 1.8, maxWidth: '680px',
   },
   card: {
     padding: '1.4rem 1.6rem',
-    border: '1px solid rgba(139,195,74,0.14)',
-    borderRadius: '8px',
-    background: 'rgba(15,22,10,0.6)',
+    border: '1px solid var(--color-border)',
+    borderRadius: 'var(--radius-md)',
+    background: 'rgba(10, 42, 26, 0.6)',
     backdropFilter: 'blur(12px)',
   },
   grid2: {
@@ -137,7 +139,7 @@ export default function AboutPage() {
         padding: '1.2rem 2.5rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         backdropFilter: 'blur(14px)',
-        borderBottom: '1px solid rgba(139,195,74,0.1)',
+        borderBottom: '1px solid rgba(168,224,99,0.1)',
         background: 'rgba(10,15,7,0.85)',
       }}>
         <button
@@ -145,7 +147,7 @@ export default function AboutPage() {
           onClick={() => navigate('/')}
           style={{
             background: 'transparent', border: 'none',
-            color: '#8bc34a', cursor: 'pointer',
+            color: 'var(--lime)', cursor: 'pointer',
             fontSize: '0.82rem', letterSpacing: '0.08em',
             textTransform: 'uppercase', display: 'flex',
             alignItems: 'center', gap: '0.5rem',
@@ -154,8 +156,8 @@ export default function AboutPage() {
         >
           {page.backHome}
         </button>
-        <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#d4ffba', letterSpacing: '-0.01em' }}>
-          BIOTOR<span style={{ color: '#8bc34a' }}>LABS</span>
+        <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--cream)', letterSpacing: '-0.01em' }}>
+          BIOTOR<span style={{ color: 'var(--lime)' }}>LABS</span>
         </div>
         <a
           href={`mailto:${ABOUT.contact.email}`}
@@ -169,7 +171,7 @@ export default function AboutPage() {
       <header style={S.hero}>
         <div style={{
           position: 'absolute', inset: 0, zIndex: 0,
-          background: 'radial-gradient(ellipse 70% 60% at 50% 80%, rgba(139,195,74,0.07) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 70% 60% at 50% 80%, rgba(168,224,99,0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
@@ -178,11 +180,11 @@ export default function AboutPage() {
             fontSize: 'clamp(2.8rem, 6vw, 5rem)',
             fontWeight: 900, lineHeight: 0.95,
             letterSpacing: '-0.05em', marginBottom: '1.5rem',
-            color: '#edf0e8',
+            color: 'var(--cream)',
           }}>
             {page.heroLine1}<br />
             <span style={{
-              background: 'linear-gradient(135deg, #8bc34a, #d4ffba)',
+              background: 'linear-gradient(135deg, var(--lime), var(--green-light))',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>{page.heroAccent}</span><br />
             {page.heroLine2}
@@ -198,9 +200,9 @@ export default function AboutPage() {
               <div key={stat.label} style={{ textAlign: 'center' }}>
                 <div style={{
                   fontSize: '2.2rem', fontWeight: 900,
-                  color: '#8bc34a', letterSpacing: '-0.04em', lineHeight: 1,
+                  color: 'var(--lime)', letterSpacing: '-0.04em', lineHeight: 1,
                 }}>{stat.num}</div>
-                <div style={{ fontSize: '0.7rem', color: '#5a7a4a', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.3rem' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--green-light)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.3rem' }}>
                   {stat.label}
                 </div>
               </div>
@@ -222,7 +224,7 @@ export default function AboutPage() {
               <div style={S.card}>
                 <p style={{
                   fontSize: '0.62rem', letterSpacing: '0.3em',
-                  textTransform: 'uppercase', color: '#8bc34a',
+                  textTransform: 'uppercase', color: 'var(--lime)',
                   marginBottom: '0.7rem', fontWeight: 700,
                 }}>
                   {item.label}
@@ -246,7 +248,7 @@ export default function AboutPage() {
         <FadeInBlock delay={0.1} style={{ margin: '3rem 0' }}>
           <div style={{
             ...S.card,
-            borderColor: 'rgba(139,195,74,0.25)',
+            borderColor: 'rgba(168,224,99,0.25)',
             padding: '2rem 2.5rem',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))',
@@ -254,16 +256,16 @@ export default function AboutPage() {
             alignItems: 'start',
           }}>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#d4ffba', marginBottom: '0.8rem' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--cream)', marginBottom: '0.8rem' }}>
                 {ABOUT.philosophy.soilTitle}
               </h3>
-              <p style={{ fontSize: '0.88rem', color: '#7a9f6a', lineHeight: 1.8, marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.8, marginBottom: '1rem' }}>
                 {ABOUT.philosophy.soilBody}
               </p>
               <p style={{
-                fontSize: '0.78rem', color: '#8bc34a',
+                fontSize: '0.78rem', color: 'var(--lime)',
                 fontStyle: 'italic', paddingLeft: '0.8rem',
-                borderLeft: '2px solid #8bc34a40',
+                borderLeft: '2px solid rgba(168, 224, 99, 0.25)',
               }}>
                 {ABOUT.philosophy.soilFact}
               </p>
@@ -272,7 +274,7 @@ export default function AboutPage() {
               <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffd4aa', marginBottom: '0.8rem' }}>
                 {ABOUT.philosophy.problemTitle}
               </h3>
-              <p style={{ fontSize: '0.88rem', color: '#7a9f6a', lineHeight: 1.75, marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.75, marginBottom: '1rem' }}>
                 {ABOUT.philosophy.problemBody}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -290,17 +292,17 @@ export default function AboutPage() {
         <FadeInBlock delay={0.2}>
           <div style={{
             ...S.card,
-            borderColor: 'rgba(139,195,74,0.3)',
-            background: 'rgba(139,195,74,0.04)',
+            borderColor: 'rgba(168,224,99,0.3)',
+            background: 'rgba(168,224,99,0.04)',
             padding: '2rem 2.5rem',
           }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#d4ffba', marginBottom: '0.8rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--cream)', marginBottom: '0.8rem' }}>
               {ABOUT.philosophy.solutionTitle}
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#8a9f7a', lineHeight: 1.8, marginBottom: '0.8rem' }}>
               {ABOUT.philosophy.solutionBody}
             </p>
-            <p style={{ fontSize: '0.78rem', color: '#5a7a4a', fontStyle: 'italic' }}>
+            <p style={{ fontSize: '0.78rem', color: 'var(--green-light)', fontStyle: 'italic' }}>
               {ABOUT.philosophy.solutionFootnote}
             </p>
           </div>
@@ -312,7 +314,7 @@ export default function AboutPage() {
           <p style={S.eyebrow}>{ABOUT.what.eyebrow}</p>
           <h2 style={S.h2}>{ABOUT.what.title}</h2>
           <p style={{ ...S.body, marginBottom: '0.8rem' }}>{ABOUT.what.intro}</p>
-          <p style={{ ...S.body, fontSize: '0.85rem', color: '#5a7a4a', marginBottom: '3rem' }}>
+          <p style={{ ...S.body, fontSize: '0.85rem', color: 'var(--green-light)', marginBottom: '3rem' }}>
             {ABOUT.what.cepario}
           </p>
         </FadeInBlock>
@@ -327,23 +329,23 @@ export default function AboutPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
                   <div style={{
                     width: '40px', height: '40px', borderRadius: '50%',
-                    border: '1px solid rgba(139,195,74,0.4)',
+                    border: '1px solid rgba(168,224,99,0.4)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.65rem', fontWeight: 700, color: '#8bc34a',
+                    fontSize: '0.65rem', fontWeight: 700, color: 'var(--lime)',
                     letterSpacing: '0.05em', fontFamily: 'monospace',
-                    background: 'rgba(139,195,74,0.06)',
+                    background: 'rgba(168,224,99,0.06)',
                     flexShrink: 0,
                   }}>{step.num}</div>
                   {i < ABOUT.what.steps.length - 1 && (
-                    <div style={{ width: '1px', height: '100%', minHeight: '20px', background: 'rgba(139,195,74,0.15)', marginTop: '0.5rem' }} />
+                    <div style={{ width: '1px', height: '100%', minHeight: '20px', background: 'rgba(168,224,99,0.15)', marginTop: '0.5rem' }} />
                   )}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
                     <span style={{ fontSize: '1.1rem' }}>{step.icon}</span>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#d4ffba' }}>{step.title}</h3>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--cream)' }}>{step.title}</h3>
                   </div>
-                  <p style={{ fontSize: '0.86rem', color: '#7a9f6a', lineHeight: 1.75 }}>{step.body}</p>
+                  <p style={{ fontSize: '0.86rem', color: 'var(--color-text-muted)', lineHeight: 1.75 }}>{step.body}</p>
                 </div>
               </div>
             </FadeInBlock>
@@ -368,7 +370,7 @@ export default function AboutPage() {
                   <p style={{ fontSize: '0.88rem', fontWeight: 700, color: spec.color, marginBottom: '0.2rem' }}>
                     {spec.label}
                   </p>
-                  <p style={{ fontSize: '0.78rem', color: '#5a7a4a', lineHeight: 1.5 }}>{spec.desc}</p>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--green-light)', lineHeight: 1.5 }}>{spec.desc}</p>
                 </div>
               </div>
             ))}
@@ -381,7 +383,7 @@ export default function AboutPage() {
           <p style={S.eyebrow}>{page.teamEyebrow}</p>
           <h2 style={S.h2}>{ABOUT.who.teamTitle}</h2>
           <p style={{ ...S.body, marginBottom: '0.8rem' }}>{ABOUT.who.teamBody}</p>
-          <p style={{ ...S.body, fontSize: '0.85rem', color: '#5a7a4a', marginBottom: '2.5rem' }}>
+          <p style={{ ...S.body, fontSize: '0.85rem', color: 'var(--green-light)', marginBottom: '2.5rem' }}>
             {ABOUT.who.teamNote}
           </p>
         </FadeInBlock>
@@ -396,20 +398,20 @@ export default function AboutPage() {
 
         <FadeInBlock delay={0.15}>
           <div style={{ ...S.card, padding: '2rem 2.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#d4ffba', marginBottom: '0.8rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--cream)', marginBottom: '0.8rem' }}>
               {ABOUT.who.presenceTitle}
             </h3>
-            <p style={{ fontSize: '0.88rem', color: '#7a9f6a', lineHeight: 1.75, marginBottom: '1.2rem' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.75, marginBottom: '1.2rem' }}>
               {ABOUT.who.presenceBody}
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
               {ABOUT.who.countries.map(country => (
                 <span key={country} style={{
                   padding: '0.3rem 0.8rem',
-                  border: '1px solid rgba(139,195,74,0.25)',
+                  border: '1px solid rgba(168,224,99,0.25)',
                   borderRadius: '2px', fontSize: '0.75rem',
-                  color: '#8bc34a', letterSpacing: '0.05em',
-                  background: 'rgba(139,195,74,0.05)',
+                  color: 'var(--lime)', letterSpacing: '0.05em',
+                  background: 'rgba(168,224,99,0.05)',
                 }}>{country}</span>
               ))}
             </div>
@@ -431,24 +433,24 @@ export default function AboutPage() {
             gap: '2.5rem', alignItems: 'flex-start',
           }}>
             <div style={{ flex: '1 1 260px' }}>
-              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{page.locationLabel}</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--lime)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{page.locationLabel}</p>
               <p style={{ fontSize: '0.9rem', color: '#8a9f7a', lineHeight: 1.7 }}>
                 {ABOUT.contact.address}
               </p>
             </div>
             <div style={{ flex: '1 1 200px' }}>
-              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{page.emailLabel}</p>
-              <a href={`mailto:${ABOUT.contact.email}`} style={{ fontSize: '0.9rem', color: '#8bc34a', textDecoration: 'none' }}>
+              <p style={{ fontSize: '0.65rem', color: 'var(--lime)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{page.emailLabel}</p>
+              <a href={`mailto:${ABOUT.contact.email}`} style={{ fontSize: '0.9rem', color: 'var(--lime)', textDecoration: 'none' }}>
                 {ABOUT.contact.email}
               </a>
             </div>
             <div style={{ flex: '1 1 160px' }}>
-              <p style={{ fontSize: '0.65rem', color: '#8bc34a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>{page.socialLabel}</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--lime)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>{page.socialLabel}</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {Object.entries(ABOUT.contact.social).map(([name, url]) => (
                   <a key={name} href={url} target="_blank" rel="noopener noreferrer"
                     style={{ fontSize: '0.82rem', color: '#6a8a5a', textDecoration: 'none', transition: 'color 0.3s' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#8bc34a' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--lime)' }}
                     onMouseLeave={e => { e.currentTarget.style.color = '#6a8a5a' }}
                   >↗ {name}</a>
                 ))}

@@ -6,14 +6,15 @@ const btnBase = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  border: '1px solid rgba(139,195,74,0.25)',
-  borderRadius: '8px',
-  background: 'rgba(10,15,7,0.88)',
+  border: '1px solid var(--color-border)',
+  borderRadius: 'var(--radius-md)',
+  background: 'rgba(10, 42, 26, 0.88)',
   backdropFilter: 'blur(12px)',
   cursor: 'pointer',
-  color: '#8bc34a',
-  fontSize: '0.72rem',
-  fontWeight: 700,
+  color: 'var(--lime)',
+  fontFamily: 'var(--font-mono)',
+  fontSize: '0.68rem',
+  fontWeight: 600,
   letterSpacing: '0.04em',
   transition: 'all 0.25s',
   pointerEvents: 'all',
@@ -32,8 +33,8 @@ export function AccessToolbar() {
         type="button"
         style={{
           ...btnBase,
-          background: grayscale ? 'rgba(139,195,74,0.2)' : btnBase.background,
-          borderColor: grayscale ? '#8bc34a' : 'rgba(139,195,74,0.25)',
+          background: grayscale ? 'rgba(168, 224, 99, 0.2)' : btnBase.background,
+          borderColor: grayscale ? 'var(--lime)' : 'var(--color-border)',
         }}
         onClick={toggleGrayscale}
         aria-pressed={grayscale}

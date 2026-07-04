@@ -1,16 +1,16 @@
 import * as THREE from 'three'
 
 export const PALETTE = {
-  bgDark: new THREE.Color('#0a0f07'),
-  soilDark: new THREE.Color('#1a1208'),
-  soilMid: new THREE.Color('#2d1f0a'),
-  rootBase: new THREE.Color('#4a8f3a'),
-  rootMid: new THREE.Color('#7ecb6e'),
-  rootTip: new THREE.Color('#d4ffba'),
-  rootGlow: new THREE.Color('#a8f58e'),
-  particleSoil: new THREE.Color('#5c3d1e'),
-  particleDust: new THREE.Color('#8a6a40'),
-  productGold: new THREE.Color('#d4a832'),
-  ambientLight: new THREE.Color('#1a2a14'),
-  sunLight: new THREE.Color('#d4f0c0'),
+  bgDark: new THREE.Color('#0A2A1A'),
+  soilDark: new THREE.Color('#0F2018'),
+  soilMid: new THREE.Color('#1A3528'),
+  rootBase: new THREE.Color('#1A5C35'),
+  rootMid: new THREE.Color('#2E8B57'),
+  rootTip: new THREE.Color('#4CAF7D'),
+  rootGlow: new THREE.Color('#A8E063'),
+  particleSoil: new THREE.Color('#3D2E1A'),
+  particleDust: new THREE.Color('#6B5A40'),
+  productGold: new THREE.Color('#C8A832'),
+  ambientLight: new THREE.Color('#0F2818'),
+  sunLight: new THREE.Color('#D4E8C8'),
 }

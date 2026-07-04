@@ -42,23 +42,25 @@ export function StatsBar() {
       <div className="stats-grid" style={{
         gap: '0.5rem',
         width: '100%', maxWidth: '860px',
-        background: 'rgba(10,15,7,0.7)',
+        background: 'rgba(10, 42, 26, 0.75)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(139,195,74,0.15)',
-        borderRadius: '10px',
+        border: '1px solid var(--color-border)',
+        borderRadius: 'var(--radius-md)',
         padding: '1.5rem 2rem',
       }}>
         {statsBar.stats.map(stat => (
           <div key={stat.label} style={{ textAlign: 'center', padding: '0.8rem 0.5rem' }}>
             <div style={{
+              fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2rem, 4vw, 2.8rem)',
-              fontWeight: 900, lineHeight: 1,
-              color: '#8bc34a', letterSpacing: '-0.04em',
+              fontWeight: 400, lineHeight: 1,
+              color: 'var(--lime)', letterSpacing: '-0.02em',
             }}>
               <span data-num={stat.num}>0</span>{stat.suffix}
             </div>
             <p style={{
-              fontSize: '0.68rem', color: '#5a7a4a',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.65rem', color: 'var(--green-light)',
               letterSpacing: '0.08em', textTransform: 'uppercase',
               marginTop: '0.4rem', lineHeight: 1.3,
             }}>{stat.label}</p>

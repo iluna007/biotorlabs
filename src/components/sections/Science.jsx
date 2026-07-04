@@ -9,17 +9,14 @@ export function Science() {
       justifyContent: 'center', padding: '10vh 0',
     }}>
       <SectionOverlay triggerSection="#science" align="left">
-        <p style={{ fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: '#8bc34a', marginBottom: '1.2rem' }}>
-          {science.eyebrow}
-        </p>
-        <h2 style={{
-          fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 800,
-          lineHeight: 1.1, color: '#edf0e8', letterSpacing: '-0.03em', marginBottom: '1.2rem',
+        <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>{science.eyebrow}</p>
+        <h2 className="section-title" style={{
+          fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '1.2rem',
         }}>
           {science.title[0]}<br />
-          <span style={{ color: '#8bc34a' }}>{science.title[1]}</span>
+          <span className="section-accent">{science.title[1]}</span>
         </h2>
-        <p style={{ fontSize: '0.92rem', color: '#7a9f6a', lineHeight: 1.75, marginBottom: '1.8rem' }}>
+        <p className="section-body" style={{ fontSize: '0.92rem', marginBottom: '1.8rem' }}>
           {science.body}
         </p>
 
@@ -27,15 +24,19 @@ export function Science() {
           {science.mechanisms.map(mech => (
             <div key={mech.id} style={{
               display: 'flex', gap: '1rem', padding: '1rem 1.2rem',
-              border: '1px solid rgba(139,195,74,0.15)', borderRadius: '4px',
-              background: 'rgba(10,15,7,0.5)', backdropFilter: 'blur(8px)',
+              border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
+              background: 'rgba(10, 42, 26, 0.55)', backdropFilter: 'blur(8px)',
             }}>
               <span style={{ fontSize: '1.2rem', flexShrink: 0, marginTop: '0.1rem' }}>{mech.icon}</span>
               <div>
-                <h3 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#d4ffba', marginBottom: '0.3rem' }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.88rem', fontWeight: 600,
+                  color: 'var(--cream)', marginBottom: '0.3rem',
+                }}>
                   {mech.title}
                 </h3>
-                <p style={{ fontSize: '0.82rem', color: '#7a9f6a', lineHeight: 1.6 }}>{mech.desc}</p>
+                <p className="section-body" style={{ fontSize: '0.82rem', lineHeight: 1.6 }}>{mech.desc}</p>
               </div>
             </div>
           ))}

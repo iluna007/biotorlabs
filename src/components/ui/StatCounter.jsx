@@ -41,29 +41,31 @@ export function StatCounter({ value, unit, label, triggerEl }) {
       style={{
         textAlign: 'center',
         padding: '1.5rem',
-        border: '1px solid rgba(91, 204, 62, 0.2)',
-        borderRadius: '4px',
-        background: 'rgba(10, 15, 7, 0.6)',
+        border: '1px solid var(--color-border)',
+        borderRadius: 'var(--radius-sm)',
+        background: 'rgba(10, 42, 26, 0.6)',
         backdropFilter: 'blur(8px)',
         minWidth: '140px',
       }}
     >
       <div
         style={{
+          fontFamily: 'var(--font-display)',
           fontSize: '3rem',
-          fontWeight: 800,
-          color: '#7ecb6e',
+          fontWeight: 400,
+          color: 'var(--lime)',
           lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}
       >
         <span ref={numRef}>0</span>
-        <span style={{ fontSize: '1.8rem', color: '#5bcc3e' }}>{unit}</span>
+        <span style={{ fontSize: '1.8rem', color: 'var(--green-light)' }}>{unit}</span>
       </div>
       <p
         style={{
-          fontSize: '0.75rem',
-          color: '#8a9f82',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.68rem',
+          color: 'var(--green-light)',
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           marginTop: '0.5rem',

@@ -83,7 +83,7 @@ export const ABOUT_ES = {
       },
     ],
     specialties: [
-      { label: 'Biofungicidas', color: '#8bc34a', desc: 'Control de hongos fitopatógenos del suelo' },
+      { label: 'Biofungicidas', color: '#A8E063', desc: 'Control de hongos fitopatógenos del suelo' },
       { label: 'Bionematicidas', color: '#e8a020', desc: 'Control de nematodos fitoparásitos' },
       { label: 'Bioinsecticidas', color: '#e76f51', desc: 'Control de insectos plaga del suelo y follaje' },
       { label: 'Bioestimulantes', color: '#2a9d8f', desc: 'Estimulación del crecimiento y absorción de nutrientes' },

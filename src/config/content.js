@@ -1,13 +1,14 @@
 // src/config/content.js
-// Todo el contenido del landing extraído de biotorlabs.com
-// Edita aquí para actualizar textos sin tocar los componentes React
+// Contenido alineado a "Estrategia de Marketing Digital — Biotor Labs" (DOS 12 Studio)
+
+import { productImage } from './assets'
 
 export const CONTENT = {
 
   brand: {
     name:     'Biotor Labs',
     product:  'TrichoMax+',
-    tagline:  'Biofungicida & Bioestimulante Premium',
+    tagline:  'Soluciones biológicas con resultados reales.',
     organism: 'Trichoderma asperellum Ta.13 (BCC-101)',
     contact:  'info@biotorlabs.com',
     location: 'Km 109.5 Carretera Panamericana, Sébaco – San Isidro, Nicaragua',
@@ -18,134 +19,163 @@ export const CONTENT = {
     },
   },
 
-  // ── HERO ────────────────────────────────────────────────────────────────
+  // ── HERO — Portada estrategia ───────────────────────────────────────────
   hero: {
-    eyebrow:     'Soluciones biológicas · Centroamérica',
-    title:       ['Biológicos que', 'demuestran'],
-    titleAccent: 'su valor en campo.',
-    subtitle:    'Biotor Labs desarrolla soluciones biotecnológicas con cepas seleccionadas, validadas científicamente y respaldadas con datos reales de campo — para productores y distribuidores que exigen más.',
-    cta:         'Descubre la Ciencia ↓',
+    eyebrow:     'Ciencia que convence · Marca que lidera',
+    title:       ['Ciencia que', 'Marca que lidera.'],
+    titleAccent: 'convence.',
+    subtitle:    'Posicionando a Biotor Labs como la referencia técnica en biotecnología agrícola de Latinoamérica — con cepas seleccionadas, validación en campo y soporte real para productores y distribuidores en Centroamérica.',
+    cta:         'Conoce la ciencia ↓',
     ctaSecondary: 'Quiero ser distribuidor',
     trustBadges: [
-      'Cepas seleccionadas y exclusivas',
-      'Validación en campo con datos reales',
-      'Soporte técnico cercano al productor',
+      'Autoridad técnica comprobada',
+      'Evidencia real de campo',
+      'Aliado genuino del productor',
       'Presencia en 5 países de Centroamérica',
     ],
   },
 
-  // ── STATS BAR ───────────────────────────────────────────────────────────
+  // ── STATS BAR — Objetivos maestros ──────────────────────────────────────
   statsBar: {
     stats: [
-      { num: '6',   label: 'Bioproductos',               suffix: '' },
-      { num: '5',   label: 'Países en Centroamérica',    suffix: '' },
-      { num: '100', label: 'Cepas en cepario',           suffix: '+' },
-      { num: '48',  label: 'Profesionales especializados', suffix: '' },
+      { num: '6',   label: 'Bioproductos validados',        suffix: '' },
+      { num: '5',   label: 'Países en Centroamérica',       suffix: '' },
+      { num: '100', label: 'Cepas en cepario',              suffix: '+' },
+      { num: '48',  label: 'Profesionales especializados',  suffix: '' },
     ],
   },
 
-  // ── ¿POR QUÉ BIOTOR? ────────────────────────────────────────────────────
+  // ── CIENCIA — Pilar 1: Educación Técnica & Científica ───────────────────
+  science: {
+    eyebrow: 'Educación Técnica & Científica',
+    title:   ['La diferencia está', 'en la cepa.'],
+    body:    'Hay biológicos que prometen. Y hay biológicos que funcionan. La diferencia está en la cepa. No todos los Trichoderma son iguales. No todos los Bacillus controlan lo mismo. En Biotor, cada cepa que llevamos al campo pasó por un proceso de selección riguroso. No comercializamos por catálogo. Seleccionamos por desempeño.',
+    mechanisms: [
+      {
+        id:    'species',
+        icon:  '🧬',
+        title: 'Especie y cepa específica',
+        desc:  'La efectividad de un producto biológico depende de la especie y cepa utilizada — no del nombre comercial en la etiqueta.',
+      },
+      {
+        id:    'mechanism',
+        icon:  '⚔',
+        title: 'Mecanismo de acción',
+        desc:  'Cada cepa fue elegida por su capacidad de acción contra el patógeno objetivo: competencia, micoparasitismo o endofitismo comprobado.',
+      },
+      {
+        id:    'soil',
+        icon:  '🌱',
+        title: 'Adaptación al suelo local',
+        desc:  'Seleccionamos cepas que se establecen en las condiciones reales de los suelos centroamericanos — no en condiciones de laboratorio genéricas.',
+      },
+      {
+        id:    'ufc',
+        icon:  '📐',
+        title: 'Concentración de UFC viables',
+        desc:  'La calidad del proceso de fermentación y la concentración real de unidades formadoras de colonias al momento de aplicar marca la diferencia.',
+      },
+    ],
+  },
+
+  // ── DETRÁS DE LA CIENCIA — Pilar 3 ──────────────────────────────────────
+  howItWorks: {
+    eyebrow: 'Detrás de la Ciencia',
+    title:   ['Selección rigurosa.', 'Validación en campo.'],
+    steps: [
+      {
+        num:   '01',
+        title: 'Evaluación en laboratorio',
+        desc:  'Antes de que llegue a tu campo, cada cepa pasó por meses de evaluación: selección, microscopía, notación técnica y pruebas de viabilidad.',
+      },
+      {
+        num:   '02',
+        title: 'Selección por desempeño',
+        desc:  'No comercializamos por catálogo. Desarrollamos tecnología que demuestra su valor en las condiciones reales de tu cultivo.',
+      },
+      {
+        num:   '03',
+        title: 'Validación en campo',
+        desc:  'Ensayos con cultivos reales, productores reales y datos verificables. Los productos no se aprueban por marketing — se aprueban en campo.',
+      },
+      {
+        num:   '04',
+        title: 'Soporte técnico continuo',
+        desc:  'Alianza genuina: acompañamiento real antes, durante y después de cada aplicación. No vendemos y desaparecemos.',
+      },
+    ],
+  },
+
+  // ── VOZ DE MARCA — Pilares de mensaje ───────────────────────────────────
   whyBiotor: {
-    eyebrow:     '¿Por qué Biotor?',
-    title:       'La diferencia está',
-    titleAccent: 'en la cepa.',
-    body:        'En un mercado lleno de promesas, Biotor Labs se distingue por una sola cosa: resultados que se pueden medir. Cada producto pasó por un proceso de selección riguroso. Cada cepa fue elegida por su desempeño, no por su precio.',
+    eyebrow:     'Cómo habla Biotor',
+    title:       'Técnica sin arrogancia.',
+    titleAccent: 'Confianza sin prepotencia.',
+    body:        'La voz de Biotor es la de un científico apasionado que también es un aliado genuino del campo. Técnica sin arrogancia. Confianza sin prepotencia. Innovación con propósito. Orientada a evidencia, directa y sofisticada sin ser distante.',
     differentiators: [
       {
-        title: 'Selección científica de cepas',
-        body:  'No trabajamos con cepas genéricas. Cada microorganismo fue seleccionado y validado por su capacidad de adaptarse a los suelos centroamericanos y generar resultados consistentes.',
+        title: 'Ciencia Real',
+        body:  'Cepas seleccionadas, validadas, con mecanismos de acción comprobados. Terminología científica con claridad — nunca genérica.',
         icon:  '🔬',
       },
       {
-        title: 'Validación en campo, no en papel',
-        body:  'Nuestros productos no se aprueban por marketing — se aprueban en ensayos reales, con cultivos reales y productores reales. Los datos están disponibles para distribuidores y agrónomos.',
+        title: 'Resultados Comprobables',
+        body:  'Ensayos de campo, datos concretos, testimonios verificables. Siempre con datos, siempre con sustento. Nunca promesas vacías.',
         icon:  '📊',
       },
       {
-        title: 'Soporte técnico que acompaña',
-        body:  'Detrás de cada producto hay un equipo técnico que entiende el cultivo, el suelo y el productor. No vendemos y desaparecemos. Seguimos de cerca cada aplicación.',
+        title: 'Alianza Genuina',
+        body:  'Soporte técnico real antes, durante y después de cada aplicación. Habla con respeto y cercanía al campo — sin condescendencia.',
         icon:  '🤝',
       },
     ],
   },
 
-  // ── CTA DISTRIBUIDORES ──────────────────────────────────────────────────
+  // ── EVIDENCIA — Pilar 2: Resultados de Campo ────────────────────────────
+  results: {
+    eyebrow: 'Evidencia & Resultados de Campo',
+    title:   ['Datos reales.', 'Resultados comprobables.'],
+    stats: [
+      { value: 78,  unit: '%', label: 'Reducción incidencia Botrytis' },
+      { value: 70,  unit: '%', label: 'Parasitismo nematodos (1.er ciclo)' },
+      { value: 340, unit: '%', label: 'Más biomasa radicular' },
+      { value: 45,  unit: ' días', label: 'Evaluación de ensayo' },
+    ],
+    disclaimer: 'Ensayos realizados en condiciones reales de campo en Centroamérica. Resultado de referencia: tomate bajo invernadero, Guatemala — protocolo con biofungicida en 3 aplicaciones preventivas. Los datos completos están disponibles para distribuidores y agrónomos.',
+    crops: ['Tomate', 'Arroz', 'Caña de Azúcar', 'Café'],
+  },
+
+  // ── TESTIMONIOS — Casos de evidencia ────────────────────────────────────
+  testimonials: {
+    eyebrow: 'Evidencia de Campo',
+    title: ['Resultados reales.', 'Productores reales.'],
+    items: [
+      {
+        quote: 'Cultivo de tomate bajo invernadero con alta presión de Botrytis. Tras 3 aplicaciones preventivas: 78% de reducción en incidencia, sin presión residual en fruto y cero días de carencia. El productor renovó protocolo para el siguiente ciclo.',
+        author: 'Caso de referencia',
+        role: 'Tomate · Guatemala',
+      },
+      {
+        quote: 'Muchos biológicos en el mercado prometen y no cumplen. Con Biotor tenemos una línea que podemos recomendar con confianza — con soporte técnico real detrás y datos de ensayo que respaldan cada recomendación.',
+        author: 'Distribuidor estratégico',
+        role: 'Centroamérica',
+      },
+      {
+        quote: 'Había probado biológicos que no funcionaron. Necesitaba ver evidencia real, no promesas. Los ensayos de Biotor me mostraron datos concretos antes de cambiar mis prácticas de manejo de cultivos.',
+        author: 'Productor tecnificado',
+        role: 'Hortalizas · CA',
+      },
+    ],
+  },
+
+  // ── CTA DISTRIBUIDORES — Objetivo 2 ─────────────────────────────────────
   distributorCTA: {
-    eyebrow:    'Red de Distribuidores',
-    title:      '¿Querés construir mercado con biológicos que realmente funcionan?',
-    body:       'Buscamos distribuidores estratégicos en Centroamérica que compartan nuestra filosofía técnica y compromiso con el productor.',
+    eyebrow:    'Atracción de Distribuidores',
+    title:      '¿Querés construir mercado con biológicos que tus clientes puedan recomendar con confianza?',
+    body:       'Buscamos distribuidores estratégicos en Centroamérica que compartan nuestra filosofía técnica. Generamos alianzas con empresas que valoran el respaldo técnico para sus productores y toman decisiones basadas en datos y resultados de campo.',
     cta:        'Aplicar como distribuidor',
     ctaMailSubject: 'Aplicar como distribuidor Biotor',
     secondaryLink: 'Conocer más sobre Biotor →',
-  },
-
-  // ── CIENCIA / MECANISMOS ────────────────────────────────────────────────
-  science: {
-    eyebrow: 'La Ciencia detrás',
-    title:   ['Cepa seleccionada,', 'resultados probados'],
-    body:    'TrichoMax+ es la evolución de TrichoMax, basado en la cepa exclusiva y seleccionada de Biotor: Trichoderma asperellum Ta.13 (=BCC-101). Una formulación más concentrada y potente, con alta patogenicidad y notable capacidad de estimular el crecimiento.',
-    mechanisms: [
-      {
-        id:    'competition',
-        icon:  '⚔',
-        title: 'Competencia',
-        desc:  'La cepa Ta.13 se caracteriza por su velocidad de crecimiento y antibiosis: produce metabolitos tóxicos que inhiben hongos fitopatógenos, asegurando un control efectivo por colonización de espacio.',
-      },
-      {
-        id:    'parasitism',
-        icon:  '🔬',
-        title: 'Micoparasitismo',
-        desc:  'Produce una amplia variedad de enzimas —glucanasas, celulasas, proteasas, quitinasas— que destruyen la pared celular de los hongos patógenos del suelo.',
-      },
-      {
-        id:    'endophytism',
-        icon:  '🌿',
-        title: 'Endofitismo',
-        desc:  'La cepa Ta.13 coloniza endofíticamente las raíces, estableciendo una relación simbiótica con la planta. Potencia la actividad microbiana rizosférica y favorece el equilibrio biológico del suelo.',
-      },
-    ],
-  },
-
-  // ── CÓMO FUNCIONA (BIOESTIMULANTE) ─────────────────────────────────────
-  howItWorks: {
-    eyebrow: 'Bioestimulante',
-    title:   ['De la raíz', 'a la cosecha'],
-    steps: [
-      {
-        num:   '01',
-        title: 'Resistencia Sistémica',
-        desc:  'Induce mecanismos de resistencia sistémica en las plantas, preparándolas para enfrentar el estrés biótico y abiótico.',
-      },
-      {
-        num:   '02',
-        title: 'Hormona de Crecimiento',
-        desc:  'Produce ácido indolacético (AIA), la principal fitohormona del crecimiento, estimulando directamente el desarrollo de raíces y tallos.',
-      },
-      {
-        num:   '03',
-        title: 'Solubilización de Nutrientes',
-        desc:  'Solubiliza el fósforo y otros nutrientes poco disponibles para la planta, mejorando la eficiencia de la fertilización.',
-      },
-      {
-        num:   '04',
-        title: 'Red de Micelios',
-        desc:  'Crea una red de micelios que crece junto a las raíces, a través de la cual transloca nutrientes y agua directamente a la planta.',
-      },
-    ],
-  },
-
-  // ── RESULTADOS ──────────────────────────────────────────────────────────
-  results: {
-    eyebrow: 'Resultados',
-    title:   ['Los números', 'no mienten'],
-    stats: [
-      { value: 340, unit: '%', label: 'Más biomasa radicular' },
-      { value: 40,  unit: '%', label: 'Mayor rendimiento' },
-      { value: 72,  unit: 'h', label: 'Primeros efectos' },
-      { value: 3,   unit: '+', label: 'Cultivos objetivo' },
-    ],
-    disclaimer: 'Ensayos realizados en cultivos de Arroz, Caña de Azúcar y Maní en condiciones de campo. Resultados pueden variar según condiciones agronómicas.',
-    crops: ['Arroz', 'Caña de Azúcar', 'Maní'],
   },
 
   // ── PRODUCTO / COMPRA ───────────────────────────────────────────────────
@@ -153,7 +183,7 @@ export const CONTENT = {
     eyebrow: 'TrichoMax+',
     title:   'Elige tu presentación',
     productName: 'TrichoMax+ WP',
-    productDesc: 'Biofungicida y Bioestimulante a base de Trichoderma asperellum Ta.13. Formulación en polvo mojable (WP) de alta concentración.',
+    productDesc: 'Biofungicida y Bioestimulante a base de Trichoderma asperellum Ta.13. Formulación en polvo mojable (WP) de alta concentración — cepa exclusiva con selección rigurosa y validación en campo.',
     plans: [
       {
         name:     'Pequeño Productor',
@@ -185,9 +215,9 @@ export const CONTENT = {
     ],
     guarantees: [
       'Cepa exclusiva certificada BCC-101',
-      'Ambientalmente seguro',
-      'Soporte técnico agronómico',
-      'Compatible con sistemas convencionales',
+      'Seleccionada por desempeño, no por catálogo',
+      'Soporte técnico agronómico en campo',
+      'Datos de ensayo disponibles para distribuidores',
     ],
   },
 
@@ -196,9 +226,9 @@ export const CONTENT = {
     brand: 'BIOTOR',
     brandAccent: 'LABS',
     links: [
-      { label: 'La Ciencia', href: '#science' },
-      { label: 'Cómo Funciona', href: '#how-it-works' },
-      { label: 'Resultados', href: '#results' },
+      { label: 'Ciencia Real', href: '#science' },
+      { label: 'Detrás de la Ciencia', href: '#how-it-works' },
+      { label: 'Evidencia', href: '#results' },
     ],
     about: 'Sobre Nosotros',
     cta:   'Solicitar Info',
@@ -221,32 +251,10 @@ export const CONTENT = {
   },
 
   buyCarousel: {
-    eyebrow: 'Portafolio Biotor Labs',
-    titlePrefix: 'Elige tu',
-    titleAccent: 'presentación',
-    subtitle: 'Soluciones biológicas con cepas seleccionadas y exclusivas de Biotor Labs. Elige el producto ideal para tu cultivo.',
-  },
-
-  testimonials: {
-    eyebrow: 'Testimonios',
-    title: ['Lo que dicen', 'los productores'],
-    items: [
-      {
-        quote: 'En dos semanas vi el doble de raíces en mis tomates. TrichoMax+ cambió mi forma de fertilizar.',
-        author: 'María G.',
-        role: 'Agricultora, Jalisco',
-      },
-      {
-        quote: 'Mis cultivos nunca habían enraizado tan rápido. El producto se paga solo en la primera cosecha.',
-        author: 'Carlos R.',
-        role: 'Productor, Valencia',
-      },
-      {
-        quote: 'Lo uso en café y cacao. Menos estrés hídrico y plantas más vigorosas desde el trasplante.',
-        author: 'Ana L.',
-        role: 'Productora, Antioquia',
-      },
-    ],
+    eyebrow: 'Marca & Propuesta de Valor',
+    titlePrefix: 'Portafolio',
+    titleAccent: 'Biotor Labs',
+    subtitle: 'En Biotor no vendemos por precio. Vendemos por resultado. Cada producto fue seleccionado por desempeño en las condiciones reales de Centroamérica.',
   },
 
   // ── FOOTER ──────────────────────────────────────────────────────────────
@@ -259,9 +267,9 @@ export const CONTENT = {
       {
         heading: 'Empresa',
         links: [
-          { label: 'Nuestra Ciencia', href: '/#science' },
-          { label: 'Cómo Funciona',   href: '/#how-it-works' },
-          { label: 'Sobre Nosotros',  href: '/nosotros', internal: true },
+          { label: 'Ciencia Real', href: '/#science' },
+          { label: 'Detrás de la Ciencia', href: '/#how-it-works' },
+          { label: 'Sobre Nosotros', href: '/nosotros', internal: true },
         ],
       },
       {
@@ -294,13 +302,13 @@ export const CONTENT = {
       tagline: 'Control Biológico Premium',
       type: 'Biofungicida · Bioestimulante',
       organism: 'Trichoderma asperellum Ta.13 (=BCC-101)',
-      description: 'Cepa seleccionada y exclusiva de Biotor. Alta patogenicidad, notable capacidad de estimular el crecimiento. Diseñado especialmente para Arroz, Caña de Azúcar y Maní.',
+      description: 'Cepa seleccionada y exclusiva de Biotor — no comercializada por catálogo, sino por desempeño comprobado. Alta patogenicidad y notable capacidad de estimular el crecimiento. Validada en Arroz, Caña de Azúcar y Maní.',
       badges: ['Biofungicida', 'Bioestimulante'],
       crops: ['Arroz', 'Caña de Azúcar', 'Maní'],
-      color: '#8bc34a',
-      accentColor: '#d4ffba',
+      color: '#A8E063',
+      accentColor: '#4CAF7D',
       url: 'https://www.biotorlabs.com/trichomax-1',
-      imageUrl: 'https://static.wixstatic.com/media/144032_2fc47823dcbd4898a1e3e28459cbba56~mv2.png/v1/crop/x_239,y_0,w_762,h_1240/fill/w_395,h_643,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/TrichoMax%20Plus%20WP.png',
+      imageUrl: productImage('trichomax-plus'),
       contactUrl: 'https://www.biotorlabs.com/fc-tr-1',
       featured: true,
     },
@@ -310,13 +318,13 @@ export const CONTENT = {
       tagline: 'Trichoderma para Suelo',
       type: 'Biofungicida · Bioestimulante',
       organism: 'Trichoderma asperellum Ta.13 (=BCC-101)',
-      description: 'La formulación original de Trichoderma asperellum de Biotor. Potencia la actividad microbiana rizosférica y favorece el equilibrio biológico del suelo.',
+      description: 'La formulación original con la cepa Ta.13 de Biotor. Potencia la actividad microbiana rizosférica y favorece el equilibrio biológico del suelo con evidencia de campo verificable.',
       badges: ['Biofungicida', 'Bioestimulante'],
       crops: ['Múltiples cultivos'],
-      color: '#6fa832',
-      accentColor: '#c8f5a0',
+      color: '#2E8B57',
+      accentColor: '#A8E063',
       url: 'https://www.biotorlabs.com/trichomax',
-      imageUrl: 'https://static.wixstatic.com/media/144032_2fc47823dcbd4898a1e3e28459cbba56~mv2.png/v1/crop/x_239,y_0,w_762,h_1240/fill/w_395,h_643,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/TrichoMax%20WP.png',
+      imageUrl: productImage('trichomax'),
       contactUrl: 'https://www.biotorlabs.com/fc-tr-1',
       featured: false,
     },
@@ -326,13 +334,13 @@ export const CONTENT = {
       tagline: 'Control de Nemátodos',
       type: 'Bionematicida · Bioestimulante',
       organism: 'Pochonia chlamydosporia IMI SD-187 (=BCC-201)',
-      description: 'Control biológico premium de nematodos fitoparásitos. Alta eficiencia: hasta 70% de parasitismo de huevos en el primer ciclo. Recupera la salud radicular del suelo.',
+      description: 'Control biológico premium de nematodos fitoparásitos con datos reales de eficacia: hasta 70% de parasitismo de huevos en el primer ciclo. Recupera la salud radicular con sustento técnico.',
       badges: ['Bionematicida', 'Bioestimulante'],
       crops: ['Tomate', 'Pepino', 'Plátano', 'Otros'],
       color: '#e8a020',
       accentColor: '#ffeaaa',
       url: 'https://www.biotorlabs.com/klamic',
-      imageUrl: 'https://static.wixstatic.com/media/144032_be43215a30c64b0eac77a09bd1d594c7~mv2.png/v1/crop/x_239,y_0,w_762,h_1240/fill/w_396,h_644,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Klamic%20WP.png',
+      imageUrl: productImage('klamic'),
       contactUrl: 'https://www.biotorlabs.com/fc-kl',
       featured: false,
     },
@@ -342,13 +350,13 @@ export const CONTENT = {
       tagline: 'Control Hongos y Nemátodos',
       type: 'Biofungicida · Bionematicida · Bioestimulante',
       organism: 'T. asperellum Ta.13 + P. chlamydosporia IMI SD-187',
-      description: 'Consorcio microbiano de doble acción. Combina el poder antifúngico de Trichoderma con el control nematicida de Pochonia en una sola aplicación.',
+      description: 'Consorcio microbiano de doble acción con cepas seleccionadas por Biotor. Combina control antifúngico y nematicida en una sola aplicación — tecnología que demuestra su valor en campo.',
       badges: ['Biofungicida', 'Bionematicida', 'Bioestimulante'],
       crops: ['Múltiples cultivos'],
       color: '#2a9d8f',
       accentColor: '#a8ede8',
       url: 'https://www.biotorlabs.com/cronox',
-      imageUrl: 'https://static.wixstatic.com/media/144032_a16816cf627e4027b8acf8043250941e~mv2.png/v1/crop/x_239,y_0,w_762,h_1240/fill/w_396,h_644,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Cronox%20Plus.png',
+      imageUrl: productImage('cronox'),
       contactUrl: 'https://www.biotorlabs.com/fc-cr',
       featured: false,
     },
@@ -358,13 +366,13 @@ export const CONTENT = {
       tagline: 'Beauveria & Metarhizium',
       type: 'Bioinsecticida · Endófito',
       organism: 'Beauveria bassiana BCC-403 + Metarhizium anisopliae BCC-305',
-      description: 'Consorcio de dos cepas entomopatógenas para control de insectos plagas del suelo y follaje. Causa epizootias: las esporas se dispersan entre insectos tras la infección.',
+      description: 'Consorcio de cepas entomopatógenas seleccionadas para control de insectos plagas del suelo y follaje. Cepas con mecanismos de acción comprobados — no promesas genéricas.',
       badges: ['Bioinsecticida', 'Endófito'],
       crops: ['Café', 'Cítricos', 'Hortalizas'],
       color: '#e76f51',
       accentColor: '#ffd4c8',
       url: 'https://www.biotorlabs.com/atropos',
-      imageUrl: 'https://static.wixstatic.com/media/144032_3179727de8cc4d4d89f3f354859adf36~mv2.png/v1/crop/x_239,y_0,w_762,h_1240/fill/w_395,h_643,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Atropos%20WP.png',
+      imageUrl: productImage('atropos'),
       contactUrl: 'https://www.biotorlabs.com/fc-at',
       featured: false,
     },
@@ -374,13 +382,13 @@ export const CONTENT = {
       tagline: 'Sistema de Defensa Biológica',
       type: 'Bioinsecticida de Consorcio Triple',
       organism: 'B. bassiana BCC-411, BCC-414 + B. brongniartii BCC-405',
-      description: 'Tres cepas de Beauveria en un solo producto. Máxima versatilidad para control de broca del café, Diaphorina citri y coleópteros. Plasticidad ecológica superior.',
+      description: 'Tres cepas de Beauveria en un solo producto — máxima versatilidad con selección rigurosa. Plasticidad ecológica superior para control de broca del café, Diaphorina citri y coleópteros.',
       badges: ['Bioinsecticida', 'Consorcio triple'],
       crops: ['Café', 'Cítricos', 'Coleópteros'],
       color: '#9b5de5',
       accentColor: '#e8d4ff',
       url: 'https://www.biotorlabs.com/invictus',
-      imageUrl: 'https://static.wixstatic.com/media/144032_8a27a83e63964d8980d30636e6377bd9~mv2.png/v1/crop/x_239,y_0,w_762,h_1240/fill/w_395,h_643,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Invictus%20WP.png',
+      imageUrl: productImage('invictus'),
       contactUrl: 'https://www.biotorlabs.com/fc-in',
       featured: false,
     },

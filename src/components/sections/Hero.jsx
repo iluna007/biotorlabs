@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { useContent } from '../../context/SitePreferencesContext'
+import { ASSETS } from '../../config/assets'
 
 export function Hero() {
   const { hero, ui } = useContent()
@@ -36,71 +37,33 @@ export function Hero() {
   }, [])
 
   return (
-    <section id="hero" className="section" style={{
+    <section id="hero" className="section hero-section" style={{
       height: '120vh', flexDirection: 'column',
       justifyContent: 'center', padding: `0 var(--pad-x)`,
       position: 'relative',
     }}>
-      <div style={{ maxWidth: '680px' }}>
-        <p ref={eyebrowRef} style={{
-          fontSize: '0.68rem', letterSpacing: '0.4em',
-          textTransform: 'uppercase', color: '#8bc34a',
-          marginBottom: '1.2rem', fontWeight: 600,
-        }}>
+      <div className="hero-inner">
+      <div style={{ maxWidth: '680px', flex: '1 1 340px' }}>
+        <p ref={eyebrowRef} className="hero-eyebrow">
           {hero.eyebrow}
         </p>
 
-        <h1 ref={titleRef} style={{
-          fontSize: 'clamp(3rem, 7vw, 5.8rem)',
-          fontWeight: 900, lineHeight: 0.95,
-          color: '#edf0e8', letterSpacing: '-0.04em',
-          marginBottom: '1.5rem',
-        }}>
+        <h1 ref={titleRef}>
           {hero.title[0]}<br />
-          <span style={{
-            background: 'linear-gradient(135deg, #8bc34a, #d4ffba)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>
-            {hero.titleAccent}
-          </span><br />
+          <span className="hero-accent">{hero.titleAccent}</span><br />
           {hero.title[1]}
         </h1>
 
-        <p ref={subtitleRef} style={{
-          fontSize: '1.05rem', color: '#7a9f6a',
-          lineHeight: 1.75, maxWidth: '500px', marginBottom: '2.5rem',
-        }}>
+        <p ref={subtitleRef} className="hero-subtitle">
           {hero.subtitle}
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-          <a href="#science" style={{
-            background: 'transparent',
-            border: '1px solid #8bc34a', color: '#8bc34a',
-            padding: '0.95rem 1.8rem', fontSize: '0.8rem',
-            letterSpacing: '0.08em', textTransform: 'uppercase',
-            cursor: 'pointer', borderRadius: '2px',
-            transition: 'all 0.3s', pointerEvents: 'all',
-            textDecoration: 'none', display: 'inline-block',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#8bc34a'; e.currentTarget.style.color = '#0a0f07' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8bc34a' }}
-          >{hero.cta}</a>
-
+          <a href="#science" className="hero-cta-primary">{hero.cta}</a>
           <button
             type="button"
+            className="hero-cta-secondary"
             onClick={() => window.open('mailto:info@biotorlabs.com?subject=Quiero ser distribuidor', '_blank')}
-            style={{
-              background: 'transparent',
-              border: '1px solid rgba(139,195,74,0.3)',
-              color: '#7a9f6a',
-              padding: '0.95rem 1.8rem',
-              fontSize: '0.8rem', letterSpacing: '0.08em', textTransform: 'uppercase',
-              cursor: 'pointer', borderRadius: '2px',
-              transition: 'all 0.3s', pointerEvents: 'all',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#8bc34a'; e.currentTarget.style.color = '#d4ffba' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(139,195,74,0.3)'; e.currentTarget.style.color = '#7a9f6a' }}
           >{hero.ctaSecondary}</button>
         </div>
 
@@ -110,11 +73,17 @@ export function Hero() {
         }}>
           {hero.trustBadges.map(badge => (
             <div key={badge} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ color: '#8bc34a', fontSize: '0.7rem' }}>✓</span>
-              <span style={{ fontSize: '0.72rem', color: '#5a7a4a', letterSpacing: '0.04em' }}>{badge}</span>
+              <span className="hero-badge-check">✓</span>
+              <span className="hero-badge-text">{badge}</span>
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="hero-visual" aria-hidden="true">
+        <img src={ASSETS.hero.brotes} alt="" loading="eager" />
+        <div className="hero-visual__fade" />
+      </div>
       </div>
 
       <div ref={scrollHintRef} style={{
@@ -122,10 +91,8 @@ export function Hero() {
         transform: 'translateX(-50%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
       }}>
-        <div style={{ width: '1px', height: '50px', background: 'linear-gradient(180deg, transparent, #8bc34a)' }} />
-        <p style={{ fontSize: '0.62rem', letterSpacing: '0.3em', color: '#8bc34a', textTransform: 'uppercase' }}>
-          {ui.scroll}
-        </p>
+        <div className="hero-scroll-line" />
+        <p className="hero-scroll-label">{ui.scroll}</p>
       </div>
     </section>
   )
