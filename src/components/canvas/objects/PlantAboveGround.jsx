@@ -5,6 +5,7 @@
 import { useRef, useLayoutEffect } from 'react'
 import * as THREE from 'three'
 import { PLANT_ANCHOR } from '../../../config/plantAnchor'
+import { getSceneTheme } from '../../../config/sceneTheme'
 
 // ── PARA REEMPLAZAR CON TU MODELO DE RHINO ────────────────────────────────
 // 1. Exporta desde Rhino como plant_trichomax.glb (ver plant_anchor.json)
@@ -15,8 +16,19 @@ import { PLANT_ANCHOR } from '../../../config/plantAnchor'
 
 const DEV_MODE = import.meta.env.DEV  // true en desarrollo, false en build
 
-export function PlantAboveGround({ scene, opacity = 1 }) {
+export function PlantAboveGround({ scene, opacity = 1, theme = 'dark' }) {
   const groupRef = useRef(null)
+
+  const applyPlantColors = (group, themeKey) => {
+    const colors = getSceneTheme(themeKey).plant
+    group.traverse((child) => {
+      if (!child.isMesh || !child.material || child.name === 'PlantBoundingBoxHelper') return
+      if (child.name === 'Stem_Main') child.material.color.set(colors.stem)
+      else if (child.name.startsWith('Stem_Node')) child.material.color.set(colors.node)
+      else if (child.name.startsWith('Leaf_')) child.material.color.set(colors.leaf)
+      else if (child.name === 'DirtDisc') child.material.color.set(colors.dirt)
+    })
+  }
 
   useLayoutEffect(() => {
     if (!scene) return
@@ -150,6 +162,7 @@ export function PlantAboveGround({ scene, opacity = 1 }) {
 
     scene.add(group)
     groupRef.current = group
+    applyPlantColors(group, theme)
 
     return () => {
       scene.remove(group)
@@ -176,6 +189,11 @@ export function PlantAboveGround({ scene, opacity = 1 }) {
       }
     })
   }, [opacity])
+
+  useLayoutEffect(() => {
+    if (!groupRef.current) return
+    applyPlantColors(groupRef.current, theme)
+  }, [theme])
 
   return null
 }

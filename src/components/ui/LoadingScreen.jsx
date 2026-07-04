@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
-import { ASSETS } from '../../config/assets'
+import { useBrandLogo } from '../../hooks/useBrandLogo'
 
 export function LoadingScreen({ onComplete }) {
   const ref = useRef(null)
+  const brandLogo = useBrandLogo()
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
@@ -31,10 +32,11 @@ export function LoadingScreen({ onComplete }) {
   return (
     <div
       ref={ref}
+      className="loading-screen"
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'var(--green-dark)',
+        background: 'var(--color-bg)',
         zIndex: 9999,
         display: 'flex',
         flexDirection: 'column',
@@ -44,7 +46,7 @@ export function LoadingScreen({ onComplete }) {
       }}
     >
       <img
-        src={ASSETS.brand.symbolWhite}
+        src={brandLogo}
         alt="Biotor Labs"
         style={{
           height: 'clamp(3rem, 8vw, 5rem)',

@@ -15,7 +15,7 @@ export function DistributorCTA() {
         padding: 'clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem)',
         border: '1px solid var(--color-border-strong)',
         borderRadius: 'var(--radius-md)',
-        background: 'linear-gradient(135deg, rgba(26, 92, 53, 0.12), rgba(10, 42, 26, 0.92))',
+        background: 'var(--cta-gradient)',
         backdropFilter: 'blur(16px)',
         display: 'flex',
         flexWrap: 'wrap',

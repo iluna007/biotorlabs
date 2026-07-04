@@ -35,7 +35,7 @@ export function Testimonials() {
                 padding: '1.5rem',
                 border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-md)',
-                background: 'rgba(10, 42, 26, 0.55)',
+                background: 'var(--surface-bg-soft)',
                 backdropFilter: 'blur(8px)',
                 margin: 0,
               }}

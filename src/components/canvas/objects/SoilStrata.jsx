@@ -1,33 +1,41 @@
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
+import { getSceneTheme } from '../../../config/sceneTheme'
 
-const STRATA_CONFIG = [
-  { y: -1.5, thickness: 1.8, color: '#1e1308', name: 'Topsoil', roughness: 0.95 },
-  { y: -3.8, thickness: 2.2, color: '#17100a', name: 'Subsoil_A', roughness: 0.98 },
-  { y: -6.5, thickness: 3.0, color: '#120d08', name: 'Subsoil_B', roughness: 0.99 },
-  { y: -10.5, thickness: 4.0, color: '#0e0a06', name: 'Parent_Rock', roughness: 0.99 },
-  { y: -16.0, thickness: 6.0, color: '#0a0704', name: 'Bedrock', roughness: 0.99 },
-]
-
-export function SoilStrata({ scene, opacity = 1 }) {
+export function SoilStrata({ scene, opacity = 1, theme = 'dark' }) {
   const groupRef = useRef(null)
+
+  const applyStrataTheme = (group, themeKey) => {
+    const layers = getSceneTheme(themeKey).strata
+    group.children.forEach((child) => {
+      if (!child.isMesh || !child.material) return
+      const layer = layers.find((l) => child.name === l.name || child.name === `${l.name}_line`)
+      if (!layer) return
+      if (child.name.includes('_line')) {
+        child.material.color.set(layer.line)
+      } else {
+        child.material.color.set(layer.color)
+      }
+    })
+  }
 
   useLayoutEffect(() => {
     if (!scene) return
     if (scene.getObjectByName('SoilStrata')) {
       groupRef.current = scene.getObjectByName('SoilStrata')
+      applyStrataTheme(groupRef.current, theme)
       return
     }
 
     const group = new THREE.Group()
     group.name = 'SoilStrata'
 
-    STRATA_CONFIG.forEach((layer) => {
+    getSceneTheme(theme).strata.forEach((layer) => {
       const geo = new THREE.PlaneGeometry(60, layer.thickness, 1, 1)
       const mat = new THREE.MeshStandardMaterial({
         color: layer.color,
-        roughness: layer.roughness,
+        roughness: 0.97,
         metalness: 0.0,
         transparent: true,
         opacity: 0.0,
@@ -42,7 +50,7 @@ export function SoilStrata({ scene, opacity = 1 }) {
 
       const lineGeo = new THREE.PlaneGeometry(60, 0.015)
       const lineMat = new THREE.MeshBasicMaterial({
-        color: '#3a2a18',
+        color: layer.line,
         transparent: true,
         opacity: 0.0,
       })
@@ -79,6 +87,11 @@ export function SoilStrata({ scene, opacity = 1 }) {
       }
     })
   }, [opacity])
+
+  useEffect(() => {
+    if (!groupRef.current) return
+    applyStrataTheme(groupRef.current, theme)
+  }, [theme])
 
   return null
 }

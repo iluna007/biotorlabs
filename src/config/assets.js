@@ -21,6 +21,18 @@ export const ASSETS = {
   hero: {
     brotes: '/images/hero/brotes-campo.webp',
   },
+
+  about: {
+    video: '/images/about/hero-bg.mp4',
+    poster: '/images/about/hero-poster.webp',
+    brotesField: '/images/about/brotes-field.webp',
+    soilTexture: '/images/about/soil-texture.webp',
+    labTubes: '/images/about/lab-tubes.webp',
+    facility: '/images/about/facility.webp',
+    research: '/images/about/research.webp',
+    cropsField: '/images/about/crops-field.webp',
+    microscope: '/images/about/microscope.webp',
+  },
 }
 
 export function productImage(id) {

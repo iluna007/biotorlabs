@@ -3,38 +3,48 @@ import { getContent } from '../config/getContent'
 
 const SitePreferencesContext = createContext(null)
 
-const STORAGE_GRAYSCALE = 'biotor-grayscale'
 const STORAGE_LOCALE = 'biotor-locale'
+const STORAGE_THEME = 'biotor-theme'
 
 function readStoredLocale() {
   const stored = localStorage.getItem(STORAGE_LOCALE)
   return stored === 'en' ? 'en' : 'es'
 }
 
-export function SitePreferencesProvider({ children }) {
-  const [grayscale, setGrayscale] = useState(
-    () => localStorage.getItem(STORAGE_GRAYSCALE) === '1',
-  )
-  const [locale, setLocale] = useState(readStoredLocale)
+function readStoredTheme() {
+  const stored = localStorage.getItem(STORAGE_THEME)
+  if (stored === 'light' || stored === 'dark') return stored
+  return 'dark'
+}
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('grayscale-mode', grayscale)
-    localStorage.setItem(STORAGE_GRAYSCALE, grayscale ? '1' : '0')
-  }, [grayscale])
+export function SitePreferencesProvider({ children }) {
+  const [locale, setLocale] = useState(readStoredLocale)
+  const [theme, setTheme] = useState(() => {
+    const stored = readStoredTheme()
+    document.documentElement.classList.toggle('light-mode', stored === 'light')
+    return stored
+  })
 
   useEffect(() => {
     document.documentElement.lang = locale
     localStorage.setItem(STORAGE_LOCALE, locale)
   }, [locale])
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('light-mode', theme === 'light')
+    localStorage.setItem(STORAGE_THEME, theme)
+  }, [theme])
+
   const value = useMemo(() => ({
-    grayscale,
-    toggleGrayscale: () => setGrayscale((on) => !on),
     locale,
     setLocale,
     toggleLocale: () => setLocale((l) => (l === 'es' ? 'en' : 'es')),
+    theme,
+    isLight: theme === 'light',
+    toggleTheme: () => setTheme((t) => (t === 'light' ? 'dark' : 'light')),
+    setTheme,
     content: getContent(locale),
-  }), [grayscale, locale])
+  }), [locale, theme])
 
   return (
     <SitePreferencesContext.Provider value={value}>

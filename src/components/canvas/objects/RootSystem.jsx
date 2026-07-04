@@ -2,9 +2,9 @@ import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { generateRootSystem, rootsToCurves } from '../../../utils/rootGenerator'
-import { PALETTE } from '../../../utils/colorPalette'
+import { getSceneTheme, applyRootColors } from '../../../config/sceneTheme'
 
-export function RootSystem({ scene, growthProgress = 0 }) {
+export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
   const meshesRef = useRef([])
   const materialRef = useRef(null)
   const clockRef = useRef(new THREE.Clock())
@@ -73,13 +73,15 @@ export function RootSystem({ scene, growthProgress = 0 }) {
       uniforms: {
         uTime: { value: 0 },
         uGrowthProgress: { value: 0 },
-        uColorBase: { value: PALETTE.rootBase },
-        uColorTip: { value: PALETTE.rootTip },
-        uColorGlow: { value: PALETTE.rootGlow },
+        uColorBase: { value: new THREE.Color() },
+        uColorTip: { value: new THREE.Color() },
+        uColorGlow: { value: new THREE.Color() },
       },
       transparent: true,
       side: THREE.DoubleSide,
     })
+
+    applyRootColors(sharedMaterial.uniforms, theme)
 
     materialRef.current = sharedMaterial
 
@@ -121,6 +123,11 @@ export function RootSystem({ scene, growthProgress = 0 }) {
       ease: 'power2.out',
     })
   }, [growthProgress])
+
+  useEffect(() => {
+    if (!materialRef.current) return
+    applyRootColors(materialRef.current.uniforms, theme)
+  }, [theme])
 
   return null
 }

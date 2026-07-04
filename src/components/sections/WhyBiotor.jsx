@@ -25,7 +25,7 @@ export function WhyBiotor() {
             <div key={d.title} style={{
               display: 'flex', gap: '1rem', padding: '1.2rem 1.4rem',
               border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)',
-              background: 'rgba(10, 42, 26, 0.55)', backdropFilter: 'blur(8px)',
+              background: 'var(--surface-bg-soft)', backdropFilter: 'blur(8px)',
             }}>
               <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{d.icon}</span>
               <div>

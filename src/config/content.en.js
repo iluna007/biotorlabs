@@ -2,6 +2,7 @@
 // English content aligned to Biotor Labs Marketing Strategy (DOS 12 Studio)
 
 import { productImage } from './assets'
+import { SOCIAL_BY_KEY } from './social'
 
 export const CONTENT_EN = {
 
@@ -12,26 +13,16 @@ export const CONTENT_EN = {
     organism: 'Trichoderma asperellum Ta.13 (BCC-101)',
     contact:  'info@biotorlabs.com',
     location: 'Km 109.5 Pan-American Highway, Sébaco – San Isidro, Nicaragua',
-    social: {
-      linkedin:  'https://www.linkedin.com/company/biotorlabs/',
-      instagram: 'https://www.instagram.com/biotorlabs/',
-      facebook:  'https://www.facebook.com/Biotorlabs',
-    },
+    social: SOCIAL_BY_KEY,
   },
 
   hero: {
+    badge:      'High-performance agricultural biotechnology · Central America',
     eyebrow:     'Science that convinces · Brand that leads',
     title:       ['Science that', 'Brand that leads.'],
     titleAccent: 'convinces.',
-    subtitle:    'Positioning Biotor Labs as the technical reference in agricultural biotechnology across Latin America — with selected strains, field validation, and real support for growers and distributors in Central America.',
     cta:         'Explore the science ↓',
     ctaSecondary: 'Become a distributor',
-    trustBadges: [
-      'Proven technical authority',
-      'Real field evidence',
-      'Genuine ally to growers',
-      'Presence in 5 Central American countries',
-    ],
   },
 
   statsBar: {
@@ -216,26 +207,43 @@ export const CONTENT_EN = {
     brand: 'BIOTOR',
     brandAccent: 'LABS',
     links: [
-      { label: 'Real Science', href: '#science' },
-      { label: 'Behind the Science', href: '#how-it-works' },
-      { label: 'Evidence', href: '#results' },
+      { label: 'Real Science', href: '/#science' },
+      { label: 'Behind the Science', href: '/#how-it-works' },
+      { label: 'Evidence', href: '/#results' },
     ],
     about: 'About Us',
-    cta:   'Request Info',
+    portfolio: 'Portfolio',
+    portfolioCarousel: 'View interactive carousel',
+  },
+
+  productPage: {
+    breadcrumbHome: 'Home',
+    breadcrumbPortfolio: 'Portfolio',
+    backToCarousel: '← Back to carousel',
+    overviewLabel: 'Overview',
+    highlightsLabel: 'Key benefits',
+    mechanismsLabel: 'Modes of action',
+    applicationLabel: 'Application',
+    formulationLabel: 'Formulation',
+    evidenceLabel: 'Field evidence',
+    contactCta: 'Contact technical team',
+    contactSubject: 'Technical inquiry',
+    productNavLabel: 'Product navigation',
   },
 
   ui: {
     scroll: 'Scroll',
+    socialNavLabel: 'Biotor Labs social media',
     strainBadge: 'Ta.13 Strain (BCC-101) — Biotor Exclusive',
     cropsLabel: 'Crops:',
-    requestInfo: 'Request Info',
+    viewPortfolio: 'View full details',
     learnMore: 'Learn more ↗',
     premium: '★ Premium',
     prevProduct: 'Previous product',
     nextProduct: 'Next product',
     goToProduct: (name) => `Go to ${name}`,
-    grayscaleOn: 'Restore color',
-    grayscaleOff: 'Grayscale',
+    themeLightOn: 'Switch to day mode',
+    themeDarkOn: 'Switch to night mode',
     languageToggle: 'Change language',
     accessToolbarLabel: 'Accessibility & language',
   },
@@ -252,6 +260,7 @@ export const CONTENT_EN = {
     copyright: '© 2026 Biotor Labs. All rights reserved.',
     location:  'Km 109.5 Pan-American Highway, Sébaco – San Isidro, Nicaragua',
     countries: 'Nicaragua · Guatemala · El Salvador · Honduras · Costa Rica',
+    socialLabel: 'Social media',
     columns: [
       {
         heading: 'Company',
@@ -264,12 +273,13 @@ export const CONTENT_EN = {
       {
         heading: 'Products',
         links: [
-          { label: 'TrichoMax+',  href: 'https://www.biotorlabs.com/trichomax-1' },
-          { label: 'TrichoMax',   href: 'https://www.biotorlabs.com/trichomax' },
-          { label: 'Klamic',      href: 'https://www.biotorlabs.com/klamic' },
-          { label: 'Cronox Plus', href: 'https://www.biotorlabs.com/cronox' },
-          { label: 'Atropos',     href: 'https://www.biotorlabs.com/atropos' },
-          { label: 'Invictus',    href: 'https://www.biotorlabs.com/invictus' },
+          { label: 'Portfolio', href: '/#buy', internal: true },
+          { label: 'TrichoMax+',  href: '/productos/trichomax-plus', internal: true },
+          { label: 'TrichoMax',   href: '/productos/trichomax', internal: true },
+          { label: 'Klamic',      href: '/productos/klamic', internal: true },
+          { label: 'Cronox Plus', href: '/productos/cronox', internal: true },
+          { label: 'Atropos',     href: '/productos/atropos', internal: true },
+          { label: 'Invictus',    href: '/productos/invictus', internal: true },
         ],
       },
       {

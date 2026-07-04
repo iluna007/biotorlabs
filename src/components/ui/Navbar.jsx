@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { useContent } from '../../context/SitePreferencesContext'
-import { ASSETS } from '../../config/assets'
+import { useBrandLogo } from '../../hooks/useBrandLogo'
+import { NavPortfolioDropdown } from './NavPortfolioDropdown'
 
 export function Navbar() {
   const ref = useRef(null)
   const location = useLocation()
+  const isHome = location.pathname === '/'
   const isAbout = location.pathname === '/nosotros'
   const { nav } = useContent()
+  const brandLogo = useBrandLogo()
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -20,19 +23,39 @@ export function Navbar() {
 
   useEffect(() => { setMenuOpen(false) }, [location.pathname])
 
-  const links = (
+  const closeMenu = () => setMenuOpen(false)
+
+  const sectionLinks = isHome ? (
+    nav.links.map(link => (
+      <a key={link.href} href={link.href.replace(/^\//, '')} className="nav-link"
+        onClick={closeMenu}
+      >{link.label}</a>
+    ))
+  ) : (
+    nav.links.map(link => (
+      <Link key={link.href} to={link.href} className="nav-link"
+        onClick={closeMenu}
+      >{link.label}</Link>
+    ))
+  )
+
+  const desktopLinks = (
     <>
-      {!isAbout && nav.links.map(link => (
-        <a key={link.href} href={link.href} className="nav-link"
-          onClick={() => setMenuOpen(false)}
-        >{link.label}</a>
-      ))}
+      {sectionLinks}
       <Link to="/nosotros" className={`nav-link${isAbout ? ' nav-link--active' : ''}`}>
         {nav.about}
       </Link>
-      <button type="button" className="nav-cta-btn"
-        onClick={() => { window.open('mailto:info@biotorlabs.com', '_blank'); setMenuOpen(false) }}
-      >{nav.cta}</button>
+      <NavPortfolioDropdown />
+    </>
+  )
+
+  const mobileLinks = (
+    <>
+      {sectionLinks}
+      <Link to="/nosotros" className={`nav-link${isAbout ? ' nav-link--active' : ''}`} onClick={closeMenu}>
+        {nav.about}
+      </Link>
+      <NavPortfolioDropdown variant="mobile" onNavigate={closeMenu} />
     </>
   )
 
@@ -42,7 +65,7 @@ export function Navbar() {
         <Link to="/" className="nav-logo-link" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0, minWidth: 0 }}>
           <img
             className="nav-logo"
-            src={ASSETS.brand.symbolWhite}
+            src={brandLogo}
             alt="Biotor Labs"
             onError={e => {
               e.target.style.display = 'none'
@@ -54,7 +77,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <div className="nav-links-desktop">{links}</div>
+        <div className="nav-links-desktop">{desktopLinks}</div>
 
         <button
           className="nav-hamburger"
@@ -83,10 +106,9 @@ export function Navbar() {
         </button>
       </nav>
 
-      <div className={`nav-drawer ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}
-          onClick={e => e.stopPropagation()}>
-          {links}
+      <div className={`nav-drawer ${menuOpen ? 'open' : ''}`} onClick={closeMenu}>
+        <div className="nav-drawer__inner" onClick={e => e.stopPropagation()}>
+          {mobileLinks}
         </div>
       </div>
     </>

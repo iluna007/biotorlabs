@@ -1,10 +1,11 @@
 import { useRef, useLayoutEffect, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
+import { getSceneTheme } from '../../../config/sceneTheme'
 
 const PARTICLE_COUNT = 1200
 
-export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0 }) {
+export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0, theme = 'dark' }) {
   const pointsRef = useRef(null)
   const clockRef = useRef(new THREE.Clock())
 
@@ -24,16 +25,29 @@ export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0 }) {
     return { positions, phases }
   }, [])
 
+  const applyMyceliumTheme = (mat, themeKey) => {
+    if (!mat?.uniforms) return
+    const { mycelium } = getSceneTheme(themeKey)
+    mat.uniforms.uColorLow.value.set(...mycelium.low)
+    mat.uniforms.uColorHigh.value.set(...mycelium.high)
+    mat.blending = themeKey === 'light' ? THREE.NormalBlending : THREE.AdditiveBlending
+    mat.depthWrite = themeKey === 'light'
+    mat.needsUpdate = true
+  }
+
   useLayoutEffect(() => {
     if (!scene) return
     if (scene.getObjectByName('MyceliumParticles')) {
       pointsRef.current = scene.getObjectByName('MyceliumParticles')
+      applyMyceliumTheme(pointsRef.current.material, theme)
       return
     }
 
     const geo = new THREE.BufferGeometry()
     geo.setAttribute('position', new THREE.BufferAttribute(positions.slice(), 3))
     geo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1))
+
+    const initial = getSceneTheme(theme).mycelium
 
     const vertShader = `
       precision mediump float;
@@ -64,6 +78,8 @@ export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0 }) {
     const fragShader = `
       precision mediump float;
       uniform float uOpacity;
+      uniform vec3 uColorLow;
+      uniform vec3 uColorHigh;
       varying float vPulse;
 
       void main() {
@@ -71,7 +87,7 @@ export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0 }) {
         if (d > 0.5) discard;
         float alpha = smoothstep(0.5, 0.1, d);
 
-        vec3 col = mix(vec3(0.3, 0.8, 0.3), vec3(0.9, 1.0, 0.7), vPulse);
+        vec3 col = mix(uColorLow, uColorHigh, vPulse);
 
         gl_FragColor = vec4(col, alpha * vPulse * uOpacity);
       }
@@ -84,6 +100,8 @@ export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0 }) {
         uTime: { value: 0 },
         uOpacity: { value: 0 },
         uRootProgress: { value: 0 },
+        uColorLow: { value: new THREE.Vector3(...initial.low) },
+        uColorHigh: { value: new THREE.Vector3(...initial.high) },
       },
       transparent: true,
       depthWrite: false,
@@ -123,6 +141,10 @@ export function MyceliumParticles({ scene, opacity = 0, rootProgress = 0 }) {
       duration: 0.6,
     })
   }, [opacity, rootProgress])
+
+  useEffect(() => {
+    applyMyceliumTheme(pointsRef.current?.material, theme)
+  }, [theme])
 
   return null
 }

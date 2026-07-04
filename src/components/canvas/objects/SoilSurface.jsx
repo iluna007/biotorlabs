@@ -1,18 +1,34 @@
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
+import { getSceneTheme } from '../../../config/sceneTheme'
 
-export function SoilSurface({ scene, cameraY = 2 }) {
+export function SoilSurface({ scene, cameraY = 2, theme = 'dark' }) {
   const meshRef = useRef(null)
+  const rimRef = useRef(null)
+
+  const applySoilTheme = (mesh, rim, themeKey) => {
+    const cfg = getSceneTheme(themeKey).soilSurface
+    if (mesh?.material?.uniforms) {
+      mesh.material.uniforms.uSoilDark.value.set(cfg.dark[0], cfg.dark[1], cfg.dark[2])
+      mesh.material.uniforms.uSoilLight.value.set(cfg.light[0], cfg.light[1], cfg.light[2])
+    }
+    if (rim?.material) {
+      rim.material.color.set(cfg.rim)
+    }
+  }
 
   useLayoutEffect(() => {
     if (!scene) return
     if (scene.getObjectByName('SoilSurface')) {
       meshRef.current = scene.getObjectByName('SoilSurface')
+      rimRef.current = scene.getObjectByName('SoilSurface_Rim')
+      applySoilTheme(meshRef.current, rimRef.current, theme)
       return
     }
 
     const geo = new THREE.PlaneGeometry(40, 40, 24, 24)
+    const initial = getSceneTheme(theme).soilSurface
 
     const vertShader = `
       precision mediump float;
@@ -38,15 +54,14 @@ export function SoilSurface({ scene, cameraY = 2 }) {
     const fragShader = `
       precision mediump float;
       uniform float uCameraY;
+      uniform vec3 uSoilDark;
+      uniform vec3 uSoilLight;
       varying vec2 vUv;
       varying float vElevation;
 
       void main() {
-        vec3 soilDark  = vec3(0.10, 0.07, 0.02);
-        vec3 soilLight = vec3(0.18, 0.13, 0.06);
-
         float noise = fract(sin(dot(vUv, vec2(127.1, 311.7))) * 43758.5);
-        vec3 color = mix(soilDark, soilLight, noise * 0.5 + vElevation * 2.0);
+        vec3 color = mix(uSoilDark, uSoilLight, noise * 0.5 + vElevation * 2.0);
 
         float distCenter = length(vUv - vec2(0.5, 0.5)) * 2.0;
         color *= 0.7 + distCenter * 0.3;
@@ -64,6 +79,8 @@ export function SoilSurface({ scene, cameraY = 2 }) {
       uniforms: {
         uTime: { value: 0 },
         uCameraY: { value: 2 },
+        uSoilDark: { value: new THREE.Vector3(...initial.dark) },
+        uSoilLight: { value: new THREE.Vector3(...initial.light) },
       },
       transparent: true,
       side: THREE.DoubleSide,
@@ -80,7 +97,7 @@ export function SoilSurface({ scene, cameraY = 2 }) {
 
     const rimGeo = new THREE.RingGeometry(4, 22, 32)
     const rimMat = new THREE.MeshBasicMaterial({
-      color: '#0a0802',
+      color: initial.rim,
       transparent: true,
       opacity: 0.9,
       side: THREE.DoubleSide,
@@ -91,6 +108,7 @@ export function SoilSurface({ scene, cameraY = 2 }) {
     rim.rotation.x = -Math.PI / 2
     rim.position.y = -0.01
     scene.add(rim)
+    rimRef.current = rim
 
     let rafId
     const clock = new THREE.Clock()
@@ -121,6 +139,10 @@ export function SoilSurface({ scene, cameraY = 2 }) {
       })
     }
   }, [cameraY])
+
+  useEffect(() => {
+    applySoilTheme(meshRef.current, rimRef.current, theme)
+  }, [theme])
 
   return null
 }

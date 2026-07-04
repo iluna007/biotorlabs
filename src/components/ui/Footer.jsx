@@ -1,19 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useContent } from '../../context/SitePreferencesContext'
-import { ASSETS } from '../../config/assets'
+import { useBrandLogo } from '../../hooks/useBrandLogo'
+import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
   const { footer } = useContent()
+  const brandLogo = useBrandLogo()
 
   return (
-    <footer style={{
-      position: 'relative', zIndex: 10,
-      background: 'rgba(10, 42, 26, 0.97)',
-      backdropFilter: 'blur(20px)',
-      borderTop: '1px solid var(--color-border)',
-      padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem) 2rem',
-      pointerEvents: 'all',
-    }}>
+    <footer className="site-footer">
       <div className="footer-grid" style={{
         maxWidth: '1100px', margin: '0 auto',
         marginBottom: '3rem',
@@ -22,7 +17,7 @@ export function Footer() {
           <Link to="/" style={{ display: 'inline-block', marginBottom: '1rem' }}>
             <img
               className="footer-logo"
-              src={ASSETS.brand.symbolWhite}
+              src={brandLogo}
               alt="Biotor Labs"
             />
           </Link>
@@ -36,9 +31,16 @@ export function Footer() {
           <p style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '0.65rem', color: 'var(--color-text-muted)', lineHeight: 1.6,
+            marginBottom: '1rem',
           }}>
             {footer.countries}
           </p>
+          <SocialLinks
+            className="footer-social"
+            variant="icon"
+            iconSize={18}
+            ariaLabel={footer.socialLabel}
+          />
         </div>
 
         {footer.columns.map(col => (

@@ -1,37 +1,53 @@
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
+import { getSceneTheme } from '../../../config/sceneTheme'
 
-export function LightingRig({ scene, scrollProgress, ambientIntensity, sunIntensity }) {
+function tweenLightColor(light, hex, duration = 0.6) {
+  if (!light) return
+  const target = new THREE.Color(hex)
+  gsap.to(light.color, {
+    r: target.r,
+    g: target.g,
+    b: target.b,
+    duration,
+  })
+}
+
+export function LightingRig({ scene, scrollProgress, ambientIntensity, sunIntensity, theme = 'dark' }) {
   const ambientRef = useRef(null)
   const sunRef = useRef(null)
   const rootGlowRef = useRef(null)
   const rimRef = useRef(null)
+  const themeCfgRef = useRef(getSceneTheme(theme).lighting)
 
   useLayoutEffect(() => {
     if (!scene) return
     if (scene.getObjectByName('BiotorLightingRig')) return
 
+    const cfg = getSceneTheme(theme).lighting
+    themeCfgRef.current = cfg
+
     const rig = new THREE.Group()
     rig.name = 'BiotorLightingRig'
 
-    const ambient = new THREE.AmbientLight('#1a2a14', 0.8)
+    const ambient = new THREE.AmbientLight(cfg.ambient, 0.8 * cfg.ambientMult)
     rig.add(ambient)
     ambientRef.current = ambient
 
-    const sun = new THREE.DirectionalLight('#d4f0c0', 2.2)
+    const sun = new THREE.DirectionalLight(cfg.sun, 2.2 * cfg.sunMult)
     sun.position.set(5, 10, 5)
     sun.castShadow = true
     sun.shadow.mapSize.set(2048, 2048)
     rig.add(sun)
     sunRef.current = sun
 
-    const rootGlow = new THREE.PointLight('#5bcc3e', 0, 8)
+    const rootGlow = new THREE.PointLight(cfg.rootGlow, 0, 8)
     rootGlow.position.set(0, -6, 0)
     rig.add(rootGlow)
     rootGlowRef.current = rootGlow
 
-    const rim = new THREE.DirectionalLight('#2a5a1a', 0.5)
+    const rim = new THREE.DirectionalLight(cfg.rim, 0.5 * cfg.rimMult)
     rim.position.set(-3, -5, -3)
     rig.add(rim)
     rimRef.current = rim
@@ -48,26 +64,37 @@ export function LightingRig({ scene, scrollProgress, ambientIntensity, sunIntens
   }, [scene])
 
   useEffect(() => {
-    if (!sunRef.current || !rootGlowRef.current || !ambientRef.current) return
+    const cfg = getSceneTheme(theme).lighting
+    themeCfgRef.current = cfg
 
-    if (ambientIntensity !== undefined) {
-      gsap.to(ambientRef.current, { intensity: ambientIntensity, duration: 0.5 })
-    }
-    if (sunIntensity !== undefined) {
-      gsap.to(sunRef.current, { intensity: sunIntensity, duration: 0.5 })
-    }
+    tweenLightColor(ambientRef.current, cfg.ambient)
+    tweenLightColor(sunRef.current, cfg.sun)
+    tweenLightColor(rimRef.current, cfg.rim)
+    tweenLightColor(rootGlowRef.current, cfg.rootGlow)
 
+    if (ambientRef.current && ambientIntensity !== undefined) {
+      gsap.to(ambientRef.current, { intensity: ambientIntensity * cfg.ambientMult, duration: 0.5 })
+    }
+    if (sunRef.current && sunIntensity !== undefined) {
+      gsap.to(sunRef.current, { intensity: sunIntensity * cfg.sunMult, duration: 0.5 })
+    }
+    if (rimRef.current) {
+      gsap.to(rimRef.current, { intensity: 0.5 * cfg.rimMult, duration: 0.5 })
+    }
+  }, [theme, ambientIntensity, sunIntensity])
+
+  useEffect(() => {
+    if (!rootGlowRef.current) return
+
+    const cfg = themeCfgRef.current
     const p = scrollProgress
     const glowZone = p > 0.3 && p < 0.68
     gsap.to(rootGlowRef.current, {
-      intensity: glowZone ? 3 + Math.sin(Date.now() * 0.002) * 0.5 : 0,
+      intensity: glowZone ? (3 + Math.sin(Date.now() * 0.002) * 0.5) * cfg.rootGlowMult : 0,
       duration: 0.5,
     })
-
-    if (rootGlowRef.current) {
-      rootGlowRef.current.position.y = -6 - p * 10
-    }
-  }, [scrollProgress, ambientIntensity, sunIntensity])
+    rootGlowRef.current.position.y = -6 - p * 10
+  }, [scrollProgress])
 
   return null
 }

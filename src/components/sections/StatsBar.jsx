@@ -42,7 +42,7 @@ export function StatsBar() {
       <div className="stats-grid" style={{
         gap: '0.5rem',
         width: '100%', maxWidth: '860px',
-        background: 'rgba(10, 42, 26, 0.75)',
+        background: 'var(--surface-bg-soft)',
         backdropFilter: 'blur(20px)',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',

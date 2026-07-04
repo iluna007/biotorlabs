@@ -25,7 +25,7 @@ export function Science() {
             <div key={mech.id} style={{
               display: 'flex', gap: '1rem', padding: '1rem 1.2rem',
               border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
-              background: 'rgba(10, 42, 26, 0.55)', backdropFilter: 'blur(8px)',
+              background: 'var(--surface-bg-soft)', backdropFilter: 'blur(8px)',
             }}>
               <span style={{ fontSize: '1.2rem', flexShrink: 0, marginTop: '0.1rem' }}>{mech.icon}</span>
               <div>

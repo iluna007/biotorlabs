@@ -21,7 +21,7 @@ export function HowItWorks() {
             <div key={step.num} style={{
               display: 'flex', gap: '1.2rem', padding: '1.1rem 1.3rem',
               border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
-              background: 'rgba(10, 42, 26, 0.55)', backdropFilter: 'blur(8px)',
+              background: 'var(--surface-bg-soft)', backdropFilter: 'blur(8px)',
             }}>
               <span style={{
                 fontFamily: 'var(--font-mono)', fontSize: '0.72rem',

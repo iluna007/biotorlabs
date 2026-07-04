@@ -43,7 +43,7 @@ export function StatCounter({ value, unit, label, triggerEl }) {
         padding: '1.5rem',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-sm)',
-        background: 'rgba(10, 42, 26, 0.6)',
+        background: 'var(--surface-bg)',
         backdropFilter: 'blur(8px)',
         minWidth: '140px',
       }}

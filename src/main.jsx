@@ -5,6 +5,7 @@ import { SitePreferencesProvider } from './context/SitePreferencesContext'
 import { AccessToolbar } from './components/ui/AccessToolbar'
 import App from './App.jsx'
 import AboutPage from './pages/AboutPage.jsx'
+import ProductPage from './pages/ProductPage.jsx'
 import './index.css'
 
 // NOTA: StrictMode removido intencionalmente.
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/"         element={<App />} />
         <Route path="/nosotros" element={<AboutPage />} />
+        <Route path="/productos/:id" element={<ProductPage />} />
       </Routes>
     </BrowserRouter>
   </SitePreferencesProvider>

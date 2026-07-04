@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { getCurrentScene, deriveObjectState, lerp } from '../../utils/sceneUtils'
+import { getSceneTheme } from '../../config/sceneTheme'
 import { PlantAboveGround } from './objects/PlantAboveGround'
 import { SoilSurface } from './objects/SoilSurface'
 import { SoilStrata } from './objects/SoilStrata'
@@ -11,7 +12,7 @@ import { MyceliumParticles } from './objects/MyceliumParticles'
 import { ProductBottle } from './objects/ProductBottle'
 import { LightingRig } from './objects/LightingRig'
 
-export function RootScene({ scrollProgress }) {
+export function RootScene({ scrollProgress, theme = 'dark' }) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const cameraRef = useRef(null)
@@ -40,12 +41,13 @@ export function RootScene({ scrollProgress }) {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.15
+    const themeCfg = getSceneTheme(theme)
+    renderer.toneMappingExposure = themeCfg.exposure
     rendererRef.current = renderer
 
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color('#0d1a09')
-    scene.fog = new THREE.FogExp2('#0d1a09', 0.018)
+    scene.background = new THREE.Color(themeCfg.sky)
+    scene.fog = new THREE.FogExp2(themeCfg.sky, 0.018)
     sceneRef.current = scene
     setGlScene(scene)
 
@@ -122,17 +124,26 @@ export function RootScene({ scrollProgress }) {
     })
 
     const fogDensity = lerp(cur.env.fogDensity, next.env.fogDensity, t)
+    const fogColor = adjustEnvColor(
+      lerpColor(cur.env.fogColor, next.env.fogColor, t),
+      theme,
+    )
     if (sceneRef.current.fog) {
       sceneRef.current.fog.density = fogDensity
-      sceneRef.current.fog.color.set(lerpColor(cur.env.fogColor, next.env.fogColor, t))
+      sceneRef.current.fog.color.set(fogColor)
     }
 
-    const bgA = new THREE.Color(cur.env.bgColor)
-    const bgB = new THREE.Color(next.env.bgColor)
+    const bgA = new THREE.Color(adjustEnvColor(cur.env.bgColor, theme))
+    const bgB = new THREE.Color(adjustEnvColor(next.env.bgColor, theme))
     sceneRef.current.background?.copy(bgA.lerp(bgB, t))
 
     setObjectState(deriveObjectState(scrollProgress))
-  }, [scrollProgress])
+  }, [scrollProgress, theme])
+
+  useEffect(() => {
+    if (!rendererRef.current) return
+    rendererRef.current.toneMappingExposure = getSceneTheme(theme).exposure
+  }, [theme])
 
   return (
     <>
@@ -145,22 +156,24 @@ export function RootScene({ scrollProgress }) {
             scrollProgress={scrollProgress}
             ambientIntensity={objectState.ambientIntensity}
             sunIntensity={objectState.sunIntensity}
+            theme={theme}
           />
 
-          <PlantAboveGround scene={glScene} opacity={objectState.plantOpacity} />
+          <PlantAboveGround scene={glScene} opacity={objectState.plantOpacity} theme={theme} />
 
-          <SoilSurface scene={glScene} cameraY={objectState.cameraY} />
+          <SoilSurface scene={glScene} cameraY={objectState.cameraY} theme={theme} />
 
-          <SoilStrata scene={glScene} opacity={objectState.strataOpacity} />
+          <SoilStrata scene={glScene} opacity={objectState.strataOpacity} theme={theme} />
 
-          <SoilParticles scene={glScene} scrollProgress={scrollProgress} />
+          <SoilParticles scene={glScene} scrollProgress={scrollProgress} theme={theme} />
 
-          <RootSystem scene={glScene} growthProgress={objectState.rootProgress} />
+          <RootSystem scene={glScene} growthProgress={objectState.rootProgress} theme={theme} />
 
           <MyceliumParticles
             scene={glScene}
             opacity={objectState.myceliumOpacity}
             rootProgress={objectState.rootProgress}
+            theme={theme}
           />
 
           <ProductBottle scene={glScene} visible={objectState.productVisible} />
@@ -174,4 +187,14 @@ function lerpColor(a, b, t) {
   const colorA = new THREE.Color(a)
   const colorB = new THREE.Color(b)
   return colorA.lerp(colorB, t).getHex()
+}
+
+const LIGHT_SKY = new THREE.Color('#e8f2ea')
+
+function adjustEnvColor(hex, theme) {
+  if (theme !== 'light') return hex
+  const adjust = getSceneTheme('light').skyAdjust
+  const color = new THREE.Color(hex)
+  color.lerp(LIGHT_SKY, adjust)
+  return color.getHex()
 }
