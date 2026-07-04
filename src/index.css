@@ -902,11 +902,23 @@ button { font-family: inherit; }
 }
 
 .nav-links-desktop { display: flex; gap: clamp(1rem, 3vw, 2rem); align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.nav-hamburger-wrap { display: none; }
 .nav-hamburger     { display: none; flex-shrink: 0; }
 
 @media (max-width: 768px) {
   .nav-links-desktop { display: none; }
-  .nav-hamburger     { display: flex; }
+  .nav-hamburger-wrap {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .nav-hamburger-wrap .nav-hamburger {
+    pointer-events: all;
+  }
+  .nav-hamburger { display: flex; }
 }
 
 @media (max-width: 480px) {

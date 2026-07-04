@@ -79,31 +79,33 @@ export function Navbar() {
 
         <div className="nav-links-desktop">{desktopLinks}</div>
 
-        <button
-          className="nav-hamburger"
-          type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-          aria-expanded={menuOpen}
-          style={{
-            background: 'transparent', border: 'none', cursor: 'pointer',
-            flexDirection: 'column', gap: '5px',
-            padding: '8px', pointerEvents: 'all',
-          }}
-        >
-          {[0, 1, 2].map(i => (
-            <span key={i} style={{
-              display: 'block', width: '22px', height: '2px',
-              background: 'var(--lime)', borderRadius: '1px',
-              transition: 'all 0.3s',
-              transform: menuOpen
-                ? i === 0 ? 'rotate(45deg) translate(5px, 5px)'
-                  : i === 1 ? 'scaleX(0)'
-                  : 'rotate(-45deg) translate(5px, -5px)'
-                : 'none',
-            }} />
-          ))}
-        </button>
+        <div className="nav-hamburger-wrap">
+          <button
+            className="nav-hamburger"
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={menuOpen}
+            style={{
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              flexDirection: 'column', gap: '5px',
+              padding: '8px', pointerEvents: 'all',
+            }}
+          >
+            {[0, 1, 2].map(i => (
+              <span key={i} style={{
+                display: 'block', width: '22px', height: '2px',
+                background: 'var(--lime)', borderRadius: '1px',
+                transition: 'all 0.3s',
+                transform: menuOpen
+                  ? i === 0 ? 'rotate(45deg) translate(5px, 5px)'
+                    : i === 1 ? 'scaleX(0)'
+                    : 'rotate(-45deg) translate(5px, -5px)'
+                  : 'none',
+              }} />
+            ))}
+          </button>
+        </div>
       </nav>
 
       <div className={`nav-drawer ${menuOpen ? 'open' : ''}`} onClick={closeMenu}>
