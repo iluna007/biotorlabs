@@ -48,31 +48,11 @@ export function StatCounter({ value, unit, label, triggerEl }) {
         minWidth: '140px',
       }}
     >
-      <div
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: '3rem',
-          fontWeight: 400,
-          color: 'var(--lime)',
-          lineHeight: 1,
-          fontVariantNumeric: 'tabular-nums',
-        }}
-      >
+      <div className="stat-counter__num">
         <span ref={numRef}>0</span>
-        <span style={{ fontSize: '1.8rem', color: 'var(--green-light)' }}>{unit}</span>
+        <span className="stat-counter__unit">{unit}</span>
       </div>
-      <p
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.68rem',
-          color: 'var(--green-light)',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          marginTop: '0.5rem',
-        }}
-      >
-        {label}
-      </p>
+      <p className="stat-counter__label">{label}</p>
     </div>
   )
 }

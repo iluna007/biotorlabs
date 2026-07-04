@@ -47,8 +47,8 @@ export const SCENE_THEMES = {
   },
 
   light: {
-    exposure: 1.38,
-    sky: '#e8f2ea',
+    exposure: 1.22,
+    sky: '#dce8df',
     skyAdjust: 0.82,
     plant: {
       stem: '#2E7D32',

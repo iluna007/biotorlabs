@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useContent } from '../../context/SitePreferencesContext'
 import { ProductPackImage } from '../ui/ProductPackImage'
 import { productPath } from '../../utils/products'
+import { dispatchActiveProduct } from '../../utils/productPack3d'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -123,6 +124,7 @@ export function BuySection() {
     const url = new URL(window.location.href)
     url.searchParams.set('product', products[active].id)
     window.history.replaceState({}, '', url)
+    dispatchActiveProduct(active, products[active].id)
   }, [active, products])
 
   const goTo = useCallback((idx, dir = 1) => {

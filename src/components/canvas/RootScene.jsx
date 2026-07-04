@@ -11,6 +11,7 @@ import { SoilParticles } from './objects/SoilParticles'
 import { MyceliumParticles } from './objects/MyceliumParticles'
 import { ProductBottle } from './objects/ProductBottle'
 import { LightingRig } from './objects/LightingRig'
+import { useProductVisualState } from '../../hooks/useProductVisualState'
 
 export function RootScene({ scrollProgress, theme = 'dark' }) {
   const canvasRef = useRef(null)
@@ -23,6 +24,7 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
 
   const [glScene, setGlScene] = useState(null)
   const [objectState, setObjectState] = useState(() => deriveObjectState(0))
+  const { productIndex, activeBias } = useProductVisualState(scrollProgress)
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current
@@ -127,14 +129,15 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
     const fogColor = adjustEnvColor(
       lerpColor(cur.env.fogColor, next.env.fogColor, t),
       theme,
+      scrollProgress,
     )
     if (sceneRef.current.fog) {
       sceneRef.current.fog.density = fogDensity
       sceneRef.current.fog.color.set(fogColor)
     }
 
-    const bgA = new THREE.Color(adjustEnvColor(cur.env.bgColor, theme))
-    const bgB = new THREE.Color(adjustEnvColor(next.env.bgColor, theme))
+    const bgA = new THREE.Color(adjustEnvColor(cur.env.bgColor, theme, scrollProgress))
+    const bgB = new THREE.Color(adjustEnvColor(next.env.bgColor, theme, scrollProgress))
     sceneRef.current.background?.copy(bgA.lerp(bgB, t))
 
     setObjectState(deriveObjectState(scrollProgress))
@@ -165,7 +168,13 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
 
           <SoilStrata scene={glScene} opacity={objectState.strataOpacity} theme={theme} />
 
-          <SoilParticles scene={glScene} scrollProgress={scrollProgress} theme={theme} />
+          <SoilParticles
+            scene={glScene}
+            scrollProgress={scrollProgress}
+            theme={theme}
+            productIndex={productIndex}
+            activeBias={activeBias}
+          />
 
           <RootSystem scene={glScene} growthProgress={objectState.rootProgress} theme={theme} />
 
@@ -174,9 +183,15 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
             opacity={objectState.myceliumOpacity}
             rootProgress={objectState.rootProgress}
             theme={theme}
+            productIndex={productIndex}
+            activeBias={activeBias}
           />
 
-          <ProductBottle scene={glScene} visible={objectState.productVisible} />
+          <ProductBottle
+            scene={glScene}
+            visible={objectState.productVisible}
+            productIndex={productIndex}
+          />
         </>
       )}
     </>
@@ -189,12 +204,23 @@ function lerpColor(a, b, t) {
   return colorA.lerp(colorB, t).getHex()
 }
 
-const LIGHT_SKY = new THREE.Color('#e8f2ea')
+const LIGHT_SKY = new THREE.Color('#dce8df')
 
-function adjustEnvColor(hex, theme) {
+/** Menos lavado bajo tierra para que los colores del portafolio se lean en modo día */
+function getLightSkyBlend(scrollProgress) {
+  if (scrollProgress <= 0.18) {
+    return 0.28 + ((0.18 - scrollProgress) / 0.18) * 0.22
+  }
+  if (scrollProgress <= 0.45) {
+    return 0.28 - ((scrollProgress - 0.18) / 0.27) * 0.2
+  }
+  return Math.max(0.06, 0.08 - (scrollProgress - 0.45) * 0.04)
+}
+
+function adjustEnvColor(hex, theme, scrollProgress = 0) {
   if (theme !== 'light') return hex
-  const adjust = getSceneTheme('light').skyAdjust
+  const blend = getLightSkyBlend(scrollProgress)
   const color = new THREE.Color(hex)
-  color.lerp(LIGHT_SKY, adjust)
+  color.lerp(LIGHT_SKY, blend)
   return color.getHex()
 }

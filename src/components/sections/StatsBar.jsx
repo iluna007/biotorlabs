@@ -50,20 +50,10 @@ export function StatsBar() {
       }}>
         {statsBar.stats.map(stat => (
           <div key={stat.label} style={{ textAlign: 'center', padding: '0.8rem 0.5rem' }}>
-            <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2rem, 4vw, 2.8rem)',
-              fontWeight: 400, lineHeight: 1,
-              color: 'var(--lime)', letterSpacing: '-0.02em',
-            }}>
+            <div className="stats-bar__num">
               <span data-num={stat.num}>0</span>{stat.suffix}
             </div>
-            <p style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.65rem', color: 'var(--green-light)',
-              letterSpacing: '0.08em', textTransform: 'uppercase',
-              marginTop: '0.4rem', lineHeight: 1.3,
-            }}>{stat.label}</p>
+            <p className="stats-bar__label">{stat.label}</p>
           </div>
         ))}
       </div>

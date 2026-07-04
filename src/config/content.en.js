@@ -17,10 +17,10 @@ export const CONTENT_EN = {
   },
 
   hero: {
-    badge:      'High-performance agricultural biotechnology · Central America',
-    eyebrow:     'Science that convinces · Brand that leads',
-    title:       ['Science that', 'Brand that leads.'],
-    titleAccent: 'convinces.',
+    titleLine1:  'With our feet',
+    titleLine2:  'on the ground',
+    subline1:    'High-performance agricultural biotechnology · Central America',
+    subline2:    'Science that convinces · Brand that leads',
     cta:         'Explore the science ↓',
     ctaSecondary: 'Become a distributor',
   },

@@ -18,10 +18,10 @@ export const CONTENT = {
 
   // ── HERO — Portada estrategia ───────────────────────────────────────────
   hero: {
-    badge:      'Biotecnología agrícola de alto desempeño · Centroamérica',
-    eyebrow:     'Ciencia que convence · Marca que lidera',
-    title:       ['Ciencia que', 'Marca que lidera.'],
-    titleAccent: 'convence.',
+    titleLine1:  'Con los pies',
+    titleLine2:  'en la tierra',
+    subline1:    'Biotecnología agrícola de alto desempeño · Centroamérica',
+    subline2:    'Ciencia que convence · Marca que lidera',
     cta:         'Conoce la ciencia ↓',
     ctaSecondary: 'Quiero ser distribuidor',
   },

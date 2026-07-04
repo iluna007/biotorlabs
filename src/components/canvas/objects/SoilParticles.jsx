@@ -1,38 +1,30 @@
 import { useRef, useLayoutEffect, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
-import { getSceneTheme } from '../../../config/sceneTheme'
+import {
+  applySphereMaterialTheme,
+  buildPortfolioParticleColors,
+  createSpherePointsMaterial,
+  stableParticleSlot,
+  tweenColorAttribute,
+} from '../../../utils/productPack3d'
 
 const PARTICLE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? 3000 : 8000
 
-function applyParticleMaterial(material, themeKey) {
-  const isLight = themeKey === 'light'
-  material.blending = isLight ? THREE.NormalBlending : THREE.AdditiveBlending
-  material.depthWrite = isLight
-  material.opacity = isLight ? 0.88 : 0.6
-  material.size = isLight ? 0.055 : 0.04
-  material.needsUpdate = true
-}
-
-function buildParticleColors(themeKey) {
-  const colors = new Float32Array(PARTICLE_COUNT * 3)
-  const soilColors = getSceneTheme(themeKey).soilParticles.map((hex) => new THREE.Color(hex))
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const i3 = i * 3
-    const color = soilColors[Math.floor(Math.random() * soilColors.length)]
-    colors[i3] = color.r
-    colors[i3 + 1] = color.g
-    colors[i3 + 2] = color.b
-  }
-  return colors
-}
-
-export function SoilParticles({ scene, scrollProgress = 0, theme = 'dark' }) {
+export function SoilParticles({
+  scene,
+  scrollProgress = 0,
+  theme = 'dark',
+  productIndex = 0,
+  activeBias = 0,
+}) {
   const pointsRef = useRef(null)
+  const tweenRef = useRef(null)
+  const lastKeyRef = useRef('')
 
-  const { positions, sizes } = useMemo(() => {
+  const { positions, scales, colors } = useMemo(() => {
     const positions = new Float32Array(PARTICLE_COUNT * 3)
-    const sizes = new Float32Array(PARTICLE_COUNT)
+    const scales = new Float32Array(PARTICLE_COUNT)
+    const colors = buildPortfolioParticleColors(PARTICLE_COUNT, 'dark', 0, 0)
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const i3 = i * 3
@@ -41,70 +33,81 @@ export function SoilParticles({ scene, scrollProgress = 0, theme = 'dark' }) {
       positions[i3] = Math.cos(angle) * radius
       positions[i3 + 1] = -Math.random() * 20
       positions[i3 + 2] = Math.sin(angle) * radius
-      sizes[i] = Math.random() * 3 + 1
+      scales[i] = 0.65 + (stableParticleSlot(i, 100) / 100) * 0.7
     }
 
-    return { positions, sizes }
+    return { positions, scales, colors }
   }, [])
-
-  const initialColors = useMemo(() => buildParticleColors('dark'), [])
 
   useLayoutEffect(() => {
     if (!scene) return
     if (scene.getObjectByName('SoilParticles')) {
-      pointsRef.current = scene.getObjectByName('SoilParticles')
-      return
+      const existing = scene.getObjectByName('SoilParticles')
+      if (!(existing.material?.uniforms?.uLightMode)) {
+        existing.material?.dispose?.()
+        existing.material = createSpherePointsMaterial(
+          theme,
+          theme === 'light' ? 0.05 : 0.04,
+        )
+      }
+      pointsRef.current = existing
+      return undefined
     }
 
     const geometry = new THREE.BufferGeometry()
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    geometry.setAttribute('color', new THREE.BufferAttribute(initialColors.slice(), 3))
-    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1))
+    geometry.setAttribute('aColor', new THREE.BufferAttribute(colors.slice(), 3))
+    geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
 
-    const material = new THREE.PointsMaterial({
-      size: 0.04,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.6,
-      sizeAttenuation: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    })
-
+    const material = createSpherePointsMaterial(theme, theme === 'light' ? 0.046 : 0.04)
     const points = new THREE.Points(geometry, material)
     points.name = 'SoilParticles'
     scene.add(points)
     pointsRef.current = points
 
     return () => {
+      tweenRef.current?.kill()
       scene.remove(points)
       geometry.dispose()
       material.dispose()
     }
-  }, [scene, positions, sizes, initialColors])
+  }, [scene, positions, scales, colors, theme])
 
   useEffect(() => {
-    if (!pointsRef.current) return
-    const opacity = 0.2 + scrollProgress * 0.8
-    const maxOpacity = theme === 'light' ? 0.92 : 1.0
-    pointsRef.current.material.opacity = Math.min(opacity, maxOpacity)
+    if (!pointsRef.current?.material?.uniforms) return
+    const scrollOpacity = 0.72 + scrollProgress * 0.28
+    const isLight = theme === 'light'
+    const baseSize = isLight ? 0.05 : 0.04
+    applySphereMaterialTheme(pointsRef.current.material, theme, baseSize)
+    pointsRef.current.material.uniforms.uOpacity.value = Math.min(
+      scrollOpacity,
+      isLight ? 0.98 : 0.9,
+    )
   }, [scrollProgress, theme])
 
   useEffect(() => {
     if (!pointsRef.current) return
-    const geo = pointsRef.current.geometry
-    const colorAttr = geo.attributes.color
-    const nextColors = buildParticleColors(theme)
-    colorAttr.array.set(nextColors)
-    colorAttr.needsUpdate = true
-    applyParticleMaterial(pointsRef.current.material, theme)
-  }, [theme])
+
+    const key = `${theme}-${productIndex}-${activeBias.toFixed(2)}`
+    if (key === lastKeyRef.current) return
+    lastKeyRef.current = key
+
+    const attr = pointsRef.current.geometry.attributes.aColor
+    const nextColors = buildPortfolioParticleColors(
+      PARTICLE_COUNT,
+      theme,
+      productIndex,
+      activeBias,
+    )
+
+    tweenRef.current?.kill()
+    tweenRef.current = tweenColorAttribute(attr, nextColors, 0.6)
+  }, [theme, productIndex, activeBias])
 
   useEffect(() => {
     if (!pointsRef.current) return
     let animId
-    const geo = pointsRef.current.geometry
-    const posAttr = geo.attributes.position
+    const posAttr = pointsRef.current.geometry.attributes.position
 
     const animate = (time) => {
       for (let i = 0; i < PARTICLE_COUNT; i += 20) {

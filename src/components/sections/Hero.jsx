@@ -7,25 +7,25 @@ import { SocialLinks } from '../ui/SocialLinks'
 export function Hero() {
   const { hero, ui } = useContent()
   const titleRef = useRef(null)
+  const sublinesRef = useRef(null)
   const socialRef = useRef(null)
   const scrollHintRef = useRef(null)
-  const eyebrowRef = useRef(null)
 
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.6 })
-    tl.fromTo(eyebrowRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' },
-    )
-    .fromTo(titleRef.current,
+    tl.fromTo(titleRef.current,
       { opacity: 0, y: 60, filter: 'blur(10px)' },
       { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'power3.out' },
-      '-=0.3',
+    )
+    .fromTo(sublinesRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+      '-=0.5',
     )
     .fromTo(socialRef.current,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
-      '-=0.6',
+      '-=0.4',
     )
     .fromTo(scrollHintRef.current,
       { opacity: 0 }, { opacity: 0.7, duration: 0.8 }, '-=0.3',
@@ -45,26 +45,23 @@ export function Hero() {
     }}>
       <div className="hero-inner">
         <div style={{ maxWidth: '680px', flex: '1 1 340px' }}>
-          {hero.badge && (
-            <p className="hero-badge">{hero.badge}</p>
-          )}
-          <p ref={eyebrowRef} className="hero-eyebrow">
-            {hero.eyebrow}
-          </p>
-
           <h1 ref={titleRef}>
-            {hero.title[0]}<br />
-            <span className="hero-accent">{hero.titleAccent}</span><br />
-            {hero.title[1]}
+            {hero.titleLine1}<br />
+            {hero.titleLine2}
           </h1>
 
-        <div ref={socialRef}>
-          <SocialLinks
-            className="hero-social"
-            variant="icon"
-            ariaLabel={ui.socialNavLabel}
-          />
-        </div>
+          <div ref={sublinesRef} className="hero-sublines">
+            {hero.subline1 && <p className="hero-badge">{hero.subline1}</p>}
+            {hero.subline2 && <p className="hero-eyebrow">{hero.subline2}</p>}
+          </div>
+
+          <div ref={socialRef}>
+            <SocialLinks
+              className="hero-social"
+              variant="icon"
+              ariaLabel={ui.socialNavLabel}
+            />
+          </div>
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="#science" className="hero-cta-primary">{hero.cta}</a>
