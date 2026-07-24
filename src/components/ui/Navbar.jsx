@@ -25,6 +25,13 @@ export function Navbar() {
 
   const closeMenu = () => setMenuOpen(false)
 
+  const goHome = (event) => {
+    closeMenu()
+    if (!isHome) return
+    event.preventDefault()
+    document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   const sectionLinks = isHome ? (
     nav.links.map(link => (
       <a key={link.href} href={link.href.replace(/^\//, '')} className="nav-link"
@@ -41,6 +48,13 @@ export function Navbar() {
 
   const desktopLinks = (
     <>
+      <Link
+        to="/"
+        className={`nav-link${isHome ? ' nav-link--active' : ''}`}
+        onClick={goHome}
+      >
+        {nav.home}
+      </Link>
       {sectionLinks}
       <Link to="/nosotros" className={`nav-link${isAbout ? ' nav-link--active' : ''}`}>
         {nav.about}
@@ -51,6 +65,13 @@ export function Navbar() {
 
   const mobileLinks = (
     <>
+      <Link
+        to="/"
+        className={`nav-link${isHome ? ' nav-link--active' : ''}`}
+        onClick={goHome}
+      >
+        {nav.home}
+      </Link>
       {sectionLinks}
       <Link to="/nosotros" className={`nav-link${isAbout ? ' nav-link--active' : ''}`} onClick={closeMenu}>
         {nav.about}

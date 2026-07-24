@@ -17,22 +17,13 @@ export function Hero({ variant = 'default' }) {
       titleRef.current,
       sublinesRef.current,
       socialRef.current,
-      scrollHintRef.current,
+      !isBarrelOverlay ? scrollHintRef.current : null,
     ].filter(Boolean)
 
     if (!targets.length) return undefined
 
     if (isBarrelOverlay) {
       gsap.set(targets, { opacity: 1, y: 0, filter: 'none' })
-      if (scrollHintRef.current) {
-        gsap.to(scrollHintRef.current, {
-          y: 8,
-          repeat: -1,
-          yoyo: true,
-          duration: 1.4,
-          ease: 'power1.inOut',
-        })
-      }
       return undefined
     }
 
@@ -80,7 +71,9 @@ export function Hero({ variant = 'default' }) {
 
           <div ref={sublinesRef} className="hero-sublines">
             {hero.subline1 && <p className="hero-badge">{hero.subline1}</p>}
-            {hero.subline2 && <p className="hero-eyebrow">{hero.subline2}</p>}
+            {!isBarrelOverlay && hero.subline2 && (
+              <p className="hero-eyebrow">{hero.subline2}</p>
+            )}
           </div>
 
           <div ref={socialRef}>
@@ -91,14 +84,16 @@ export function Hero({ variant = 'default' }) {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="#science" className="hero-cta-primary">{hero.cta}</a>
-            <button
-              type="button"
-              className="hero-cta-secondary"
-              onClick={() => window.open('mailto:info@biotorlabs.com?subject=Quiero ser distribuidor', '_blank')}
-            >{hero.ctaSecondary}</button>
-          </div>
+          {!isBarrelOverlay && (
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <a href="#science" className="hero-cta-primary">{hero.cta}</a>
+              <button
+                type="button"
+                className="hero-cta-secondary"
+                onClick={() => window.open('mailto:info@biotorlabs.com?subject=Quiero ser distribuidor', '_blank')}
+              >{hero.ctaSecondary}</button>
+            </div>
+          )}
         </div>
 
         {!isBarrelOverlay && (
@@ -109,10 +104,12 @@ export function Hero({ variant = 'default' }) {
         )}
       </div>
 
-      <div ref={scrollHintRef} className="hero-scroll-hint">
-        <div className="hero-scroll-line" />
-        <p className="hero-scroll-label">{ui.scroll}</p>
-      </div>
+      {!isBarrelOverlay && (
+        <div ref={scrollHintRef} className="hero-scroll-hint">
+          <div className="hero-scroll-line" />
+          <p className="hero-scroll-label">{ui.scroll}</p>
+        </div>
+      )}
     </section>
   )
 }

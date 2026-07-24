@@ -26,6 +26,7 @@ export const ASSETS = {
   barrel: {
     cana: '/images/hero/cana-barrel.webp',
     brotes: '/images/hero/brotes-barrel.webp',
+    lab: '/images/hero/lab-barrel.webp',
   },
 
   about: {

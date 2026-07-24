@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { BARREL_ROOT_START_VH } from '../config/barrelScroll'
 import { createScrollThrottler } from '../utils/scrollThrottle'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const EMIT_MS = 48
 
-/**
- * Progreso 0→1 del crecimiento radicular:
- * inicio = fase 3 del barril (Detrás de la Ciencia)
- * fin = final del carrusel Portafolio (#buy)
- */
+/** Progreso 0→1 del crecimiento radicular: inicio en #results, fin en #buy */
 export function computeRootGrowthProgress() {
-  const barrel = document.getElementById('hero')
+  const results = document.getElementById('results')
   const buy = document.getElementById('buy')
-  if (!barrel || !buy) return 0
+  if (!results || !buy) return 0
 
-  const vhPx = window.innerHeight / 100
-  const startY = barrel.offsetTop + BARREL_ROOT_START_VH * vhPx
+  const startY = results.offsetTop
   const endY = buy.offsetTop + buy.offsetHeight
   const scrollY = getScrollY()
 
@@ -73,6 +67,7 @@ export {
   deriveSurfacePlantState,
   getResultsSectionProgress,
   applyResultsCameraOrbit,
+  applyUndergroundSpiralOrbit,
 } from '../utils/undergroundCamera'
 
 function getScrollY() {

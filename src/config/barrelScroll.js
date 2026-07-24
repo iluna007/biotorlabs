@@ -10,7 +10,7 @@ export const BARREL_TOTAL_VH = BARREL_PHASE_VH.reduce((sum, h) => sum + h, 0)
  * Fracción de cada fase dedicada a la transición de imagen.
  * El resto (1 - BARREL_CONTENT_DELAY) es exploración con parallax vertical.
  */
-export const BARREL_CONTENT_DELAY = 0.20
+export const BARREL_CONTENT_DELAY = 0.22
 
 export const WIPE_SLOPE = 12
 
@@ -29,7 +29,8 @@ function smoothstep(edge0, edge1, x) {
  * t = 0: invisible (línea debajo); t = 1: pantalla completa (línea arriba).
  */
 export function getDiagonalWipeClips(t) {
-  const raw = Math.max(0, Math.min(1, t))
+  const clamped = Math.max(0, Math.min(1, t))
+  const raw = smoothstep(0, 1, clamped)
   const leftY = 110 - raw * 120
   const rightY = leftY + WIPE_SLOPE
 
@@ -41,19 +42,6 @@ export function getDiagonalWipeClips(t) {
       const outRightY = outLeftY + WIPE_SLOPE
       return `polygon(0% 0%, 100% 0%, 100% ${outRightY.toFixed(2)}%, 0% ${outLeftY.toFixed(2)}%)`
     })(),
-  }
-}
-
-export function getBarrelBlendMotion(t) {
-  const { incoming } = getDiagonalWipeClips(t)
-  return {
-    clipPath: incoming,
-    outOpacity: 1,
-    inOpacity: 1,
-    outTransform: 'translate(-50%, -50%) scale(1.05)',
-    inTransform: 'translate(-50%, -50%) scale(1.05)',
-    stageRotateX: 0,
-    soloTransform: 'translate(-50%, -50%) scale(1.0)',
   }
 }
 
@@ -73,42 +61,44 @@ export function getBarrelImageBlend(rotation, faceCount = 3) {
   return { mode: 'blend', from: segment, to: segment + 1, t: local }
 }
 
-/** Progreso 0→1 del fade hacia WebGL (brotes → raíces) */
-export function getWebglRevealProgress(rotation, faceCount = 3) {
-  const blend = getBarrelImageBlend(rotation, faceCount)
-  if (blend.mode === 'blend' && blend.to === faceCount - 1) {
-    return smoothstep(0, 1, blend.t)
-  }
-  return blend.mode === 'single' && blend.slide === faceCount - 1 ? 1 : 0
-}
-
 /** Rotación ligada al scroll — pausa durante fases de exploración */
 export function getBarrelRotationFromProgress(progress, faceCount = 3, contentDelay = BARREL_CONTENT_DELAY) {
   const faceDeg = 360 / faceCount
-  const maxRot = 360 - faceDeg
   const total = BARREL_TOTAL_VH
   const p = Math.max(0, Math.min(1, progress))
 
   const phase0End = BARREL_PHASE_VH[0] / total
   const trans1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1] * contentDelay) / total
   const phase1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1]) / total
-  const trans2End = phase1End + (BARREL_PHASE_VH[2] * contentDelay) / total
+
+  const phase2Duration = BARREL_PHASE_VH[2] / total
+  const trans2End = phase1End + phase2Duration * contentDelay
 
   if (p <= phase0End) return 0
   if (p <= trans1End) return ((p - phase0End) / (trans1End - phase0End)) * faceDeg
   if (p <= phase1End) return faceDeg
-  if (p <= trans2End) return faceDeg + ((p - phase1End) / (trans2End - phase1End)) * faceDeg
-  return maxRot
+  if (p <= trans2End) {
+    return faceDeg + ((p - phase1End) / (trans2End - phase1End)) * faceDeg
+  }
+  return faceDeg * 2
 }
 
 /**
  * Parallax de exploración: solo desplazamiento vertical (sin zoom).
- * panY = 0 → centrada; panY = -7 → sube 7% con el scroll.
+ * panY = 0 → centrada; panY = -10 → sube 10% con el scroll.
  */
 export function getExplorationParallax(phaseIndex, local, contentDelay = BARREL_CONTENT_DELAY) {
+  if (phaseIndex === 2) {
+    if (local < contentDelay) {
+      return { scale: 1.0, panY: 0 }
+    }
+    const postT = (local - contentDelay) / (1 - contentDelay)
+    return { scale: 1.0, panY: -postT * 10 }
+  }
+
   const postT = Math.max(0, (local - contentDelay) / (1 - contentDelay))
   return {
     scale: 1.0,
-    panY: -postT * 7,
+    panY: -postT * 10,
   }
 }

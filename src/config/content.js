@@ -97,12 +97,8 @@ export const CONTENT = {
     ],
   },
 
-  // ── VOZ DE MARCA — Pilares de mensaje ───────────────────────────────────
+  // ── PILARES CIENTÍFICOS (post-barril) ───────────────────────────────────
   whyBiotor: {
-    eyebrow:     'Cómo habla Biotor',
-    title:       'Técnica sin arrogancia.',
-    titleAccent: 'Confianza sin prepotencia.',
-    body:        'La voz de Biotor es la de un científico apasionado que también es un aliado genuino del campo. Técnica sin arrogancia. Confianza sin prepotencia. Innovación con propósito. Orientada a evidencia, directa y sofisticada sin ser distante.',
     differentiators: [
       {
         title: 'Ciencia Real',
@@ -216,11 +212,8 @@ export const CONTENT = {
   nav: {
     brand: 'BIOTOR',
     brandAccent: 'LABS',
-    links: [
-      { label: 'Ciencia Real', href: '/#science' },
-      { label: 'Detrás de la Ciencia', href: '/#how-it-works' },
-      { label: 'Evidencia', href: '/#results' },
-    ],
+    links: [],
+    home: 'Inicio',
     about: 'Sobre Nosotros',
     portfolio: 'Portafolio',
     portfolioCarousel: 'Ver carrusel interactivo',

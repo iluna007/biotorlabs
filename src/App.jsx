@@ -6,13 +6,13 @@ import { useSitePreferences } from './context/SitePreferencesContext'
 import { useLenis } from './hooks/useLenis'
 import { useScrollProgress } from './hooks/useScrollProgress'
 import { useRootGrowthProgress } from './hooks/useRootGrowthProgress'
+import { useResultsReveal } from './hooks/useResultsReveal'
 import { RootScene } from './components/canvas/RootScene'
 import { LoadingScreen } from './components/ui/LoadingScreen'
 import { Navbar } from './components/ui/Navbar'
 import { Footer } from './components/ui/Footer'
 import { ScrollBarrel } from './components/sections/ScrollBarrel'
 import { getBarrelPhase2Explore } from './utils/barrelPhase2'
-import { WhyBiotor } from './components/sections/WhyBiotor'
 import { Results } from './components/sections/Results'
 import { Testimonials } from './components/sections/Testimonials'
 import { DistributorCTA } from './components/sections/DistributorCTA'
@@ -32,8 +32,6 @@ function hasSeenIntro() {
 
 export default function App() {
   const [loaded, setLoaded] = useState(hasSeenIntro)
-  const [activeSlide, setActiveSlide] = useState(0)
-  const [webglReveal, setWebglReveal] = useState(0)
   const [barrelPhase, setBarrelPhase] = useState({
     phaseIndex: 0,
     local: 0,
@@ -46,11 +44,12 @@ export default function App() {
   useLenis(loaded)
   const { progress } = useScrollProgress(loaded)
   const rootGrowthProgress = useRootGrowthProgress(loaded)
+  const resultsReveal = useResultsReveal(loaded)
 
-  const webglVisible = activeSlide >= 2 || rootGrowthProgress > 0.01 || webglReveal > 0.02
+  const webglVisible = resultsReveal > 0.02 || rootGrowthProgress > 0.01
   const webglOpacity = Math.min(
     1,
-    Math.max(webglReveal, activeSlide >= 2 ? 1 : 0, rootGrowthProgress > 0.02 ? 1 : 0),
+    Math.max(resultsReveal, rootGrowthProgress > 0.02 ? 1 : 0),
   )
   const barrelPhase2Progress = getBarrelPhase2Explore(barrelPhase)
 
@@ -104,13 +103,11 @@ export default function App() {
 
         {loaded && (
           <ScrollBarrel
-            onSlideChange={setActiveSlide}
-            onWebglReveal={setWebglReveal}
             onBarrelPhaseUpdate={setBarrelPhase}
+            modelStepActive={resultsReveal > 0.02}
           />
         )}
 
-        <WhyBiotor />
         <Results />
         <Testimonials />
         <DistributorCTA />

@@ -94,10 +94,6 @@ export const CONTENT_EN = {
   },
 
   whyBiotor: {
-    eyebrow:     'How Biotor speaks',
-    title:       'Technical without arrogance.',
-    titleAccent: 'Confident without pretension.',
-    body:        'Biotor\'s voice is that of a passionate scientist who is also a genuine ally in the field. Technical without arrogance. Confident without pretension. Innovation with purpose. Evidence-driven, direct, and sophisticated without being distant.',
     differentiators: [
       {
         title: 'Real Science',
@@ -206,11 +202,8 @@ export const CONTENT_EN = {
   nav: {
     brand: 'BIOTOR',
     brandAccent: 'LABS',
-    links: [
-      { label: 'Real Science', href: '/#science' },
-      { label: 'Behind the Science', href: '/#how-it-works' },
-      { label: 'Evidence', href: '/#results' },
-    ],
+    links: [],
+    home: 'Home',
     about: 'About Us',
     portfolio: 'Portfolio',
     portfolioCarousel: 'View interactive carousel',

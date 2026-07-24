@@ -186,8 +186,7 @@ button { font-family: inherit; }
   text-align: center;
 }
 
-.section-overlay--center .section-body,
-.section-overlay--center .why-biotor-cards {
+.section-overlay--center .section-body {
   text-align: left;
 }
 
@@ -2445,14 +2444,6 @@ html.light-mode .about-page__scrim {
   pointer-events: none;
 }
 
-/* Fase Raíces: canvas WebGL visible durante reveal y fase 3 */
-.barrel-wrapper[data-active-slide='2'] .barrel-sticky,
-.barrel-wrapper[data-active-slide='2'] .barrel-blend,
-.barrel-wrapper[data-webgl-reveal='1'] .barrel-sticky,
-.barrel-wrapper[data-webgl-reveal='1'] .barrel-blend {
-  background: transparent;
-}
-
 /* Fullscreen image transitions — diagonal wipe (Corn Revolution style) */
 .barrel-blend {
   position: absolute;
@@ -2479,12 +2470,26 @@ html.light-mode .about-page__scrim {
   transition: opacity 0.55s ease;
 }
 
-.barrel-wrapper[data-active-slide='0'] .barrel-blend::after {
+.barrel-wrapper[data-cana-overlay='1'] .barrel-blend::after {
   opacity: 1;
 }
 
-.barrel-wrapper[data-active-slide='0'] .barrel-blend__img--outgoing {
+.barrel-wrapper[data-cana-overlay='1'] .barrel-blend__img--outgoing {
   filter: brightness(0.78);
+}
+
+.barrel-wrapper[data-active-slide='2'] .barrel-blend::after {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 42, 26, 0.72) 0%,
+    rgba(10, 42, 26, 0.45) 42%,
+    rgba(10, 42, 26, 0.82) 100%
+  );
+}
+
+.barrel-wrapper[data-active-slide='2'] .barrel-blend__img--lab {
+  filter: brightness(0.72);
 }
 
 .barrel-blend--transition {
@@ -2515,6 +2520,10 @@ html.light-mode .about-page__scrim {
   object-position: center bottom;
 }
 
+.barrel-blend__img--lab {
+  object-position: center center;
+}
+
 .barrel-blend__img--outgoing {
   z-index: 1;
 }
@@ -2539,6 +2548,10 @@ html.light-mode .about-page__scrim {
 
 .barrel-blend__wipe-layer .barrel-blend__img {
   z-index: 1;
+}
+
+.barrel-blend__wipe-layer--lab {
+  z-index: 3;
 }
 
 .barrel-scene {
@@ -2858,56 +2871,83 @@ html.light-mode .about-page__scrim {
   pointer-events: none;
 }
 
-.barrel-dots {
+.barrel-progress {
+  --progress-step: 0;
   position: absolute;
   right: clamp(1rem, 2.5vw, 2.25rem);
   top: 50%;
   left: auto;
   bottom: auto;
   transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 1.35rem;
+  height: clamp(140px, 24vh, 200px);
+  width: 12px;
   z-index: 10;
   pointer-events: none;
 }
 
-.barrel-dot {
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.65rem;
+.barrel-progress__track {
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: rgba(168, 224, 99, 0.22);
 }
 
-.barrel-dot::before {
-  content: '';
+.barrel-progress__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--progress-step) / 3 * 100%);
+  background: rgba(168, 224, 99, 0.55);
+  transition: height 0.35s ease;
+}
+
+.barrel-progress__marks {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barrel-progress__mark {
+  position: relative;
   width: 6px;
   height: 6px;
+  margin: 0 auto;
   border-radius: 50%;
-  border: 1px solid rgba(168, 224, 99, 0.5);
-  background: transparent;
-  transition: background 0.3s, transform 0.3s;
+  border: 1px solid rgba(168, 224, 99, 0.45);
+  background: rgba(5, 15, 8, 0.72);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
-.barrel-dot span {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(168, 224, 99, 0.5);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-}
-
-.barrel-dot.is-active::before {
+.barrel-progress__mark.is-active {
   background: var(--lime);
-  transform: scale(1.5);
+  border-color: var(--lime);
+  transform: scale(1.35);
 }
 
-.barrel-dot.is-active span {
-  color: var(--lime);
+html.light-mode .barrel-progress__track {
+  background: rgba(10, 42, 26, 0.18);
+}
+
+html.light-mode .barrel-progress__fill {
+  background: rgba(10, 42, 26, 0.35);
+}
+
+html.light-mode .barrel-progress__mark {
+  background: rgba(250, 250, 247, 0.85);
+  border-color: rgba(10, 42, 26, 0.35);
+}
+
+html.light-mode .barrel-progress__mark.is-active {
+  background: var(--green-accent);
+  border-color: var(--green-accent);
 }
 
 html.light-mode .barrel-face::after {
@@ -2917,14 +2957,6 @@ html.light-mode .barrel-face::after {
     rgba(250, 250, 247, 0.1) 42%,
     rgba(10, 42, 26, 0.45) 100%
   );
-}
-
-html.light-mode .barrel-dot span {
-  color: var(--green-mid);
-}
-
-html.light-mode .barrel-dot.is-active span {
-  color: var(--green-accent);
 }
 
 @media (max-width: 900px) {

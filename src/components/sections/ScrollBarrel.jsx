@@ -1,4 +1,4 @@
-// Barrel scroll infinito — 3 caras: caña → brotes → WebGL (raíces)
+// Barrel scroll — 3 caras: caña → brotes → laboratorio
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
@@ -11,7 +11,6 @@ import {
   computeBarrelRadius,
   getBarrelImageBlend,
   getDiagonalWipeClips,
-  getWebglRevealProgress,
   getBarrelRotationFromProgress,
   getExplorationParallax,
 } from '../../config/barrelScroll'
@@ -24,18 +23,20 @@ gsap.registerPlugin(ScrollTrigger)
 
 const SLIDES = [
   {
-    type: 'image',
     src: ASSETS.barrel.cana,
     label: 'Cultivo',
     imageClass: 'barrel-blend__img--field',
   },
   {
-    type: 'image',
     src: ASSETS.barrel.brotes,
     label: 'Brotes',
     imageClass: 'barrel-blend__img--soil',
   },
-  { type: 'webgl', label: 'Raíces' },
+  {
+    src: ASSETS.barrel.lab,
+    label: 'Laboratorio',
+    imageClass: 'barrel-blend__img--lab',
+  },
 ]
 
 const PHASES = BARREL_PHASE_VH.map((heightVh, i) => ({
@@ -49,21 +50,28 @@ const FACE_DEG = 360 / N
 const TOTAL_VH = BARREL_TOTAL_VH
 const MAX_ROTATION = 360 - FACE_DEG
 const CONTENT_DELAY = BARREL_CONTENT_DELAY
+const LAB_SLIDE = 2
+const PROGRESS_STEPS = 4
+
+function getProgressStep(visualSlide, scrollProgress) {
+  if (scrollProgress >= 0.975) return 3
+  return Math.min(visualSlide, PROGRESS_STEPS - 2)
+}
 
 function imgPanTransform(panY = 0) {
   return `translate(-50%, calc(-50% + ${panY.toFixed(2)}%)) scale(1)`
 }
 
-function imgTransform(scale, panY = 0) {
-  return `translate(-50%, calc(-50% + ${panY.toFixed(2)}%)) scale(${scale.toFixed(4)})`
+function getVisualSlide(phaseIndex) {
+  if (phaseIndex <= 0) return 0
+  if (phaseIndex === 1) return 1
+  return LAB_SLIDE
 }
 
-function getVisualSlide(rotation, phaseIndex) {
-  if (phaseIndex <= 0) return 0
-  // Toda la fase 1 (transición + exploración Ciencia) = brotes, sin activar WebGL
-  if (phaseIndex === 1) return 1
-  if (rotation < FACE_DEG * 1.55) return 1
-  return 2
+function isCanaOverlayActive(rotation) {
+  const blend = getBarrelImageBlend(rotation, N)
+  if (blend.mode === 'single') return blend.slide === 0
+  return blend.from === 0
 }
 
 function getPhaseState(progress) {
@@ -78,7 +86,7 @@ function getPhaseState(progress) {
 
     if (progress <= end || i === PHASES.length - 1) {
       const local = Math.max(0, Math.min(1, (progress - start) / (end - start || 1)))
-      const visualSlide = getVisualSlide(rotation, i)
+      const visualSlide = getVisualSlide(i)
       const contentVisible = i === 0 || local >= CONTENT_DELAY
       const contentSlide = contentVisible ? i : Math.max(0, i - 1)
 
@@ -94,7 +102,7 @@ function getPhaseState(progress) {
   }
 
   return {
-    visualSlide: 2,
+    visualSlide: LAB_SLIDE,
     contentSlide: 2,
     contentVisible: true,
     local: 1,
@@ -104,10 +112,16 @@ function getPhaseState(progress) {
 }
 
 function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }) {
-  const { root, imgA, imgB, wipeLayer } = refs
-  if (!root || !imgA || !imgB || !wipeLayer) return
+  const { root, imgA, imgB, imgC, wipeLayer, wipeLayer2 } = refs
+  if (!root || !imgA || !imgB || !imgC || !wipeLayer || !wipeLayer2) return
 
   const blend = getBarrelImageBlend(rotation, N)
+  const fullWipe = getDiagonalWipeClips(1).incoming
+
+  const hideWipes = () => {
+    wipeLayer.style.display = 'none'
+    wipeLayer2.style.display = 'none'
+  }
 
   const showCana = () => {
     imgA.style.visibility = 'visible'
@@ -120,22 +134,13 @@ function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }) 
     imgA.style.opacity = '0'
   }
 
-  if (blend.mode === 'single' && blend.slide >= 2) {
-    hideCana()
-    root.style.background = 'transparent'
-    root.style.visibility = 'hidden'
-    imgA.style.clipPath = 'none'
-    wipeLayer.style.display = 'none'
-    return
-  }
-
   root.style.visibility = 'visible'
 
   if (blend.mode === 'single' && blend.slide === 0) {
     showCana()
     imgA.style.clipPath = 'none'
     imgA.style.transform = imgPanTransform(parallax.panY)
-    wipeLayer.style.display = 'none'
+    hideWipes()
     return
   }
 
@@ -146,47 +151,71 @@ function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }) 
     imgA.style.transform = imgPanTransform(0)
     imgB.style.transform = imgPanTransform(parallax.panY)
     wipeLayer.style.display = 'block'
-    wipeLayer.style.clipPath = getDiagonalWipeClips(1).incoming
+    wipeLayer.style.clipPath = fullWipe
+    wipeLayer2.style.display = 'none'
+    return
+  }
+
+  if (blend.mode === 'single' && blend.slide === LAB_SLIDE) {
+    hideCana()
+    root.style.background = ''
+    imgB.style.transform = imgPanTransform(0)
+    imgC.style.transform = imgPanTransform(parallax.panY)
+    wipeLayer.style.display = 'block'
+    wipeLayer.style.clipPath = fullWipe
+    wipeLayer2.style.display = 'block'
+    wipeLayer2.style.clipPath = fullWipe
     return
   }
 
   const clips = getDiagonalWipeClips(blend.t)
-  const toWebgl = SLIDES[blend.to]?.type === 'webgl'
 
-  if (toWebgl) {
-    // Brotes se retiran con wipe; detrás debe verse WebGL, no la caña (imgA)
+  if (blend.to === LAB_SLIDE) {
     hideCana()
-    root.style.background = 'transparent'
-    imgB.style.transform = imgTransform(1.0 + clips.raw * 0.08, 0)
+    root.style.background = ''
+    imgB.style.transform = imgPanTransform(0)
+    imgC.style.transform = imgPanTransform(0)
     wipeLayer.style.display = 'block'
-    wipeLayer.style.clipPath = clips.outgoingWebgl
+    wipeLayer.style.clipPath = fullWipe
+    wipeLayer2.style.display = 'block'
+    wipeLayer2.style.clipPath = clips.incoming
     return
   }
 
-  // Transición caña → brotes (wipe diagonal, sin zoom — solo pan vertical)
   showCana()
   imgA.style.clipPath = 'none'
   imgA.style.transform = imgPanTransform(parallax.panY)
   imgB.style.transform = imgPanTransform(0)
   wipeLayer.style.display = 'block'
   wipeLayer.style.clipPath = clips.incoming
+  wipeLayer2.style.display = 'none'
 }
 
-export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate }) {
+export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
   const wrapperRef = useRef(null)
   const barrelRef = useRef(null)
   const blendRef = useRef(null)
   const imgARef = useRef(null)
   const imgBRef = useRef(null)
+  const imgCRef = useRef(null)
   const wipeRef = useRef(null)
+  const wipe2Ref = useRef(null)
   const phase1ScrollRef = useRef(null)
   const phase1InnerRef = useRef(null)
   const [contentSlide, setContentSlide] = useState(0)
   const [contentVisible, setContentVisible] = useState(true)
   const [visualSlide, setVisualSlide] = useState(0)
+  const [progressStep, setProgressStep] = useState(0)
   const [radius, setRadius] = useState(() => computeBarrelRadius(N))
   const radiusRef = useRef(radius)
-  const lastUiRef = useRef({ visualSlide: 0, contentSlide: 0, contentVisible: true })
+  const lastUiRef = useRef({
+    visualSlide: 0,
+    contentSlide: 0,
+    contentVisible: true,
+    progressStep: 0,
+  })
+
+  const activeProgressStep = modelStepActive ? 3 : progressStep
 
   const syncRadius = useCallback(() => {
     const r = computeBarrelRadius(N, window.innerHeight)
@@ -196,12 +225,6 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
       wrapperRef.current.style.setProperty('--barrel-r', `${r}px`)
       wrapperRef.current.style.setProperty('--barrel-perspective', `${Math.round(r * 3.4)}px`)
     }
-  }, [])
-
-  const updateDots = useCallback((slide) => {
-    document.querySelectorAll('.barrel-dot').forEach((dot, i) => {
-      dot.classList.toggle('is-active', i === slide)
-    })
   }, [])
 
   useEffect(() => {
@@ -216,15 +239,20 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
       root: blendRef.current,
       imgA: imgARef.current,
       imgB: imgBRef.current,
+      imgC: imgCRef.current,
       wipeLayer: wipeRef.current,
+      wipeLayer2: wipe2Ref.current,
     }
 
-    const syncUiState = (state) => {
+    const syncUiState = (state, scrollProgress) => {
       const prev = lastUiRef.current
+      const nextStep = getProgressStep(state.visualSlide, scrollProgress)
+
       if (prev.visualSlide !== state.visualSlide) {
         setVisualSlide(state.visualSlide)
-        onSlideChange?.(state.visualSlide)
-        updateDots(state.visualSlide)
+      }
+      if (prev.progressStep !== nextStep) {
+        setProgressStep(nextStep)
       }
       if (prev.contentSlide !== state.contentSlide) {
         setContentSlide(state.contentSlide)
@@ -236,17 +264,17 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
         visualSlide: state.visualSlide,
         contentSlide: state.contentSlide,
         contentVisible: state.contentVisible,
+        progressStep: nextStep,
       }
     }
 
     const applyBarrelState = (self) => {
       const progress = typeof self.progress === 'number' ? self.progress : 0
       const state = getPhaseState(progress)
-      const r = radiusRef.current
 
-      gsap.set(barrel, { rotateX: state.rotation, z: -r })
       wrapper.dataset.activeSlide = String(state.visualSlide)
       wrapper.dataset.contentSlide = String(state.contentSlide)
+      wrapper.dataset.canaOverlay = isCanaOverlayActive(state.rotation) ? '1' : '0'
 
       const parallax = getExplorationParallax(
         state.phaseIndex,
@@ -256,13 +284,6 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
 
       updateBlendVisuals(state.rotation, blendRefs, parallax)
 
-      const blend = getBarrelImageBlend(state.rotation, N)
-      const webglRevealActive =
-        state.visualSlide >= 2 ||
-        (blend.mode === 'blend' && SLIDES[blend.to]?.type === 'webgl')
-      wrapper.dataset.webglReveal = webglRevealActive ? '1' : '0'
-
-      onWebglReveal?.(getWebglRevealProgress(state.rotation, N))
       onBarrelPhaseUpdate?.({
         phaseIndex: state.phaseIndex,
         local: state.local,
@@ -270,7 +291,7 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
         contentSlide: state.contentSlide,
         inBarrel: self.isActive,
       })
-      syncUiState(state)
+      syncUiState(state, progress)
 
       if (phase1InnerRef.current && phase1ScrollRef.current && state.contentVisible) {
         const inner = phase1InnerRef.current
@@ -309,7 +330,7 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
       window.removeEventListener('resize', onResize)
       trigger.kill()
     }
-  }, [onSlideChange, onWebglReveal, onBarrelPhaseUpdate, updateDots, syncRadius])
+  }, [onBarrelPhaseUpdate, syncRadius, modelStepActive])
 
   const showPhase = (index) => {
     if (index === 0) {
@@ -330,6 +351,7 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
       }}
       data-active-slide="0"
       data-content-slide="0"
+      data-cana-overlay="1"
     >
       <div className="barrel-sticky">
         <div ref={blendRef} className="barrel-blend">
@@ -352,26 +374,27 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
               loading="eager"
             />
           </div>
+          <div ref={wipe2Ref} className="barrel-blend__wipe-layer barrel-blend__wipe-layer--lab">
+            <img
+              ref={imgCRef}
+              src={SLIDES[2].src}
+              alt={SLIDES[2].label}
+              className="barrel-blend__img barrel-blend__img--lab barrel-blend__img--incoming"
+              style={{ transform: imgPanTransform(0) }}
+              loading="eager"
+            />
+          </div>
         </div>
 
         <div className="barrel-scene barrel-scene--hidden">
           <div ref={barrelRef} className="barrel-drum">
-            {SLIDES.map((slide, i) => {
-              const faceStyle = {
-                transform: `rotateX(${-FACE_DEG * i}deg) translateZ(${radius}px)`,
-              }
-              const isWebgl = slide.type === 'webgl'
-
-              return (
-                <div
-                  key={slide.label}
-                  className={`barrel-face${isWebgl ? ' barrel-face--webgl' : ' barrel-face--hidden'}`}
-                  style={faceStyle}
-                >
-                  {isWebgl && <div className="barrel-face__webgl-slot" aria-hidden="true" />}
-                </div>
-              )
-            })}
+            {SLIDES.map((slide, i) => (
+              <div
+                key={slide.label}
+                className="barrel-face barrel-face--hidden"
+                style={{ transform: `rotateX(${-FACE_DEG * i}deg) translateZ(${radius}px)` }}
+              />
+            ))}
           </div>
         </div>
 
@@ -397,12 +420,25 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate
           </div>
         </div>
 
-        <nav className="barrel-dots" aria-label="Fases del recorrido">
-          {SLIDES.map((slide, i) => (
-            <div key={slide.label} className={`barrel-dot${visualSlide === i ? ' is-active' : ''}`}>
-              <span>{slide.label}</span>
-            </div>
-          ))}
+        <nav
+          className="barrel-progress"
+          aria-label="Progreso del recorrido"
+          style={{ '--progress-step': activeProgressStep }}
+        >
+          <div className="barrel-progress__track" aria-hidden="true">
+            <div className="barrel-progress__fill" aria-hidden="true" />
+          </div>
+          <ol className="barrel-progress__marks">
+            {Array.from({ length: PROGRESS_STEPS }, (_, i) => (
+              <li
+                key={i}
+                className={`barrel-progress__mark${activeProgressStep === i ? ' is-active' : ''}`}
+                aria-current={activeProgressStep === i ? 'step' : undefined}
+              >
+                <span className="sr-only">{`Fase ${i + 1}`}</span>
+              </li>
+            ))}
+          </ol>
         </nav>
       </div>
     </section>

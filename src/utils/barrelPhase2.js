@@ -24,10 +24,9 @@ export function isPlantSurfaceView(barrelPhase2Progress) {
   return barrelPhase2Progress !== null && barrelPhase2Progress < SURFACE_END
 }
 
-/** Continúa el viaje subterráneo tras el barril sin reiniciar desde 0. */
+/** Continúa el viaje subterráneo tras el barril (desde #results). */
 export function mapPostBarrelRootProgress(rootGrowthProgress) {
-  const t = Math.max(0, Math.min(1, rootGrowthProgress))
-  return PHASE2_UNDERGROUND_MAX + t * (1 - PHASE2_UNDERGROUND_MAX)
+  return Math.max(0, Math.min(1, rootGrowthProgress))
 }
 
 /**

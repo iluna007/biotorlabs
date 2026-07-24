@@ -10,17 +10,11 @@ import { runSceneTicks } from '../../utils/sceneTick'
 
 import { PlantAboveGround } from './objects/PlantAboveGround'
 
-import { SoilSurface } from './objects/SoilSurface'
-
-import { SoilStrata } from './objects/SoilStrata'
-
 import { RootSystem } from './objects/RootSystem'
 
 import { SoilParticles } from './objects/SoilParticles'
 
 import { MyceliumParticles } from './objects/MyceliumParticles'
-
-import { ProductBottle } from './objects/ProductBottle'
 
 import { LightingRig } from './objects/LightingRig'
 
@@ -35,12 +29,6 @@ import {
   deriveUndergroundObjectState,
 
   getSurfacePlantCamera,
-
-  deriveSurfacePlantState,
-
-  getResultsSectionProgress,
-
-  applyResultsCameraOrbit,
 
 } from '../../hooks/useRootGrowthProgress'
 
@@ -86,13 +74,29 @@ export function RootScene({
 
   const renderActiveRef = useRef(renderActive)
 
-  const fovTargetRef = useRef(52)
+  const initialPlantCam = getSurfacePlantCamera()
 
-  const camTargetPos = useRef(new THREE.Vector3(0.8, 2.2, 7.0))
+  const fovTargetRef = useRef(initialPlantCam.fov)
 
-  const camTargetLookAt = useRef(new THREE.Vector3(0.0, 0.8, 0.0))
+  const camTargetPos = useRef(new THREE.Vector3(
+    initialPlantCam.pos.x,
+    initialPlantCam.pos.y,
+    initialPlantCam.pos.z,
+  ))
 
-  const camCurrentLookAt = useRef(new THREE.Vector3(0.0, 0.8, 0.0))
+  const camTargetLookAt = useRef(new THREE.Vector3(
+    initialPlantCam.target.x,
+    initialPlantCam.target.y,
+    initialPlantCam.target.z,
+  ))
+
+  const camCurrentLookAt = useRef(new THREE.Vector3(
+    initialPlantCam.target.x,
+    initialPlantCam.target.y,
+    initialPlantCam.target.z,
+  ))
+  const camLerpRef = useRef(0.04)
+  const wasUndergroundRef = useRef(false)
   const undergroundPeakRef = useRef(0)
 
   const [glScene, setGlScene] = useState(null)
@@ -164,9 +168,7 @@ export function RootScene({
 
     const scene = new THREE.Scene()
 
-    scene.background = new THREE.Color(themeCfg.sky)
-
-    scene.fog = new THREE.FogExp2(themeCfg.sky, 0.018)
+    applyMinimalSceneBackground(scene, theme)
 
     scene.userData.tickHandlers = []
 
@@ -178,7 +180,7 @@ export function RootScene({
 
     const camera = new THREE.PerspectiveCamera(
 
-      52,
+      initialPlantCam.fov,
 
       window.innerWidth / window.innerHeight,
 
@@ -188,7 +190,11 @@ export function RootScene({
 
     )
 
-    camera.position.set(0.8, 2.2, 7.0)
+    camera.position.set(
+      initialPlantCam.pos.x,
+      initialPlantCam.pos.y,
+      initialPlantCam.pos.z,
+    )
 
     camCurrentLookAt.current.set(0, 0.8, 0)
 
@@ -222,9 +228,9 @@ export function RootScene({
 
 
 
-      cam.position.lerp(camTargetPos.current, 0.04)
+      cam.position.lerp(camTargetPos.current, camLerpRef.current)
 
-      camCurrentLookAt.current.lerp(camTargetLookAt.current, 0.04)
+      camCurrentLookAt.current.lerp(camTargetLookAt.current, camLerpRef.current)
 
       cam.lookAt(camCurrentLookAt.current)
 
@@ -288,6 +294,54 @@ export function RootScene({
 
   useEffect(() => {
 
+    if (!undergroundActive || !cameraRef.current) {
+
+      wasUndergroundRef.current = undergroundActive
+
+      return
+
+    }
+
+
+
+    if (!wasUndergroundRef.current) {
+
+      const uT = resolveUndergroundProgress(rootGrowthProgress, barrelPhase2Progress)
+
+      const cam = getUndergroundCamera(uT)
+
+      const camera = cameraRef.current
+
+
+
+      camTargetPos.current.set(cam.pos.x, cam.pos.y, cam.pos.z)
+
+      camTargetLookAt.current.set(cam.target.x, cam.target.y, cam.target.z)
+
+      fovTargetRef.current = cam.fov
+
+      camera.position.set(cam.pos.x, cam.pos.y, cam.pos.z)
+
+      camCurrentLookAt.current.set(cam.target.x, cam.target.y, cam.target.z)
+
+      camera.lookAt(camCurrentLookAt.current)
+
+      camera.fov = cam.fov
+
+      camera.updateProjectionMatrix()
+
+    }
+
+
+
+    wasUndergroundRef.current = undergroundActive
+
+  }, [undergroundActive, rootGrowthProgress, barrelPhase2Progress])
+
+
+
+  useEffect(() => {
+
     if (!sceneRef.current || !cameraRef.current) return
 
 
@@ -332,72 +386,15 @@ export function RootScene({
 
     if (undergroundActive) {
 
-      if (isPlantSurfaceView(barrelPhase2Progress)) {
-
-        const cam = getSurfacePlantCamera()
-
-        const surface = deriveSurfacePlantState()
-
-
-
-        camTargetPos.current.set(cam.pos.x, cam.pos.y, cam.pos.z)
-
-        camTargetLookAt.current.set(cam.target.x, cam.target.y, cam.target.z)
-
-        fovTargetRef.current = cam.fov
-
-
-
-        const fogColor = adjustEnvColor('#142610', theme, 0)
-
-        if (sceneRef.current.fog) {
-
-          sceneRef.current.fog.density = 0.006
-
-          sceneRef.current.fog.color.set(fogColor)
-
-        }
-
-        sceneRef.current.background?.set(fogColor)
-
-
-
-        applyState({
-
-          plantOpacity: surface.plantOpacity,
-
-          strataOpacity: surface.strataOpacity,
-
-          rootProgress: surface.rootProgress,
-
-          myceliumOpacity: surface.myceliumOpacity,
-
-          productVisible: false,
-
-          productOpacity: 0,
-
-          cameraY: surface.cameraY,
-
-          ambientIntensity: surface.ambientIntensity,
-
-          sunIntensity: surface.sunIntensity,
-
-        })
-
-        return
-
-      }
-
-
-
       const uT = resolveUndergroundProgress(rootGrowthProgress, barrelPhase2Progress)
 
-      const resultsOrbitT = getResultsSectionProgress(scrollProgress)
-      const cam = applyResultsCameraOrbit(getUndergroundCamera(uT), resultsOrbitT)
+      const cam = getUndergroundCamera(uT)
 
-      const underground = deriveUndergroundObjectState(uT)
+      const onSurface = isPlantSurfaceView(barrelPhase2Progress)
 
 
+
+      camLerpRef.current = 0.07
 
       camTargetPos.current.set(cam.pos.x, cam.pos.y, cam.pos.z)
 
@@ -407,45 +404,69 @@ export function RootScene({
 
 
 
-      const fogColor = adjustEnvColor('#060c03', theme, uT)
+      applyMinimalSceneBackground(sceneRef.current, theme)
 
-      if (sceneRef.current.fog) {
 
-        sceneRef.current.fog.density = 0.012 + (1 - uT) * 0.02
 
-        sceneRef.current.fog.color.set(fogColor)
+      if (onSurface) {
+
+        applyState({
+
+          plantOpacity: 1,
+
+          strataOpacity: 0,
+
+          rootProgress: 0,
+
+          myceliumOpacity: 0,
+
+          productVisible: false,
+
+          productOpacity: 0,
+
+          cameraY: 0.35,
+
+          ambientIntensity: 1.2,
+
+          sunIntensity: 0.85,
+
+        })
+
+      } else {
+
+        const underground = deriveUndergroundObjectState(uT)
+
+        applyState({
+
+          plantOpacity: underground.plantOpacity,
+
+          strataOpacity: underground.strataOpacity,
+
+          rootProgress: getRootShaderProgress(uT),
+
+          myceliumOpacity: underground.myceliumOpacity,
+
+          productVisible: false,
+
+          productOpacity: 0,
+
+          cameraY: underground.cameraY,
+
+          ambientIntensity: underground.ambientIntensity,
+
+          sunIntensity: underground.sunIntensity,
+
+        })
 
       }
-
-      sceneRef.current.background?.set(fogColor)
-
-
-
-      applyState({
-
-        plantOpacity: underground.plantOpacity,
-
-        strataOpacity: underground.strataOpacity,
-
-        rootProgress: getRootShaderProgress(uT),
-
-        myceliumOpacity: underground.myceliumOpacity,
-
-        productVisible: false,
-
-        productOpacity: 0,
-
-        cameraY: underground.cameraY,
-
-        ambientIntensity: underground.ambientIntensity,
-
-        sunIntensity: underground.sunIntensity,
-
-      })
 
       return
 
     }
+
+
+
+    camLerpRef.current = 0.04
 
 
 
@@ -477,33 +498,7 @@ export function RootScene({
 
 
 
-    const fogDensity = lerp(cur.env.fogDensity, next.env.fogDensity, t)
-
-    const fogColor = adjustEnvColor(
-
-      lerpColor(cur.env.fogColor, next.env.fogColor, t),
-
-      theme,
-
-      scrollProgress,
-
-    )
-
-    if (sceneRef.current.fog) {
-
-      sceneRef.current.fog.density = fogDensity
-
-      sceneRef.current.fog.color.set(fogColor)
-
-    }
-
-
-
-    const bgA = new THREE.Color(adjustEnvColor(cur.env.bgColor, theme, scrollProgress))
-
-    const bgB = new THREE.Color(adjustEnvColor(next.env.bgColor, theme, scrollProgress))
-
-    sceneRef.current.background?.copy(bgA.lerp(bgB, t))
+    applyMinimalSceneBackground(sceneRef.current, theme)
 
 
 
@@ -518,6 +513,8 @@ export function RootScene({
     if (!rendererRef.current) return
 
     rendererRef.current.toneMappingExposure = getSceneTheme(theme).exposure
+
+    applyMinimalSceneBackground(sceneRef.current, theme)
 
   }, [theme])
 
@@ -556,14 +553,6 @@ export function RootScene({
             opacity={objectState.plantOpacity}
             theme={theme}
           />
-
-
-
-          <SoilSurface scene={glScene} cameraY={objectState.cameraY} theme={theme} />
-
-
-
-          <SoilStrata scene={glScene} opacity={objectState.strataOpacity} theme={theme} />
 
 
 
@@ -621,20 +610,6 @@ export function RootScene({
 
           />
 
-
-
-          <ProductBottle
-
-            scene={glScene}
-
-            visible={!undergroundActive && objectState.productVisible}
-
-            productIndex={productIndex}
-
-            animate={renderActive}
-
-          />
-
         </>
 
       )}
@@ -647,53 +622,29 @@ export function RootScene({
 
 
 
-function lerpColor(a, b, t) {
+function getMinimalSceneBackground(theme) {
 
-  const colorA = new THREE.Color(a)
-
-  const colorB = new THREE.Color(b)
-
-  return colorA.lerp(colorB, t).getHex()
+  return theme === 'light' ? '#ffffff' : '#000000'
 
 }
 
 
 
-const LIGHT_SKY = new THREE.Color('#dce8df')
+function applyMinimalSceneBackground(scene, theme) {
 
+  if (!scene) return
 
+  if (!scene.background) {
 
-function getLightSkyBlend(scrollProgress) {
+    scene.background = new THREE.Color(getMinimalSceneBackground(theme))
 
-  if (scrollProgress <= 0.18) {
+  } else {
 
-    return 0.28 + ((0.18 - scrollProgress) / 0.18) * 0.22
-
-  }
-
-  if (scrollProgress <= 0.45) {
-
-    return 0.28 - ((scrollProgress - 0.18) / 0.27) * 0.2
+    scene.background.set(getMinimalSceneBackground(theme))
 
   }
 
-  return Math.max(0.06, 0.08 - (scrollProgress - 0.45) * 0.04)
-
-}
-
-
-
-function adjustEnvColor(hex, theme, scrollProgress = 0) {
-
-  if (theme !== 'light') return hex
-
-  const blend = getLightSkyBlend(scrollProgress)
-
-  const color = new THREE.Color(hex)
-
-  color.lerp(LIGHT_SKY, blend)
-
-  return color.getHex()
+  scene.fog = null
 
 }
 
