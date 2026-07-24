@@ -23,7 +23,7 @@
   --color-border-strong: rgba(168, 224, 99, 0.4);
 
   /* Superficies y chrome */
-  --nav-bg:              rgba(10, 42, 26, 0.38);
+  --nav-bg:              rgba(10, 42, 26, 0.94);
   --footer-bg:           rgba(10, 42, 26, 0.42);
   --drawer-bg:           rgba(10, 42, 26, 0.98);
   --dropdown-bg:         rgba(10, 42, 26, 0.98);
@@ -494,8 +494,8 @@ button { font-family: inherit; }
 }
 
 body.webgl-chrome .site-nav {
-  background: rgba(10, 42, 26, 0.22);
-  border-bottom-color: rgba(168, 224, 99, 0.08);
+  background: var(--nav-bg);
+  border-bottom-color: rgba(168, 224, 99, 0.12);
 }
 
 .site-footer {
@@ -2445,6 +2445,14 @@ html.light-mode .about-page__scrim {
   pointer-events: none;
 }
 
+/* Fase Raíces: canvas WebGL visible durante reveal y fase 3 */
+.barrel-wrapper[data-active-slide='2'] .barrel-sticky,
+.barrel-wrapper[data-active-slide='2'] .barrel-blend,
+.barrel-wrapper[data-webgl-reveal='1'] .barrel-sticky,
+.barrel-wrapper[data-webgl-reveal='1'] .barrel-blend {
+  background: transparent;
+}
+
 /* Fullscreen image transitions — diagonal wipe (Corn Revolution style) */
 .barrel-blend {
   position: absolute;
@@ -2453,6 +2461,30 @@ html.light-mode .about-page__scrim {
   overflow: hidden;
   background: #050f08;
   transform-origin: 50% 50%;
+}
+
+.barrel-blend::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 42, 26, 0.68) 0%,
+    rgba(10, 42, 26, 0.32) 44%,
+    rgba(10, 42, 26, 0.78) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.55s ease;
+}
+
+.barrel-wrapper[data-active-slide='0'] .barrel-blend::after {
+  opacity: 1;
+}
+
+.barrel-wrapper[data-active-slide='0'] .barrel-blend__img--outgoing {
+  filter: brightness(0.78);
 }
 
 .barrel-blend--transition {
@@ -2485,7 +2517,6 @@ html.light-mode .about-page__scrim {
 
 .barrel-blend__img--outgoing {
   z-index: 1;
-  /* Sin opacity animation — la imagen A siempre visible detrás */
 }
 
 .barrel-blend__img--solo {
@@ -2739,6 +2770,44 @@ html.light-mode .about-page__scrim {
   text-shadow:
     0 2px 28px rgba(0, 0, 0, 0.72),
     0 0 40px rgba(10, 42, 26, 0.45);
+}
+
+.hero-section--barrel-overlay .hero-badge {
+  color: var(--warm-white);
+  border-color: rgba(250, 250, 247, 0.42);
+  background: rgba(10, 42, 26, 0.38);
+}
+
+.hero-section--barrel-overlay .hero-eyebrow {
+  color: rgba(250, 250, 247, 0.94);
+}
+
+.hero-section--barrel-overlay .hero-cta-primary {
+  border-color: rgba(250, 250, 247, 0.88);
+  color: var(--warm-white);
+}
+
+.hero-section--barrel-overlay .hero-cta-primary:hover {
+  background: var(--warm-white);
+  color: var(--green-dark);
+}
+
+.hero-section--barrel-overlay .hero-cta-secondary {
+  border-color: rgba(250, 250, 247, 0.58);
+  color: rgba(250, 250, 247, 0.9);
+}
+
+.hero-section--barrel-overlay .hero-cta-secondary:hover {
+  border-color: var(--warm-white);
+  color: var(--warm-white);
+}
+
+.hero-section--barrel-overlay .hero-scroll-label {
+  color: rgba(250, 250, 247, 0.88);
+}
+
+.hero-section--barrel-overlay .hero-scroll-line {
+  background: linear-gradient(180deg, transparent, rgba(250, 250, 247, 0.78));
 }
 
 .hero-section--barrel-overlay .hero-inner {

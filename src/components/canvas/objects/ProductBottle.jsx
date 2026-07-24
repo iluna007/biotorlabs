@@ -7,6 +7,7 @@ import {
   PRODUCT_PACK_URLS,
   fitTextureContain,
 } from '../../../utils/productPack3d'
+import { registerSceneTick } from '../../../utils/sceneTick'
 
 const BAG_POSITION = new THREE.Vector3(0, -15.5, 0)
 const PLANE_W = 0.58
@@ -28,9 +29,12 @@ function applyPackTexture(material, texture, planeW, planeH) {
   return tex
 }
 
-export function ProductBottle({ scene, visible = false, productIndex = 0 }) {
+export function ProductBottle({ scene, visible = false, productIndex = 0, animate = true }) {
   const groupRef = useRef(null)
-  const rafIdRef = useRef(null)
+  const animateRef = useRef(animate)
+  const visibleRef = useRef(visible)
+  animateRef.current = animate
+  visibleRef.current = visible
   const texturesRef = useRef([])
   const clonedTexturesRef = useRef([])
   const frontsRef = useRef([])
@@ -143,18 +147,15 @@ export function ProductBottle({ scene, visible = false, productIndex = 0 }) {
       })
       .catch(() => {})
 
-    const rotate = () => {
-      if (groupRef.current) {
-        groupRef.current.rotation.y += 0.004
-        groupRef.current.rotation.z = Math.sin(Date.now() * 0.0008) * 0.03
-      }
-      rafIdRef.current = requestAnimationFrame(rotate)
-    }
-    rotate()
+    const unregisterTick = registerSceneTick(scene, () => {
+      if (!groupRef.current || !animateRef.current || !visibleRef.current) return
+      groupRef.current.rotation.y += 0.004
+      groupRef.current.rotation.z = Math.sin(performance.now() * 0.0008) * 0.03
+    })
 
     return () => {
       cancelled = true
-      cancelAnimationFrame(rafIdRef.current)
+      unregisterTick()
       crossfadeRef.current?.kill()
       scene.remove(group)
       group.traverse((child) => {

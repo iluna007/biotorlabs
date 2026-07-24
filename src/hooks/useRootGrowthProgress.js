@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BARREL_ROOT_START_VH } from '../config/barrelScroll'
+import { createScrollThrottler } from '../utils/scrollThrottle'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const EMIT_MS = 48
 
 /**
  * Progreso 0→1 del crecimiento radicular:
@@ -32,7 +35,8 @@ export function useRootGrowthProgress(enabled = true) {
   useEffect(() => {
     if (!enabled) return undefined
 
-    const update = () => setProgress(computeRootGrowthProgress())
+    const emit = createScrollThrottler(EMIT_MS)
+    const update = () => emit(computeRootGrowthProgress(), setProgress)
 
     update()
 
@@ -61,7 +65,15 @@ export function useRootGrowthProgress(enabled = true) {
 }
 
 /** Mapea crecimiento → progreso de escena bajo tierra (cámara) */
-export { getUndergroundCamera, getRootShaderProgress, deriveUndergroundObjectState } from '../utils/undergroundCamera'
+export {
+  getUndergroundCamera,
+  getRootShaderProgress,
+  deriveUndergroundObjectState,
+  getSurfacePlantCamera,
+  deriveSurfacePlantState,
+  getResultsSectionProgress,
+  applyResultsCameraOrbit,
+} from '../utils/undergroundCamera'
 
 function getScrollY() {
   return ScrollTrigger.getScrollFunc(document.documentElement)()

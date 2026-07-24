@@ -50,3 +50,11 @@ export const PLANT_ANCHOR = {
     suggestedCrop: 'sugarcane_young',
   },
 }
+
+/** @deprecated Campo múltiple desactivado por rendimiento — solo ancla central. */
+export const PLANT_FIELD = [{ x: 0, z: 0, scale: 1, rotationY: 0, tiltX: 0 }]
+export const PLANT_FIELD_MOBILE = PLANT_FIELD
+
+export function getPlantFieldLayout() {
+  return PLANT_FIELD
+}

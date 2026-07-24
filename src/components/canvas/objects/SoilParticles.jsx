@@ -8,7 +8,7 @@ import {
   tweenColorAttribute,
 } from '../../../utils/productPack3d'
 
-const PARTICLE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? 3000 : 8000
+const PARTICLE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? 1200 : 2500
 
 export function SoilParticles({
   scene,
@@ -16,6 +16,7 @@ export function SoilParticles({
   theme = 'dark',
   productIndex = 0,
   activeBias = 0,
+  active = true,
 }) {
   const pointsRef = useRef(null)
   const tweenRef = useRef(null)
@@ -106,22 +107,8 @@ export function SoilParticles({
 
   useEffect(() => {
     if (!pointsRef.current) return
-    let animId
-    const posAttr = pointsRef.current.geometry.attributes.position
-
-    const animate = (time) => {
-      for (let i = 0; i < PARTICLE_COUNT; i += 20) {
-        const i3 = i * 3
-        posAttr.array[i3] += Math.sin(time * 0.0005 + i) * 0.0002
-        posAttr.array[i3 + 2] += Math.cos(time * 0.0004 + i) * 0.0002
-      }
-      posAttr.needsUpdate = true
-      animId = requestAnimationFrame(animate)
-    }
-
-    animId = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animId)
-  }, [])
+    pointsRef.current.visible = active
+  }, [active])
 
   return null
 }

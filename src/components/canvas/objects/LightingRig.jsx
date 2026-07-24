@@ -38,7 +38,7 @@ export function LightingRig({ scene, scrollProgress, ambientIntensity, sunIntens
     const sun = new THREE.DirectionalLight(cfg.sun, 2.2 * cfg.sunMult)
     sun.position.set(5, 10, 5)
     sun.castShadow = true
-    sun.shadow.mapSize.set(2048, 2048)
+    sun.shadow.mapSize.set(1024, 1024)
     rig.add(sun)
     sunRef.current = sun
 

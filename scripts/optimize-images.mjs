@@ -10,6 +10,8 @@ import path from 'node:path'
 const ROOT = path.resolve('public/images')
 
 const SOURCES = {
+  'hero/cana-barrel.webp': { from: 'hero/cana-6.jpg', w: 1920, q: 80 },
+  'hero/brotes-barrel.webp': { from: 'hero/brotes-barrel.jpg', w: 1920, q: 78 },
   'hero/brotes-campo.webp': { from: 'hero/brotes-campo.jpg', w: 1400, q: 82 },
   'products/trichomax-plus.webp': { from: 'products/trichomax-plus.png', w: 800, q: 85 },
   'products/trichomax.webp':      { from: 'products/trichomax.png',      w: 800, q: 85 },

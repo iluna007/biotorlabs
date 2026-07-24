@@ -1,199 +1,240 @@
-// src/components/canvas/objects/PlantAboveGround.jsx
-// VERSIÓN ACTUALIZADA — usa PLANT_ANCHOR como fuente de verdad
-// Incluye helper visual de bounding box (solo en desarrollo)
+// Planta única en el ancla — GLB solo cuando la escena WebGL está activa.
 
 import { useRef, useLayoutEffect } from 'react'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { PLANT_ANCHOR } from '../../../config/plantAnchor'
 import { getSceneTheme } from '../../../config/sceneTheme'
 
-// ── PARA REEMPLAZAR CON TU MODELO DE RHINO ────────────────────────────────
-// 1. Exporta desde Rhino como plant_trichomax.glb (ver plant_anchor.json)
-// 2. Coloca en /public/models/plant_trichomax.glb
-// 3. Descomenta el bloque GLTFLoader y comenta el bloque MAQUETA
-// import { GLTFLoader }  from 'three/examples/jsm/loaders/GLTFLoader.js'
-// ──────────────────────────────────────────────────────────────────────────
+const GLB_PATH = '/models/plant_trichomax.glb'
+const MAQUETA_PREFIX = 'Maqueta_'
 
-const DEV_MODE = import.meta.env.DEV  // true en desarrollo, false en build
+function fitModelToAnchor(model) {
+  const box = new THREE.Box3().setFromObject(model)
+  let size = box.getSize(new THREE.Vector3())
+
+  if (size.y > 20) {
+    model.scale.setScalar(0.001)
+    box.setFromObject(model)
+    size = box.getSize(new THREE.Vector3())
+  }
+
+  const targetHeight = PLANT_ANCHOR.boundingBox.height
+  const uniformScale = targetHeight / Math.max(size.y, 0.001)
+  model.scale.multiplyScalar(uniformScale)
+
+  box.setFromObject(model)
+  const center = box.getCenter(new THREE.Vector3())
+  model.position.x -= center.x
+  model.position.z -= center.z
+  model.position.y -= box.min.y
+}
+
+function prepareModelMaterials(model) {
+  model.traverse((child) => {
+    if (!child.isMesh) return
+    child.castShadow = true
+    child.receiveShadow = true
+    child.frustumCulled = true
+
+    const materials = Array.isArray(child.material) ? child.material : [child.material]
+    materials.forEach((mat, index) => {
+      if (!mat) {
+        const fallback = new THREE.MeshStandardMaterial({
+          color: '#4a7c2f',
+          roughness: 0.75,
+          metalness: 0.05,
+          side: THREE.DoubleSide,
+        })
+        if (Array.isArray(child.material)) child.material[index] = fallback
+        else child.material = fallback
+        return
+      }
+
+      mat.side = THREE.DoubleSide
+      if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace
+      if (mat.emissiveMap) mat.emissiveMap.colorSpace = THREE.SRGBColorSpace
+      mat.needsUpdate = true
+    })
+  })
+}
+
+function buildMaqueta() {
+  const group = new THREE.Group()
+  group.name = `${MAQUETA_PREFIX}Plant`
+
+  const stemMat = new THREE.MeshStandardMaterial({ color: '#3a6b1a', roughness: 0.8 })
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.10, 2.4, 6), stemMat)
+  stem.name = `${MAQUETA_PREFIX}Stem_Main`
+  stem.position.y = 1.2
+  group.add(stem)
+
+  for (let i = 0; i < 4; i++) {
+    const node = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.075, 0.075, 0.06, 8),
+      new THREE.MeshStandardMaterial({ color: '#5a3d15', roughness: 0.9 }),
+    )
+    node.name = `${MAQUETA_PREFIX}Stem_Node_${i}`
+    node.position.y = 0.4 + i * 0.55
+    group.add(node)
+  }
+
+  const leafPositions = [
+    { y: 1.0, rx: 0.1, ry: 0.0, rz: -0.5, w: 0.12, h: 1.1 },
+    { y: 1.3, rx: 0.2, ry: 1.0, rz: 0.5, w: 0.11, h: 1.0 },
+    { y: 1.6, rx: -0.1, ry: 2.1, rz: -0.4, w: 0.13, h: 0.9 },
+    { y: 1.9, rx: 0.15, ry: 3.2, rz: 0.6, w: 0.10, h: 0.85 },
+    { y: 2.1, rx: -0.2, ry: 4.5, rz: -0.3, w: 0.09, h: 0.7 },
+  ]
+
+  const leafMat = new THREE.MeshStandardMaterial({
+    color: '#4d8a22',
+    roughness: 0.85,
+    side: THREE.DoubleSide,
+  })
+
+  leafPositions.forEach((lp, i) => {
+    const leaf = new THREE.Mesh(new THREE.PlaneGeometry(lp.w, lp.h, 1, 4), leafMat)
+    leaf.name = `${MAQUETA_PREFIX}Leaf_${i}`
+    leaf.position.set(0, lp.y, 0)
+    leaf.rotation.set(lp.rx, lp.ry, lp.rz)
+    group.add(leaf)
+  })
+
+  return group
+}
+
+function removeMaqueta(group) {
+  const toRemove = []
+  group.traverse((child) => {
+    if (child.name?.startsWith(MAQUETA_PREFIX)) toRemove.push(child)
+  })
+  toRemove.forEach((child) => {
+    group.remove(child)
+    if (child.isMesh) {
+      child.geometry?.dispose()
+      if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose())
+      else child.material?.dispose()
+    }
+  })
+}
+
+function applyOpacity(group, opacity) {
+  if (!group) return
+  group.traverse((child) => {
+    if (!child.isMesh || !child.material) return
+    child.visible = opacity > 0.01
+    const materials = Array.isArray(child.material) ? child.material : [child.material]
+    materials.forEach((mat) => {
+      if (!mat) return
+      mat.transparent = opacity < 0.999
+      mat.opacity = opacity < 0.999 ? opacity : 1
+      mat.needsUpdate = true
+    })
+  })
+}
+
+function applyPlantColors(group, themeKey) {
+  const colors = getSceneTheme(themeKey).plant
+  group.traverse((child) => {
+    if (!child.isMesh || !child.material) return
+    const name = child.name.replace(MAQUETA_PREFIX, '')
+    if (name === 'Stem_Main') child.material.color.set(colors.stem)
+    else if (name.startsWith('Stem_Node')) child.material.color.set(colors.node)
+    else if (name.startsWith('Leaf_')) child.material.color.set(colors.leaf)
+  })
+}
+
+function disposeGroup(group) {
+  group.traverse((child) => {
+    if (!child.isMesh) return
+    child.geometry?.dispose()
+    if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose())
+    else child.material?.dispose()
+  })
+}
 
 export function PlantAboveGround({ scene, opacity = 1, theme = 'dark' }) {
   const groupRef = useRef(null)
+  const opacityRef = useRef(opacity)
+  const loadStartedRef = useRef(false)
 
-  const applyPlantColors = (group, themeKey) => {
-    const colors = getSceneTheme(themeKey).plant
-    group.traverse((child) => {
-      if (!child.isMesh || !child.material || child.name === 'PlantBoundingBoxHelper') return
-      if (child.name === 'Stem_Main') child.material.color.set(colors.stem)
-      else if (child.name.startsWith('Stem_Node')) child.material.color.set(colors.node)
-      else if (child.name.startsWith('Leaf_')) child.material.color.set(colors.leaf)
-      else if (child.name === 'DirtDisc') child.material.color.set(colors.dirt)
-    })
-  }
+  opacityRef.current = opacity
 
   useLayoutEffect(() => {
-    if (!scene) return
-    if (scene.getObjectByName('PlantAboveGround')) {
-      groupRef.current = scene.getObjectByName('PlantAboveGround')
-      return
+    if (!scene) return undefined
+
+    let group = scene.getObjectByName('PlantAboveGround')
+    if (!group) {
+      group = new THREE.Group()
+      group.name = 'PlantAboveGround'
+      group.position.set(
+        PLANT_ANCHOR.position.x,
+        PLANT_ANCHOR.position.y,
+        PLANT_ANCHOR.position.z,
+      )
+      group.add(buildMaqueta())
+      scene.add(group)
     }
 
-    const group = new THREE.Group()
-    group.name = 'PlantAboveGround'
-
-    // Aplicar transform desde el anchor
-    group.position.set(
-      PLANT_ANCHOR.position.x,
-      PLANT_ANCHOR.position.y,
-      PLANT_ANCHOR.position.z,
-    )
-
-    // ── BOUNDING BOX HELPER (solo en DEV — te muestra el espacio reservado) ──
-    if (DEV_MODE) {
-      const { width, height, depth } = PLANT_ANCHOR.boundingBox
-      const boxHelper = new THREE.Mesh(
-        new THREE.BoxGeometry(width, height, depth),
-        new THREE.MeshBasicMaterial({
-          color: '#00ff88',
-          wireframe: true,
-          transparent: true,
-          opacity: 0.15,
-        })
-      )
-      boxHelper.name = 'PlantBoundingBoxHelper'
-      boxHelper.position.y = height / 2  // centrar verticalmente sobre el suelo
-      group.add(boxHelper)
-
-      // Punto del pivot (esfera en el origen)
-      const pivotHelper = new THREE.Mesh(
-        new THREE.SphereGeometry(0.05, 8, 8),
-        new THREE.MeshBasicMaterial({ color: '#ff4444' })
-      )
-      pivotHelper.name = 'PlantPivotHelper'
-      group.add(pivotHelper)
-    }
-
-    // ── MAQUETA LOW-POLY (caña de azúcar estilizada) ─────────────────────
-    // Sustituir todo este bloque con GLTFLoader cuando tengas el modelo
-    // La maqueta intenta aproximar visualmente una caña de azúcar joven
-
-    const stemMat = new THREE.MeshStandardMaterial({
-      color: '#3a6b1a',
-      roughness: 0.8,
-      transparent: true,
-      opacity: 1.0,
-    })
-
-    // Tallo principal (caña) — cilindro hexagonal
-    const stem = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055, 0.10, 2.4, 6),
-      stemMat
-    )
-    stem.name = 'Stem_Main'
-    stem.position.y = 1.2
-    group.add(stem)
-
-    // Nodos de la caña (anillos característicos de la caña de azúcar)
-    for (let i = 0; i < 4; i++) {
-      const node = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.075, 0.075, 0.06, 8),
-        new THREE.MeshStandardMaterial({ color: '#5a3d15', roughness: 0.9, transparent: true, opacity: 1 })
-      )
-      node.name = `Stem_Node_${i}`
-      node.position.y = 0.4 + i * 0.55
-      group.add(node)
-    }
-
-    // Hojas largas y estrechas (características de caña/pasto)
-    const leafPositions = [
-      { y: 1.0, rx: 0.1, ry: 0.0,  rz: -0.5, w: 0.12, h: 1.1 },
-      { y: 1.3, rx: 0.2, ry: 1.0,  rz:  0.5, w: 0.11, h: 1.0 },
-      { y: 1.6, rx: -0.1, ry: 2.1, rz: -0.4, w: 0.13, h: 0.9 },
-      { y: 1.9, rx: 0.15, ry: 3.2, rz:  0.6, w: 0.10, h: 0.85 },
-      { y: 2.1, rx: -0.2, ry: 4.5, rz: -0.3, w: 0.09, h: 0.7 },
-    ]
-
-    const leafMat = new THREE.MeshStandardMaterial({
-      color: '#4d8a22',
-      roughness: 0.85,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 1.0,
-    })
-
-    leafPositions.forEach((lp, i) => {
-      const leaf = new THREE.Mesh(
-        new THREE.PlaneGeometry(lp.w, lp.h, 1, 4),
-        leafMat
-      )
-      leaf.name = `Leaf_${i}`
-      leaf.position.set(0, lp.y, 0)
-      leaf.rotation.set(lp.rx, lp.ry, lp.rz)
-      group.add(leaf)
-    })
-
-    // Disco de tierra (base)
-    const dirtDisc = new THREE.Mesh(
-      new THREE.CircleGeometry(0.7, 8),
-      new THREE.MeshStandardMaterial({ color: '#1f1208', roughness: 0.99 })
-    )
-    dirtDisc.name = 'DirtDisc'
-    dirtDisc.rotation.x = -Math.PI / 2
-    dirtDisc.position.y = 0.01
-    group.add(dirtDisc)
-    // ── FIN MAQUETA ────────────────────────────────────────────────────────
-
-    // ── GLTFLoader (descomentar cuando tengas el .glb de Rhino) ───────────
-    /*
-    import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-    const loader = new GLTFLoader()
-    loader.load('/models/plant_trichomax.glb', (gltf) => {
-      const model = gltf.scene
-      model.name = 'Plant_GLB'
-      // Si modelaste en mm en Rhino:
-      // model.scale.set(0.001, 0.001, 0.001)
-      // Si modelaste en metros: no necesitas escalar
-      group.add(model)
-      // Remover la maqueta si ya estaba:
-      const maqueta = group.getObjectByName('Stem_Main')
-      if (maqueta) group.remove(maqueta)
-    }, undefined, (err) => console.error('Plant GLB load error:', err))
-    */
-    // ──────────────────────────────────────────────────────────────────────
-
-    scene.add(group)
     groupRef.current = group
+    applyOpacity(group, opacityRef.current)
     applyPlantColors(group, theme)
 
-    return () => {
-      scene.remove(group)
-      group.traverse((child) => {
-        if (child.isMesh) {
-          child.geometry.dispose()
-          if (Array.isArray(child.material)) {
-            child.material.forEach((m) => m.dispose())
-          } else {
-            child.material.dispose()
-          }
-        }
-      })
-    }
-  }, [scene])
+    if (loadStartedRef.current) return undefined
 
-  // Control de opacidad
+    loadStartedRef.current = true
+    let cancelled = false
+    const loader = new GLTFLoader()
+
+    loader.load(
+      GLB_PATH,
+      (gltf) => {
+        if (cancelled || !groupRef.current) return
+
+        const model = gltf.scene
+        model.name = 'MiscanthusModel'
+        fitModelToAnchor(model)
+        prepareModelMaterials(model)
+
+        removeMaqueta(groupRef.current)
+        groupRef.current.add(model)
+        applyOpacity(groupRef.current, opacityRef.current)
+        applyPlantColors(groupRef.current, theme)
+      },
+      undefined,
+      (error) => {
+        if (cancelled) return
+        console.warn('No se pudo cargar plant_trichomax.glb, se mantiene la maqueta:', error)
+      },
+    )
+
+    return () => {
+      cancelled = true
+    }
+  }, [scene, theme])
+
   useLayoutEffect(() => {
-    if (!groupRef.current) return
-    groupRef.current.traverse((child) => {
-      if (child.isMesh && child.material && child.name !== 'PlantBoundingBoxHelper') {
-        child.material.opacity = opacity
-        child.visible = opacity > 0.01
-      }
-    })
+    applyOpacity(groupRef.current, opacity)
   }, [opacity])
 
   useLayoutEffect(() => {
     if (!groupRef.current) return
     applyPlantColors(groupRef.current, theme)
   }, [theme])
+
+  useLayoutEffect(() => {
+    return () => {
+      if (!scene) return
+      const group = scene.getObjectByName('PlantAboveGround')
+      if (group) {
+        scene.remove(group)
+        disposeGroup(group)
+        groupRef.current = null
+        loadStartedRef.current = false
+      }
+    }
+  }, [scene])
 
   return null
 }

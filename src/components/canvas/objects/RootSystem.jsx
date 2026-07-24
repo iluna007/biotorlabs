@@ -1,20 +1,40 @@
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
 import { generateRootSystem, rootsToCurves } from '../../../utils/rootGenerator'
-import { getSceneTheme, applyRootColors } from '../../../config/sceneTheme'
+import { applyRootColors } from '../../../config/sceneTheme'
+import { applyRootGrowthToMeshes } from '../../../utils/rootGrowthMesh'
+import { registerSceneTick } from '../../../utils/sceneTick'
+
+function disposeRootGroup(group) {
+  group.traverse((child) => {
+    if (child.isMesh) child.geometry?.dispose()
+  })
+}
+
+function applyGrowth(meshes, material, progress) {
+  applyRootGrowthToMeshes(meshes, progress)
+  if (material?.uniforms?.uGrowthProgress) {
+    material.uniforms.uGrowthProgress.value = progress
+  }
+}
 
 export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
   const meshesRef = useRef([])
   const materialRef = useRef(null)
-  const clockRef = useRef(new THREE.Clock())
+  const growthRef = useRef(growthProgress)
+
+  growthRef.current = growthProgress
 
   useLayoutEffect(() => {
-    if (!scene) return
-    if (scene.getObjectByName('RootSystem')) {
-      materialRef.current = scene.children.find(c => c.name === 'RootSystem')?.material ?? null
-      return
+    if (!scene) return undefined
+
+    const existing = scene.getObjectByName('RootSystem')
+    if (existing) {
+      disposeRootGroup(existing)
+      scene.remove(existing)
     }
-    if (materialRef.current) return
+    meshesRef.current = []
+    materialRef.current = null
 
     const vertexShader = `
       uniform float uTime;
@@ -24,14 +44,13 @@ export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
 
       void main() {
         vProgress = uv.x;
-        float alive = step(vProgress, uGrowthProgress);
-        float tipGlow = smoothstep(uGrowthProgress - 0.06, uGrowthProgress, vProgress);
+        float tipGlow = smoothstep(uGrowthProgress - 0.08, uGrowthProgress, vProgress);
         float pulse = sin(uTime * 2.5 + vProgress * 8.0) * 0.5 + 0.5;
         vGlow = tipGlow * pulse;
 
         vec3 pos = position;
-        float wave = sin(uTime * 0.7 + pos.y * 3.0) * 0.008 * alive;
-        pos.x += wave;
+        float wave = sin(uTime * 0.7 + pos.y * 3.0) * 0.008;
+        pos.x += wave * step(vProgress, uGrowthProgress);
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
@@ -46,21 +65,22 @@ export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
       varying float vGlow;
 
       void main() {
-        if (vProgress > uGrowthProgress + 0.005) discard;
-        float t = clamp(vProgress / max(uGrowthProgress, 0.01), 0.0, 1.0);
+        if (vProgress > uGrowthProgress + 0.015) discard;
+
+        float t = clamp(vProgress / max(uGrowthProgress, 0.06), 0.0, 1.0);
         vec3 base = mix(uColorBase, uColorTip, t);
         vec3 color = mix(base, uColorGlow, vGlow * 0.7);
-        float alpha = 1.0 - smoothstep(uGrowthProgress - 0.015, uGrowthProgress, vProgress) * 0.4;
-        gl_FragColor = vec4(color, alpha);
+        gl_FragColor = vec4(color, 1.0);
       }
     `
 
-    const rootCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 8 : 14
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    const rootCount = isMobile ? 5 : 8
     const rootData = generateRootSystem({
       rootCount,
-      maxDepth: 4,
-      maxLength: 9,
-      spreadAngle: 0.65,
+      maxDepth: 3,
+      maxLength: 7,
+      spreadAngle: 0.6,
       seed: 137,
     })
 
@@ -71,52 +91,58 @@ export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
       fragmentShader,
       uniforms: {
         uTime: { value: 0 },
-        uGrowthProgress: { value: 0 },
+        uGrowthProgress: { value: growthRef.current },
         uColorBase: { value: new THREE.Color() },
         uColorTip: { value: new THREE.Color() },
         uColorGlow: { value: new THREE.Color() },
       },
-      transparent: true,
+      transparent: false,
+      depthWrite: true,
       side: THREE.DoubleSide,
     })
 
     applyRootColors(sharedMaterial.uniforms, theme)
-
     materialRef.current = sharedMaterial
 
-    curves.forEach(({ geometry }) => {
+    const rootGroup = new THREE.Group()
+    rootGroup.name = 'RootSystem'
+    rootGroup.frustumCulled = false
+
+    curves.forEach(({ geometry }, index) => {
+      geometry.userData.totalIndices = geometry.index?.count ?? 0
       const mesh = new THREE.Mesh(geometry, sharedMaterial)
-      mesh.name = 'RootSystem'
-      mesh.position.y = -1
-      mesh.castShadow = true
-      scene.add(mesh)
+      mesh.name = `RootSystem_${index}`
+      mesh.frustumCulled = true
+      mesh.castShadow = false
+      mesh.renderOrder = 2
+      rootGroup.add(mesh)
       meshesRef.current.push(mesh)
     })
 
-    let animId
-    const animate = () => {
-      if (materialRef.current) {
-        materialRef.current.uniforms.uTime.value = clockRef.current.getElapsedTime()
+    scene.add(rootGroup)
+    applyGrowth(meshesRef.current, sharedMaterial, growthRef.current)
+
+    const unregisterTick = registerSceneTick(scene, (elapsed) => {
+      if (materialRef.current?.uniforms?.uTime) {
+        materialRef.current.uniforms.uTime.value = elapsed
       }
-      animId = requestAnimationFrame(animate)
-    }
-    animate()
+    })
 
     return () => {
-      cancelAnimationFrame(animId)
-      meshesRef.current.forEach((m) => {
-        scene.remove(m)
-        m.geometry.dispose()
-      })
+      unregisterTick()
+      const group = scene.getObjectByName('RootSystem')
+      if (group) {
+        disposeRootGroup(group)
+        scene.remove(group)
+      }
       sharedMaterial.dispose()
       meshesRef.current = []
       materialRef.current = null
     }
   }, [scene])
 
-  useEffect(() => {
-    if (!materialRef.current) return
-    materialRef.current.uniforms.uGrowthProgress.value = growthProgress
+  useLayoutEffect(() => {
+    applyGrowth(meshesRef.current, materialRef.current, growthProgress)
   }, [growthProgress])
 
   useEffect(() => {

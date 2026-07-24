@@ -8,8 +8,9 @@ import {
   tweenColorAttribute,
   tweenMyceliumColors,
 } from '../../../utils/productPack3d'
+import { registerSceneTick } from '../../../utils/sceneTick'
 
-const PARTICLE_COUNT = 1200
+const PARTICLE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? 500 : 700
 
 export function MyceliumParticles({
   scene,
@@ -20,7 +21,6 @@ export function MyceliumParticles({
   activeBias = 0,
 }) {
   const pointsRef = useRef(null)
-  const clockRef = useRef(new THREE.Clock())
   const tweenRef = useRef(null)
   const colorTweenRef = useRef(null)
   const lastKeyRef = useRef('')
@@ -142,17 +142,12 @@ export function MyceliumParticles({
     scene.add(points)
     pointsRef.current = points
 
-    let rafId
-    const animate = () => {
-      rafId = requestAnimationFrame(animate)
-      if (mat.uniforms) {
-        mat.uniforms.uTime.value = clockRef.current.getElapsedTime()
-      }
-    }
-    animate()
+    const unregisterTick = registerSceneTick(scene, (elapsed) => {
+      if (mat.uniforms?.uTime) mat.uniforms.uTime.value = elapsed
+    })
 
     return () => {
-      cancelAnimationFrame(rafId)
+      unregisterTick()
       tweenRef.current?.kill()
       colorTweenRef.current?.kill()
       scene.remove(points)

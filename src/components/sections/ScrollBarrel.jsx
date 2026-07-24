@@ -13,7 +13,7 @@ import {
   getDiagonalWipeClips,
   getWebglRevealProgress,
   getBarrelRotationFromProgress,
-  getExplorationParallaxScale,
+  getExplorationParallax,
 } from '../../config/barrelScroll'
 import { Hero } from './Hero'
 import { StatsBar } from './StatsBar'
@@ -50,12 +50,18 @@ const TOTAL_VH = BARREL_TOTAL_VH
 const MAX_ROTATION = 360 - FACE_DEG
 const CONTENT_DELAY = BARREL_CONTENT_DELAY
 
-function imgTransform(scale) {
-  return `translate(-50%, -50%) scale(${scale.toFixed(4)})`
+function imgPanTransform(panY = 0) {
+  return `translate(-50%, calc(-50% + ${panY.toFixed(2)}%)) scale(1)`
 }
 
-function getVisualSlide(rotation) {
-  if (rotation < FACE_DEG * 0.55) return 0
+function imgTransform(scale, panY = 0) {
+  return `translate(-50%, calc(-50% + ${panY.toFixed(2)}%)) scale(${scale.toFixed(4)})`
+}
+
+function getVisualSlide(rotation, phaseIndex) {
+  if (phaseIndex <= 0) return 0
+  // Toda la fase 1 (transición + exploración Ciencia) = brotes, sin activar WebGL
+  if (phaseIndex === 1) return 1
   if (rotation < FACE_DEG * 1.55) return 1
   return 2
 }
@@ -72,7 +78,7 @@ function getPhaseState(progress) {
 
     if (progress <= end || i === PHASES.length - 1) {
       const local = Math.max(0, Math.min(1, (progress - start) / (end - start || 1)))
-      const visualSlide = getVisualSlide(rotation)
+      const visualSlide = getVisualSlide(rotation, i)
       const contentVisible = i === 0 || local >= CONTENT_DELAY
       const contentSlide = contentVisible ? i : Math.max(0, i - 1)
 
@@ -97,13 +103,26 @@ function getPhaseState(progress) {
   }
 }
 
-function updateBlendVisuals(rotation, refs, parallaxScale = 1) {
+function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }) {
   const { root, imgA, imgB, wipeLayer } = refs
   if (!root || !imgA || !imgB || !wipeLayer) return
 
   const blend = getBarrelImageBlend(rotation, N)
 
+  const showCana = () => {
+    imgA.style.visibility = 'visible'
+    imgA.style.opacity = '1'
+    root.style.background = ''
+  }
+
+  const hideCana = () => {
+    imgA.style.visibility = 'hidden'
+    imgA.style.opacity = '0'
+  }
+
   if (blend.mode === 'single' && blend.slide >= 2) {
+    hideCana()
+    root.style.background = 'transparent'
     root.style.visibility = 'hidden'
     imgA.style.clipPath = 'none'
     wipeLayer.style.display = 'none'
@@ -113,16 +132,19 @@ function updateBlendVisuals(rotation, refs, parallaxScale = 1) {
   root.style.visibility = 'visible'
 
   if (blend.mode === 'single' && blend.slide === 0) {
+    showCana()
     imgA.style.clipPath = 'none'
-    imgA.style.transform = imgTransform(parallaxScale)
+    imgA.style.transform = imgPanTransform(parallax.panY)
     wipeLayer.style.display = 'none'
     return
   }
 
   if (blend.mode === 'single' && blend.slide === 1) {
+    hideCana()
+    root.style.background = ''
     imgA.style.clipPath = 'none'
-    imgA.style.transform = imgTransform(1.05)
-    imgB.style.transform = imgTransform(parallaxScale)
+    imgA.style.transform = imgPanTransform(0)
+    imgB.style.transform = imgPanTransform(parallax.panY)
     wipeLayer.style.display = 'block'
     wipeLayer.style.clipPath = getDiagonalWipeClips(1).incoming
     return
@@ -132,23 +154,25 @@ function updateBlendVisuals(rotation, refs, parallaxScale = 1) {
   const toWebgl = SLIDES[blend.to]?.type === 'webgl'
 
   if (toWebgl) {
-    const scale = 1 + clips.raw * 0.08
-    imgB.style.transform = imgTransform(scale)
+    // Brotes se retiran con wipe; detrás debe verse WebGL, no la caña (imgA)
+    hideCana()
+    root.style.background = 'transparent'
+    imgB.style.transform = imgTransform(1.0 + clips.raw * 0.08, 0)
     wipeLayer.style.display = 'block'
     wipeLayer.style.clipPath = clips.outgoingWebgl
-    imgA.style.clipPath = 'none'
-    imgA.style.transform = imgTransform(1.0)
     return
   }
 
+  // Transición caña → brotes (wipe diagonal, sin zoom — solo pan vertical)
+  showCana()
   imgA.style.clipPath = 'none'
-  imgA.style.transform = imgTransform(1.05)
-  imgB.style.transform = imgTransform(1.05)
+  imgA.style.transform = imgPanTransform(parallax.panY)
+  imgB.style.transform = imgPanTransform(0)
   wipeLayer.style.display = 'block'
   wipeLayer.style.clipPath = clips.incoming
 }
 
-export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
+export function ScrollBarrel({ onSlideChange, onWebglReveal, onBarrelPhaseUpdate }) {
   const wrapperRef = useRef(null)
   const barrelRef = useRef(null)
   const blendRef = useRef(null)
@@ -224,14 +248,28 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
       wrapper.dataset.activeSlide = String(state.visualSlide)
       wrapper.dataset.contentSlide = String(state.contentSlide)
 
-      const parallaxScale = getExplorationParallaxScale(
+      const parallax = getExplorationParallax(
         state.phaseIndex,
         state.local,
         CONTENT_DELAY,
       )
 
-      updateBlendVisuals(state.rotation, blendRefs, parallaxScale)
+      updateBlendVisuals(state.rotation, blendRefs, parallax)
+
+      const blend = getBarrelImageBlend(state.rotation, N)
+      const webglRevealActive =
+        state.visualSlide >= 2 ||
+        (blend.mode === 'blend' && SLIDES[blend.to]?.type === 'webgl')
+      wrapper.dataset.webglReveal = webglRevealActive ? '1' : '0'
+
       onWebglReveal?.(getWebglRevealProgress(state.rotation, N))
+      onBarrelPhaseUpdate?.({
+        phaseIndex: state.phaseIndex,
+        local: state.local,
+        contentVisible: state.contentVisible,
+        contentSlide: state.contentSlide,
+        inBarrel: self.isActive,
+      })
       syncUiState(state)
 
       if (phase1InnerRef.current && phase1ScrollRef.current && state.contentVisible) {
@@ -253,6 +291,9 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
       end: 'bottom bottom',
       scrub: 0.05,
       onUpdate: applyBarrelState,
+      onLeave: () => {
+        onBarrelPhaseUpdate?.((prev) => ({ ...prev, inBarrel: false }))
+      },
     })
 
     applyBarrelState(trigger)
@@ -268,7 +309,7 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
       window.removeEventListener('resize', onResize)
       trigger.kill()
     }
-  }, [onSlideChange, onWebglReveal, updateDots, syncRadius])
+  }, [onSlideChange, onWebglReveal, onBarrelPhaseUpdate, updateDots, syncRadius])
 
   const showPhase = (index) => {
     if (index === 0) {
@@ -297,8 +338,9 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
             src={SLIDES[0].src}
             alt={SLIDES[0].label}
             className="barrel-blend__img barrel-blend__img--field barrel-blend__img--outgoing"
-            style={{ transform: imgTransform(1) }}
+            style={{ transform: imgPanTransform(0) }}
             loading="eager"
+            fetchPriority="high"
           />
           <div ref={wipeRef} className="barrel-blend__wipe-layer">
             <img
@@ -306,7 +348,7 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
               src={SLIDES[1].src}
               alt={SLIDES[1].label}
               className="barrel-blend__img barrel-blend__img--soil barrel-blend__img--incoming"
-              style={{ transform: imgTransform(1) }}
+              style={{ transform: imgPanTransform(0) }}
               loading="eager"
             />
           </div>

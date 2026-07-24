@@ -8,7 +8,7 @@ export const BARREL_TOTAL_VH = BARREL_PHASE_VH.reduce((sum, h) => sum + h, 0)
 
 /**
  * Fracción de cada fase dedicada a la transición de imagen.
- * El resto (1 - BARREL_CONTENT_DELAY) es exploración con parallax zoom.
+ * El resto (1 - BARREL_CONTENT_DELAY) es exploración con parallax vertical.
  */
 export const BARREL_CONTENT_DELAY = 0.20
 
@@ -90,28 +90,25 @@ export function getBarrelRotationFromProgress(progress, faceCount = 3, contentDe
   const p = Math.max(0, Math.min(1, progress))
 
   const phase0End = BARREL_PHASE_VH[0] / total
-  if (p <= phase0End) return 0
-
   const trans1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1] * contentDelay) / total
-  if (p <= trans1End) {
-    return ((p - phase0End) / (trans1End - phase0End)) * faceDeg
-  }
-
   const phase1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1]) / total
-  if (p <= phase1End) return faceDeg
-
   const trans2End = phase1End + (BARREL_PHASE_VH[2] * contentDelay) / total
-  if (p <= trans2End) {
-    return faceDeg + ((p - phase1End) / (trans2End - phase1End)) * faceDeg
-  }
 
+  if (p <= phase0End) return 0
+  if (p <= trans1End) return ((p - phase0End) / (trans1End - phase0End)) * faceDeg
+  if (p <= phase1End) return faceDeg
+  if (p <= trans2End) return faceDeg + ((p - phase1End) / (trans2End - phase1End)) * faceDeg
   return maxRot
 }
 
-export function getExplorationParallaxScale(phaseIndex, local, contentDelay = BARREL_CONTENT_DELAY) {
-  if (phaseIndex <= 0) {
-    return 1 + Math.max(0, local) * 0.04
-  }
+/**
+ * Parallax de exploración: solo desplazamiento vertical (sin zoom).
+ * panY = 0 → centrada; panY = -7 → sube 7% con el scroll.
+ */
+export function getExplorationParallax(phaseIndex, local, contentDelay = BARREL_CONTENT_DELAY) {
   const postT = Math.max(0, (local - contentDelay) / (1 - contentDelay))
-  return 1 + postT * 0.10
+  return {
+    scale: 1.0,
+    panY: -postT * 7,
+  }
 }

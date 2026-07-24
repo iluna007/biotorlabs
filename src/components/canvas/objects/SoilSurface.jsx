@@ -2,6 +2,7 @@ import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { getSceneTheme } from '../../../config/sceneTheme'
+import { registerSceneTick } from '../../../utils/sceneTick'
 
 export function SoilSurface({ scene, cameraY = 2, theme = 'dark' }) {
   const meshRef = useRef(null)
@@ -110,18 +111,14 @@ export function SoilSurface({ scene, cameraY = 2, theme = 'dark' }) {
     scene.add(rim)
     rimRef.current = rim
 
-    let rafId
-    const clock = new THREE.Clock()
-    const animate = () => {
-      rafId = requestAnimationFrame(animate)
-      if (mesh.material.uniforms) {
-        mesh.material.uniforms.uTime.value = clock.getElapsedTime()
+    const unregisterTick = registerSceneTick(scene, (elapsed) => {
+      if (mesh.material.uniforms?.uTime) {
+        mesh.material.uniforms.uTime.value = elapsed
       }
-    }
-    animate()
+    })
 
     return () => {
-      cancelAnimationFrame(rafId)
+      unregisterTick()
       scene.remove(mesh)
       scene.remove(rim)
       geo.dispose()

@@ -11,6 +11,7 @@ import { LoadingScreen } from './components/ui/LoadingScreen'
 import { Navbar } from './components/ui/Navbar'
 import { Footer } from './components/ui/Footer'
 import { ScrollBarrel } from './components/sections/ScrollBarrel'
+import { getBarrelPhase2Explore } from './utils/barrelPhase2'
 import { WhyBiotor } from './components/sections/WhyBiotor'
 import { Results } from './components/sections/Results'
 import { Testimonials } from './components/sections/Testimonials'
@@ -33,14 +34,25 @@ export default function App() {
   const [loaded, setLoaded] = useState(hasSeenIntro)
   const [activeSlide, setActiveSlide] = useState(0)
   const [webglReveal, setWebglReveal] = useState(0)
+  const [barrelPhase, setBarrelPhase] = useState({
+    phaseIndex: 0,
+    local: 0,
+    contentVisible: true,
+    contentSlide: 0,
+    inBarrel: false,
+  })
   const location = useLocation()
   const { theme } = useSitePreferences()
   useLenis(loaded)
-  const { progress } = useScrollProgress()
+  const { progress } = useScrollProgress(loaded)
   const rootGrowthProgress = useRootGrowthProgress(loaded)
 
   const webglVisible = activeSlide >= 2 || rootGrowthProgress > 0.01 || webglReveal > 0.02
-  const webglOpacity = Math.min(1, Math.max(webglReveal, activeSlide >= 2 ? 1 : 0, rootGrowthProgress > 0.02 ? 1 : 0))
+  const webglOpacity = Math.min(
+    1,
+    Math.max(webglReveal, activeSlide >= 2 ? 1 : 0, rootGrowthProgress > 0.02 ? 1 : 0),
+  )
+  const barrelPhase2Progress = getBarrelPhase2Explore(barrelPhase)
 
   useEffect(() => {
     document.body.classList.toggle('webgl-chrome', webglVisible)
@@ -77,6 +89,7 @@ export default function App() {
           scrollProgress={progress}
           rootGrowthProgress={rootGrowthProgress}
           undergroundActive={webglVisible}
+          barrelPhase2Progress={barrelPhase2Progress}
           theme={theme}
           style={{
             opacity: webglVisible ? webglOpacity : 0,
@@ -93,6 +106,7 @@ export default function App() {
           <ScrollBarrel
             onSlideChange={setActiveSlide}
             onWebglReveal={setWebglReveal}
+            onBarrelPhaseUpdate={setBarrelPhase}
           />
         )}
 
