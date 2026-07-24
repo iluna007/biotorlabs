@@ -4,45 +4,74 @@ import { useContent } from '../../context/SitePreferencesContext'
 import { ASSETS } from '../../config/assets'
 import { SocialLinks } from '../ui/SocialLinks'
 
-export function Hero() {
+export function Hero({ variant = 'default' }) {
   const { hero, ui } = useContent()
+  const isBarrelOverlay = variant === 'barrel-overlay'
   const titleRef = useRef(null)
   const sublinesRef = useRef(null)
   const socialRef = useRef(null)
   const scrollHintRef = useRef(null)
 
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.6 })
-    tl.fromTo(titleRef.current,
-      { opacity: 0, y: 60, filter: 'blur(10px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'power3.out' },
-    )
-    .fromTo(sublinesRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' },
-      '-=0.5',
-    )
-    .fromTo(socialRef.current,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
-      '-=0.4',
-    )
-    .fromTo(scrollHintRef.current,
-      { opacity: 0 }, { opacity: 0.7, duration: 0.8 }, '-=0.3',
-    )
+    const targets = [
+      titleRef.current,
+      sublinesRef.current,
+      socialRef.current,
+      scrollHintRef.current,
+    ].filter(Boolean)
 
-    gsap.to(scrollHintRef.current, {
-      y: 8, repeat: -1, yoyo: true, duration: 1.4,
-      ease: 'power1.inOut', delay: 2.5,
+    if (!targets.length) return undefined
+
+    if (isBarrelOverlay) {
+      gsap.set(targets, { opacity: 1, y: 0, filter: 'none' })
+      if (scrollHintRef.current) {
+        gsap.to(scrollHintRef.current, {
+          y: 8,
+          repeat: -1,
+          yoyo: true,
+          duration: 1.4,
+          ease: 'power1.inOut',
+        })
+      }
+      return undefined
+    }
+
+    const tl = gsap.timeline({ delay: 0.4 })
+    tl.from(titleRef.current, {
+      opacity: 0, y: 48, filter: 'blur(8px)',
+      duration: 1.1, ease: 'power3.out',
     })
-  }, [])
+    .from(sublinesRef.current, {
+      opacity: 0, y: 16, duration: 0.65, ease: 'power2.out',
+    }, '-=0.55')
+    .from(socialRef.current, {
+      opacity: 0, y: 24, duration: 0.85, ease: 'power2.out',
+    }, '-=0.4')
+    .from(scrollHintRef.current, {
+      opacity: 0, duration: 0.7,
+    }, '-=0.35')
+
+    if (scrollHintRef.current) {
+      gsap.to(scrollHintRef.current, {
+        y: 8, repeat: -1, yoyo: true, duration: 1.4,
+        ease: 'power1.inOut', delay: 2,
+      })
+    }
+
+    return () => {
+      tl.kill()
+    }
+  }, [isBarrelOverlay])
 
   return (
-    <section id="hero" className="section hero-section" style={{
-      height: '120vh', flexDirection: 'column',
-      justifyContent: 'center', padding: '0 var(--pad-x)',
-      position: 'relative',
-    }}>
+    <section
+      className={`section hero-section${isBarrelOverlay ? ' hero-section--barrel-overlay' : ''}`}
+      style={isBarrelOverlay ? undefined : {
+        height: '120vh', flexDirection: 'column',
+        justifyContent: 'center', padding: '0 var(--pad-x)',
+        position: 'relative',
+      }}
+    >
       <div className="hero-inner">
         <div style={{ maxWidth: '680px', flex: '1 1 340px' }}>
           <h1 ref={titleRef}>
@@ -73,17 +102,15 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="hero-visual" aria-hidden="true">
-          <img src={ASSETS.hero.brotes} alt="" loading="eager" />
-          <div className="hero-visual__fade" />
-        </div>
+        {!isBarrelOverlay && (
+          <div className="hero-visual" aria-hidden="true">
+            <img src={ASSETS.hero.brotes} alt="" loading="eager" />
+            <div className="hero-visual__fade" />
+          </div>
+        )}
       </div>
 
-      <div ref={scrollHintRef} style={{
-        position: 'absolute', bottom: '3rem', left: '50%',
-        transform: 'translateX(-50%)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
-      }}>
+      <div ref={scrollHintRef} className="hero-scroll-hint">
         <div className="hero-scroll-line" />
         <p className="hero-scroll-label">{ui.scroll}</p>
       </div>

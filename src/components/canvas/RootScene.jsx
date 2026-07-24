@@ -12,8 +12,19 @@ import { MyceliumParticles } from './objects/MyceliumParticles'
 import { ProductBottle } from './objects/ProductBottle'
 import { LightingRig } from './objects/LightingRig'
 import { useProductVisualState } from '../../hooks/useProductVisualState'
+import {
+  getUndergroundCamera,
+  getRootShaderProgress,
+  deriveUndergroundObjectState,
+} from '../../hooks/useRootGrowthProgress'
 
-export function RootScene({ scrollProgress, theme = 'dark' }) {
+export function RootScene({
+  scrollProgress,
+  rootGrowthProgress = 0,
+  undergroundActive = false,
+  theme = 'dark',
+  style,
+}) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const cameraRef = useRef(null)
@@ -105,7 +116,43 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
   useEffect(() => {
     if (!sceneRef.current || !cameraRef.current) return
 
-    const { cur, next, t } = getCurrentScene(scrollProgress)
+    if (undergroundActive) {
+      const cam = getUndergroundCamera(rootGrowthProgress)
+      const underground = deriveUndergroundObjectState(rootGrowthProgress)
+
+      camTargetPos.current.set(cam.pos.x, cam.pos.y, cam.pos.z)
+      camTargetLookAt.current.set(cam.target.x, cam.target.y, cam.target.z)
+
+      gsap.to(cameraRef.current, {
+        fov: cam.fov,
+        duration: 0.35,
+        onUpdate: () => cameraRef.current?.updateProjectionMatrix(),
+      })
+
+      const fogColor = adjustEnvColor('#060c03', theme, 0.65)
+      if (sceneRef.current.fog) {
+        sceneRef.current.fog.density = 0.012 + (1 - rootGrowthProgress) * 0.02
+        sceneRef.current.fog.color.set(fogColor)
+      }
+      sceneRef.current.background?.set(fogColor)
+
+      setObjectState({
+        plantOpacity: underground.plantOpacity,
+        strataOpacity: underground.strataOpacity,
+        rootProgress: getRootShaderProgress(rootGrowthProgress),
+        myceliumOpacity: underground.myceliumOpacity,
+        productVisible: false,
+        productOpacity: 0,
+        cameraY: underground.cameraY,
+        ambientIntensity: underground.ambientIntensity,
+        sunIntensity: underground.sunIntensity,
+      })
+      return
+    }
+
+    const sceneProgress = scrollProgress
+
+    const { cur, next, t } = getCurrentScene(sceneProgress)
 
     camTargetPos.current.set(
       lerp(cur.camera.pos.x, next.camera.pos.x, t),
@@ -129,19 +176,19 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
     const fogColor = adjustEnvColor(
       lerpColor(cur.env.fogColor, next.env.fogColor, t),
       theme,
-      scrollProgress,
+      sceneProgress,
     )
     if (sceneRef.current.fog) {
       sceneRef.current.fog.density = fogDensity
       sceneRef.current.fog.color.set(fogColor)
     }
 
-    const bgA = new THREE.Color(adjustEnvColor(cur.env.bgColor, theme, scrollProgress))
-    const bgB = new THREE.Color(adjustEnvColor(next.env.bgColor, theme, scrollProgress))
+    const bgA = new THREE.Color(adjustEnvColor(cur.env.bgColor, theme, sceneProgress))
+    const bgB = new THREE.Color(adjustEnvColor(next.env.bgColor, theme, sceneProgress))
     sceneRef.current.background?.copy(bgA.lerp(bgB, t))
 
-    setObjectState(deriveObjectState(scrollProgress))
-  }, [scrollProgress, theme])
+    setObjectState(deriveObjectState(sceneProgress))
+  }, [scrollProgress, rootGrowthProgress, undergroundActive, theme])
 
   useEffect(() => {
     if (!rendererRef.current) return
@@ -150,7 +197,7 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
 
   return (
     <>
-      <canvas id="root-canvas" ref={canvasRef} />
+      <canvas id="root-canvas" ref={canvasRef} style={style} />
 
       {glScene && (
         <>
@@ -176,12 +223,16 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
             activeBias={activeBias}
           />
 
-          <RootSystem scene={glScene} growthProgress={objectState.rootProgress} theme={theme} />
+          <RootSystem
+            scene={glScene}
+            growthProgress={undergroundActive ? getRootShaderProgress(rootGrowthProgress) : rootGrowthProgress}
+            theme={theme}
+          />
 
           <MyceliumParticles
             scene={glScene}
-            opacity={objectState.myceliumOpacity}
-            rootProgress={objectState.rootProgress}
+            opacity={objectState.myceliumOpacity * Math.max(0.2, rootGrowthProgress)}
+            rootProgress={rootGrowthProgress}
             theme={theme}
             productIndex={productIndex}
             activeBias={activeBias}
@@ -189,7 +240,7 @@ export function RootScene({ scrollProgress, theme = 'dark' }) {
 
           <ProductBottle
             scene={glScene}
-            visible={objectState.productVisible}
+            visible={!undergroundActive && objectState.productVisible}
             productIndex={productIndex}
           />
         </>

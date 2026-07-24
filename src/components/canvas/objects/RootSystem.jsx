@@ -1,6 +1,5 @@
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import * as THREE from 'three'
-import { gsap } from 'gsap'
 import { generateRootSystem, rootsToCurves } from '../../../utils/rootGenerator'
 import { getSceneTheme, applyRootColors } from '../../../config/sceneTheme'
 
@@ -60,7 +59,7 @@ export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
     const rootData = generateRootSystem({
       rootCount,
       maxDepth: 4,
-      maxLength: 7,
+      maxLength: 9,
       spreadAngle: 0.65,
       seed: 137,
     })
@@ -117,11 +116,7 @@ export function RootSystem({ scene, growthProgress = 0, theme = 'dark' }) {
 
   useEffect(() => {
     if (!materialRef.current) return
-    gsap.to(materialRef.current.uniforms.uGrowthProgress, {
-      value: growthProgress,
-      duration: 0.6,
-      ease: 'power2.out',
-    })
+    materialRef.current.uniforms.uGrowthProgress.value = growthProgress
   }, [growthProgress])
 
   useEffect(() => {

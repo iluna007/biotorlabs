@@ -20,6 +20,12 @@ export const ASSETS = {
 
   hero: {
     brotes: '/images/hero/brotes-campo.webp',
+    cana: '/images/hero/cana-6.jpg',
+  },
+
+  barrel: {
+    cana: '/images/hero/cana-6.jpg',
+    brotes: '/images/hero/brotes-barrel.jpg',
   },
 
   about: {

@@ -5,12 +5,34 @@ import { useContent } from '../../context/SitePreferencesContext'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export function StatsBar() {
+export function StatsBar({ embedded = false, runAnimation = false }) {
   const ref = useRef(null)
   const { statsBar } = useContent()
+  const animatedRef = useRef(false)
 
   useEffect(() => {
-    if (!ref.current) return
+    if (!ref.current || !runAnimation || animatedRef.current) return
+    animatedRef.current = true
+
+    const nums = ref.current.querySelectorAll('[data-num]')
+    nums.forEach((el, i) => {
+      const target = parseInt(el.dataset.num, 10)
+      const obj = { val: 0 }
+      gsap.to(obj, {
+        val: target,
+        duration: 1.8,
+        ease: 'power2.out',
+        delay: i * 0.12,
+        onUpdate: () => {
+          el.textContent = Math.floor(obj.val)
+        },
+      })
+    })
+  }, [runAnimation, statsBar])
+
+  useEffect(() => {
+    if (embedded || !ref.current) return
+
     const nums = ref.current.querySelectorAll('[data-num]')
     nums.forEach((el, i) => {
       const target = parseInt(el.dataset.num, 10)
@@ -26,7 +48,36 @@ export function StatsBar() {
         },
       })
     })
-  }, [statsBar])
+  }, [embedded, statsBar])
+
+  const inner = (
+    <div className={`stats-grid${embedded ? ' stats-grid--vertical' : ''}`} style={embedded ? undefined : {
+      gap: '0.5rem',
+      width: '100%', maxWidth: '860px',
+      background: 'var(--surface-bg-soft)',
+      backdropFilter: 'blur(20px)',
+      border: '1px solid var(--color-border)',
+      borderRadius: 'var(--radius-md)',
+      padding: '1.5rem 2rem',
+    }}>
+      {statsBar.stats.map(stat => (
+        <div key={stat.label} style={embedded ? undefined : { textAlign: 'center', padding: '0.8rem 0.5rem' }}>
+          <div className="stats-bar__num">
+            <span data-num={stat.num}>0</span>{stat.suffix}
+          </div>
+          <p className="stats-bar__label">{stat.label}</p>
+        </div>
+      ))}
+    </div>
+  )
+
+  if (embedded) {
+    return (
+      <div ref={ref} className="barrel-stats">
+        {inner}
+      </div>
+    )
+  }
 
   return (
     <section
@@ -39,24 +90,7 @@ export function StatsBar() {
         pointerEvents: 'none',
       }}
     >
-      <div className="stats-grid" style={{
-        gap: '0.5rem',
-        width: '100%', maxWidth: '860px',
-        background: 'var(--surface-bg-soft)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-md)',
-        padding: '1.5rem 2rem',
-      }}>
-        {statsBar.stats.map(stat => (
-          <div key={stat.label} style={{ textAlign: 'center', padding: '0.8rem 0.5rem' }}>
-            <div className="stats-bar__num">
-              <span data-num={stat.num}>0</span>{stat.suffix}
-            </div>
-            <p className="stats-bar__label">{stat.label}</p>
-          </div>
-        ))}
-      </div>
+      {inner}
     </section>
   )
 }

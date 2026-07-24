@@ -5,14 +5,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useSitePreferences } from './context/SitePreferencesContext'
 import { useLenis } from './hooks/useLenis'
 import { useScrollProgress } from './hooks/useScrollProgress'
+import { useRootGrowthProgress } from './hooks/useRootGrowthProgress'
 import { RootScene } from './components/canvas/RootScene'
 import { LoadingScreen } from './components/ui/LoadingScreen'
 import { Navbar } from './components/ui/Navbar'
 import { Footer } from './components/ui/Footer'
-import { Hero } from './components/sections/Hero'
-import { StatsBar } from './components/sections/StatsBar'
-import { Science } from './components/sections/Science'
-import { HowItWorks } from './components/sections/HowItWorks'
+import { ScrollBarrel } from './components/sections/ScrollBarrel'
 import { WhyBiotor } from './components/sections/WhyBiotor'
 import { Results } from './components/sections/Results'
 import { Testimonials } from './components/sections/Testimonials'
@@ -33,10 +31,21 @@ function hasSeenIntro() {
 
 export default function App() {
   const [loaded, setLoaded] = useState(hasSeenIntro)
+  const [activeSlide, setActiveSlide] = useState(0)
+  const [webglReveal, setWebglReveal] = useState(0)
   const location = useLocation()
   const { theme } = useSitePreferences()
-  useLenis()
+  useLenis(loaded)
   const { progress } = useScrollProgress()
+  const rootGrowthProgress = useRootGrowthProgress(loaded)
+
+  const webglVisible = activeSlide >= 2 || rootGrowthProgress > 0.01 || webglReveal > 0.02
+  const webglOpacity = Math.min(1, Math.max(webglReveal, activeSlide >= 2 ? 1 : 0, rootGrowthProgress > 0.02 ? 1 : 0))
+
+  useEffect(() => {
+    document.body.classList.toggle('webgl-chrome', webglVisible)
+    return () => document.body.classList.remove('webgl-chrome')
+  }, [webglVisible])
 
   const handleLoadComplete = useCallback(() => {
     try {
@@ -63,14 +72,30 @@ export default function App() {
     <>
       {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
 
-      {loaded && <RootScene scrollProgress={progress} theme={theme} />}
+      {loaded && (
+        <RootScene
+          scrollProgress={progress}
+          rootGrowthProgress={rootGrowthProgress}
+          undergroundActive={webglVisible}
+          theme={theme}
+          style={{
+            opacity: webglVisible ? webglOpacity : 0,
+            visibility: webglVisible ? 'visible' : 'hidden',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
 
-      <div className="page-content">
+      <div className={`page-content${webglVisible ? ' page-content--webgl-visible' : ''}`}>
         <Navbar />
-        <Hero />
-        <StatsBar />
-        <Science />
-        <HowItWorks />
+
+        {loaded && (
+          <ScrollBarrel
+            onSlideChange={setActiveSlide}
+            onWebglReveal={setWebglReveal}
+          />
+        )}
+
         <WhyBiotor />
         <Results />
         <Testimonials />
