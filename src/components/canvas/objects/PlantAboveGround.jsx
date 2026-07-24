@@ -3,6 +3,7 @@
 import { useRef, useLayoutEffect } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 import { PLANT_ANCHOR } from '../../../config/plantAnchor'
 import { getSceneTheme } from '../../../config/sceneTheme'
 
@@ -186,6 +187,7 @@ export function PlantAboveGround({ scene, opacity = 1, theme = 'dark' }) {
     loadStartedRef.current = true
     let cancelled = false
     const loader = new GLTFLoader()
+    loader.setMeshoptDecoder(MeshoptDecoder)
 
     loader.load(
       GLB_PATH,

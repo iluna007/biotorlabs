@@ -49,6 +49,9 @@ Desktop.ini
 *.rar
 *.zip
 
+# Modelos 3D fuente (no versionar — solo .glb optimizado en public/models/)
+public/models/*.source.glb
+
 # Archivos fuente de marca (no versionar — solo public/images/brand|products|hero optimizados)
 public/images/01. Identidad de Biotor/
 public/images/02. Identidad de Biotor con slogan/

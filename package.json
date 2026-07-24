@@ -11,6 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "optimize-images": "node scripts/optimize-images.mjs",
+    "optimize-models": "node scripts/optimize-models.mjs",
     "optimize-about-media": "node scripts/optimize-about-media.mjs"
   },
   "dependencies": {
