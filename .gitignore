@@ -7,22 +7,47 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies & build
 node_modules
 dist
 dist-ssr
+.vite
+coverage
+*.tsbuildinfo
+
+# Local env & secrets
+.env
+.env.*
+!.env.example
 *.local
+
+# Capturas / frames temporales (debug scroll, previews)
 .tmp-frames/
+frame_*.jpg
+frame_*.png
+frame_*.webp
+/frame_*
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Archivos fuente de diseño (no versionar — solo assets optimizados en public/)
+*.ai
+*.psd
+*.rar
+*.zip
 
 # Archivos fuente de marca (no versionar — solo public/images/brand|products|hero optimizados)
 public/images/01. Identidad de Biotor/
