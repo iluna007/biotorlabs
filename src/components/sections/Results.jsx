@@ -9,7 +9,7 @@ export function Results() {
       minHeight: '130vh', flexDirection: 'column',
       justifyContent: 'center', padding: '10vh 3rem',
     }}>
-      <SectionOverlay triggerSection="#results" align="left">
+      <SectionOverlay triggerSection="#results" align="center">
         <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>{results.eyebrow}</p>
         <h2 className="section-title" style={{
           fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '2rem',

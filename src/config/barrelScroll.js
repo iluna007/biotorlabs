@@ -1,13 +1,18 @@
 /** Altura de scroll (vh) por fase del barril */
-export const BARREL_PHASE_VH = [100, 200, 240]
+export const BARREL_PHASE_VH = [5, 150, 180]
 
 /** vh acumulados donde empieza fase 3 (WebGL + Detrás de la Ciencia) */
 export const BARREL_ROOT_START_VH = BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1]
 
 export const BARREL_TOTAL_VH = BARREL_PHASE_VH.reduce((sum, h) => sum + h, 0)
 
-/** Fracción de cada fase (≥1) dedicada a la transición de imagen */
-export const BARREL_CONTENT_DELAY = 0.34
+/**
+ * Fracción de cada fase dedicada a la transición de imagen.
+ * El resto (1 - BARREL_CONTENT_DELAY) es exploración con parallax zoom.
+ */
+export const BARREL_CONTENT_DELAY = 0.20
+
+export const WIPE_SLOPE = 12
 
 export function computeBarrelRadius(panelCount, faceHeightPx = typeof window !== 'undefined' ? window.innerHeight : 900) {
   const n = Math.max(3, panelCount)
@@ -20,26 +25,35 @@ function smoothstep(edge0, edge1, x) {
 }
 
 /**
- * Crossfade suave con parallax ligero — sin costura dura visible.
- * Funciona igual al subir y al bajar.
+ * Wipe diagonal vertical — escena entrante desde ABAJO ("\\" sube con el scroll).
+ * t = 0: invisible (línea debajo); t = 1: pantalla completa (línea arriba).
  */
-export function getBarrelBlendMotion(t) {
+export function getDiagonalWipeClips(t) {
   const raw = Math.max(0, Math.min(1, t))
-  const p = smoothstep(0, 1, raw)
-
-  const outOpacity = 1 - smoothstep(0.12, 0.88, p)
-  const inOpacity = smoothstep(0.12, 0.88, p)
-  const outY = -p * 2.2
-  const inY = (1 - p) * 2.2
-  const scale = 1.12 + Math.sin(p * Math.PI) * 0.025
+  const leftY = 110 - raw * 120
+  const rightY = leftY + WIPE_SLOPE
 
   return {
-    outOpacity,
-    inOpacity,
-    stageRotateX: (p - 0.5) * -2.5,
-    outTransform: `translate(-50%, calc(-50% + ${outY.toFixed(2)}%)) scale(${scale.toFixed(3)})`,
-    inTransform: `translate(-50%, calc(-50% + ${inY.toFixed(2)}%)) scale(${scale.toFixed(3)})`,
-    soloTransform: 'translate(-50%, -50%) scale(1.12)',
+    raw,
+    incoming: `polygon(0% ${leftY.toFixed(2)}%, 100% ${rightY.toFixed(2)}%, 100% 100%, 0% 100%)`,
+    outgoingWebgl: (() => {
+      const outLeftY = 100 - raw * 110
+      const outRightY = outLeftY + WIPE_SLOPE
+      return `polygon(0% 0%, 100% 0%, 100% ${outRightY.toFixed(2)}%, 0% ${outLeftY.toFixed(2)}%)`
+    })(),
+  }
+}
+
+export function getBarrelBlendMotion(t) {
+  const { incoming } = getDiagonalWipeClips(t)
+  return {
+    clipPath: incoming,
+    outOpacity: 1,
+    inOpacity: 1,
+    outTransform: 'translate(-50%, -50%) scale(1.05)',
+    inTransform: 'translate(-50%, -50%) scale(1.05)',
+    stageRotateX: 0,
+    soloTransform: 'translate(-50%, -50%) scale(1.0)',
   }
 }
 
@@ -66,4 +80,38 @@ export function getWebglRevealProgress(rotation, faceCount = 3) {
     return smoothstep(0, 1, blend.t)
   }
   return blend.mode === 'single' && blend.slide === faceCount - 1 ? 1 : 0
+}
+
+/** Rotación ligada al scroll — pausa durante fases de exploración */
+export function getBarrelRotationFromProgress(progress, faceCount = 3, contentDelay = BARREL_CONTENT_DELAY) {
+  const faceDeg = 360 / faceCount
+  const maxRot = 360 - faceDeg
+  const total = BARREL_TOTAL_VH
+  const p = Math.max(0, Math.min(1, progress))
+
+  const phase0End = BARREL_PHASE_VH[0] / total
+  if (p <= phase0End) return 0
+
+  const trans1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1] * contentDelay) / total
+  if (p <= trans1End) {
+    return ((p - phase0End) / (trans1End - phase0End)) * faceDeg
+  }
+
+  const phase1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1]) / total
+  if (p <= phase1End) return faceDeg
+
+  const trans2End = phase1End + (BARREL_PHASE_VH[2] * contentDelay) / total
+  if (p <= trans2End) {
+    return faceDeg + ((p - phase1End) / (trans2End - phase1End)) * faceDeg
+  }
+
+  return maxRot
+}
+
+export function getExplorationParallaxScale(phaseIndex, local, contentDelay = BARREL_CONTENT_DELAY) {
+  if (phaseIndex <= 0) {
+    return 1 + Math.max(0, local) * 0.04
+  }
+  const postT = Math.max(0, (local - contentDelay) / (1 - contentDelay))
+  return 1 + postT * 0.10
 }

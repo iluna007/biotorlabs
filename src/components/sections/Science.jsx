@@ -5,7 +5,7 @@ function ScienceContent({ embedded = false }) {
   const { science } = useContent()
 
   return (
-    <div className={embedded ? 'barrel-phase-content section-overlay--left' : undefined}>
+    <div className={embedded ? 'barrel-phase-content barrel-science-content' : undefined}>
       <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>{science.eyebrow}</p>
       <h2 className="section-title" style={{
         fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '1.2rem',
@@ -17,25 +17,13 @@ function ScienceContent({ embedded = false }) {
         {science.body}
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="science-mechanisms-grid">
         {science.mechanisms.map(mech => (
-          <div key={mech.id} style={{
-            display: 'flex', gap: '1rem', padding: '1rem 1.2rem',
-            border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
-            background: 'var(--surface-bg-soft)', backdropFilter: 'blur(8px)',
-          }}>
-            <span style={{ fontSize: '1.2rem', flexShrink: 0, marginTop: '0.1rem' }}>{mech.icon}</span>
-            <div>
-              <h3 style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.88rem', fontWeight: 600,
-                color: 'var(--cream)', marginBottom: '0.3rem',
-              }}>
-                {mech.title}
-              </h3>
-              <p className="section-body" style={{ fontSize: '0.82rem', lineHeight: 1.6 }}>{mech.desc}</p>
-            </div>
-          </div>
+          <article key={mech.id} className="science-mechanism-card">
+            <span className="science-mechanism-card__icon" aria-hidden="true">{mech.icon}</span>
+            <h3 className="science-mechanism-card__title">{mech.title}</h3>
+            <p className="section-body science-mechanism-card__desc">{mech.desc}</p>
+          </article>
         ))}
       </div>
     </div>

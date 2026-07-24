@@ -73,10 +73,9 @@ export function Hero({ variant = 'default' }) {
       }}
     >
       <div className="hero-inner">
-        <div style={{ maxWidth: '680px', flex: '1 1 340px' }}>
+        <div className={isBarrelOverlay ? 'hero-copy hero-copy--centered' : undefined} style={isBarrelOverlay ? undefined : { maxWidth: '680px', flex: '1 1 340px' }}>
           <h1 ref={titleRef}>
-            {hero.titleLine1}<br />
-            {hero.titleLine2}
+            {hero.titleLine1} {hero.titleLine2}
           </h1>
 
           <div ref={sublinesRef} className="hero-sublines">

@@ -15,7 +15,7 @@ export function Testimonials() {
         padding: '10vh 0',
       }}
     >
-      <SectionOverlay triggerSection="#testimonials" align="right">
+      <SectionOverlay triggerSection="#testimonials" align="center">
         <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>
           {testimonials.eyebrow}
         </p>

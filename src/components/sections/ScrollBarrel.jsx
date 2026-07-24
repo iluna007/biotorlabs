@@ -10,8 +10,10 @@ import {
   BARREL_CONTENT_DELAY,
   computeBarrelRadius,
   getBarrelImageBlend,
-  getBarrelBlendMotion,
+  getDiagonalWipeClips,
   getWebglRevealProgress,
+  getBarrelRotationFromProgress,
+  getExplorationParallaxScale,
 } from '../../config/barrelScroll'
 import { Hero } from './Hero'
 import { StatsBar } from './StatsBar'
@@ -25,13 +27,13 @@ const SLIDES = [
     type: 'image',
     src: ASSETS.barrel.cana,
     label: 'Cultivo',
-    imageClass: 'barrel-face__img--field',
+    imageClass: 'barrel-blend__img--field',
   },
   {
     type: 'image',
     src: ASSETS.barrel.brotes,
     label: 'Brotes',
-    imageClass: 'barrel-face__img--soil',
+    imageClass: 'barrel-blend__img--soil',
   },
   { type: 'webgl', label: 'Raíces' },
 ]
@@ -48,6 +50,10 @@ const TOTAL_VH = BARREL_TOTAL_VH
 const MAX_ROTATION = 360 - FACE_DEG
 const CONTENT_DELAY = BARREL_CONTENT_DELAY
 
+function imgTransform(scale) {
+  return `translate(-50%, -50%) scale(${scale.toFixed(4)})`
+}
+
 function getVisualSlide(rotation) {
   if (rotation < FACE_DEG * 0.55) return 0
   if (rotation < FACE_DEG * 1.55) return 1
@@ -55,6 +61,8 @@ function getVisualSlide(rotation) {
 }
 
 function getPhaseState(progress) {
+  const rotation = getBarrelRotationFromProgress(progress, N, CONTENT_DELAY)
+
   let accumulated = 0
   for (let i = 0; i < PHASES.length; i++) {
     const phase = PHASES[i]
@@ -63,14 +71,7 @@ function getPhaseState(progress) {
     const end = accumulated / TOTAL_VH
 
     if (progress <= end || i === PHASES.length - 1) {
-      const span = end - start || 1
-      const local = Math.max(0, Math.min(1, (progress - start) / span))
-      const rotStart = i === 0 ? 0 : PHASES[i - 1].rotation
-      const rotEnd = phase.rotation
-
-      const rotT = i === 0 ? 0 : Math.min(1, local / CONTENT_DELAY)
-      const rotation = i === 0 ? 0 : rotStart + (rotEnd - rotStart) * rotT
-
+      const local = Math.max(0, Math.min(1, (progress - start) / (end - start || 1)))
       const visualSlide = getVisualSlide(rotation)
       const contentVisible = i === 0 || local >= CONTENT_DELAY
       const contentSlide = contentVisible ? i : Math.max(0, i - 1)
@@ -85,6 +86,7 @@ function getPhaseState(progress) {
       }
     }
   }
+
   return {
     visualSlide: 2,
     contentSlide: 2,
@@ -95,17 +97,72 @@ function getPhaseState(progress) {
   }
 }
 
+function updateBlendVisuals(rotation, refs, parallaxScale = 1) {
+  const { root, imgA, imgB, wipeLayer } = refs
+  if (!root || !imgA || !imgB || !wipeLayer) return
+
+  const blend = getBarrelImageBlend(rotation, N)
+
+  if (blend.mode === 'single' && blend.slide >= 2) {
+    root.style.visibility = 'hidden'
+    imgA.style.clipPath = 'none'
+    wipeLayer.style.display = 'none'
+    return
+  }
+
+  root.style.visibility = 'visible'
+
+  if (blend.mode === 'single' && blend.slide === 0) {
+    imgA.style.clipPath = 'none'
+    imgA.style.transform = imgTransform(parallaxScale)
+    wipeLayer.style.display = 'none'
+    return
+  }
+
+  if (blend.mode === 'single' && blend.slide === 1) {
+    imgA.style.clipPath = 'none'
+    imgA.style.transform = imgTransform(1.05)
+    imgB.style.transform = imgTransform(parallaxScale)
+    wipeLayer.style.display = 'block'
+    wipeLayer.style.clipPath = getDiagonalWipeClips(1).incoming
+    return
+  }
+
+  const clips = getDiagonalWipeClips(blend.t)
+  const toWebgl = SLIDES[blend.to]?.type === 'webgl'
+
+  if (toWebgl) {
+    const scale = 1 + clips.raw * 0.08
+    imgB.style.transform = imgTransform(scale)
+    wipeLayer.style.display = 'block'
+    wipeLayer.style.clipPath = clips.outgoingWebgl
+    imgA.style.clipPath = 'none'
+    imgA.style.transform = imgTransform(1.0)
+    return
+  }
+
+  imgA.style.clipPath = 'none'
+  imgA.style.transform = imgTransform(1.05)
+  imgB.style.transform = imgTransform(1.05)
+  wipeLayer.style.display = 'block'
+  wipeLayer.style.clipPath = clips.incoming
+}
+
 export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
   const wrapperRef = useRef(null)
   const barrelRef = useRef(null)
+  const blendRef = useRef(null)
+  const imgARef = useRef(null)
+  const imgBRef = useRef(null)
+  const wipeRef = useRef(null)
   const phase1ScrollRef = useRef(null)
   const phase1InnerRef = useRef(null)
   const [contentSlide, setContentSlide] = useState(0)
   const [contentVisible, setContentVisible] = useState(true)
   const [visualSlide, setVisualSlide] = useState(0)
-  const [barrelRotation, setBarrelRotation] = useState(0)
   const [radius, setRadius] = useState(() => computeBarrelRadius(N))
   const radiusRef = useRef(radius)
+  const lastUiRef = useRef({ visualSlide: 0, contentSlide: 0, contentVisible: true })
 
   const syncRadius = useCallback(() => {
     const r = computeBarrelRadius(N, window.innerHeight)
@@ -131,6 +188,33 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
     syncRadius()
     gsap.set(barrel, { rotateX: 0, z: -radiusRef.current })
 
+    const blendRefs = {
+      root: blendRef.current,
+      imgA: imgARef.current,
+      imgB: imgBRef.current,
+      wipeLayer: wipeRef.current,
+    }
+
+    const syncUiState = (state) => {
+      const prev = lastUiRef.current
+      if (prev.visualSlide !== state.visualSlide) {
+        setVisualSlide(state.visualSlide)
+        onSlideChange?.(state.visualSlide)
+        updateDots(state.visualSlide)
+      }
+      if (prev.contentSlide !== state.contentSlide) {
+        setContentSlide(state.contentSlide)
+      }
+      if (prev.contentVisible !== state.contentVisible) {
+        setContentVisible(state.contentVisible)
+      }
+      lastUiRef.current = {
+        visualSlide: state.visualSlide,
+        contentSlide: state.contentSlide,
+        contentVisible: state.contentVisible,
+      }
+    }
+
     const applyBarrelState = (self) => {
       const progress = typeof self.progress === 'number' ? self.progress : 0
       const state = getPhaseState(progress)
@@ -140,13 +224,15 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
       wrapper.dataset.activeSlide = String(state.visualSlide)
       wrapper.dataset.contentSlide = String(state.contentSlide)
 
-      setVisualSlide(state.visualSlide)
-      setContentSlide(state.contentSlide)
-      setContentVisible(state.contentVisible)
-      setBarrelRotation(state.rotation)
-      onSlideChange?.(state.visualSlide)
+      const parallaxScale = getExplorationParallaxScale(
+        state.phaseIndex,
+        state.local,
+        CONTENT_DELAY,
+      )
+
+      updateBlendVisuals(state.rotation, blendRefs, parallaxScale)
       onWebglReveal?.(getWebglRevealProgress(state.rotation, N))
-      updateDots(state.visualSlide)
+      syncUiState(state)
 
       if (phase1InnerRef.current && phase1ScrollRef.current && state.contentVisible) {
         const inner = phase1InnerRef.current
@@ -165,7 +251,7 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
       trigger: wrapper,
       start: 'top top',
       end: 'bottom bottom',
-      scrub: 0.55,
+      scrub: 0.05,
       onUpdate: applyBarrelState,
     })
 
@@ -190,73 +276,6 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
     }
     return contentVisible && contentSlide === index
   }
-  const imageBlend = getBarrelImageBlend(barrelRotation, N)
-  const imageSlides = SLIDES.filter((s) => s.type === 'image')
-
-  const renderBlendLayer = () => {
-    if (imageBlend.mode === 'single' && imageBlend.slide >= imageSlides.length) {
-      return null
-    }
-
-    const motion = imageBlend.mode === 'blend' ? getBarrelBlendMotion(imageBlend.t) : null
-
-    const renderImage = (slideIndex, className, style) => {
-      const slide = SLIDES[slideIndex]
-      if (!slide || slide.type !== 'image') return null
-      const variantClass = slide.imageClass?.replace('barrel-face__img', 'barrel-blend__img') ?? ''
-      return (
-        <img
-          src={slide.src}
-          alt={slide.label}
-          className={`barrel-blend__img${variantClass ? ` ${variantClass}` : ''}${className ? ` ${className}` : ''}`}
-          style={style}
-          loading={slideIndex === 0 ? 'eager' : 'lazy'}
-        />
-      )
-    }
-
-    if (imageBlend.mode === 'single') {
-      return (
-        <div className="barrel-blend">
-          {renderImage(imageBlend.slide, 'barrel-blend__img--solo', {
-            transform: getBarrelBlendMotion(0).soloTransform,
-          })}
-        </div>
-      )
-    }
-
-    const { from, to, t } = imageBlend
-    const toWebgl = SLIDES[to]?.type === 'webgl'
-    const m = motion ?? getBarrelBlendMotion(t)
-
-    const stageStyle = {
-      transform: `perspective(1400px) rotateX(${m.stageRotateX.toFixed(2)}deg)`,
-    }
-
-    if (toWebgl) {
-      return (
-        <div className="barrel-blend barrel-blend--transition" style={stageStyle}>
-          {renderImage(from, 'barrel-blend__img--outgoing', {
-            opacity: m.outOpacity,
-            transform: m.outTransform,
-          })}
-        </div>
-      )
-    }
-
-    return (
-      <div className="barrel-blend barrel-blend--transition" style={stageStyle}>
-        {renderImage(from, 'barrel-blend__img--outgoing', {
-          opacity: m.outOpacity,
-          transform: m.outTransform,
-        })}
-        {renderImage(to, 'barrel-blend__img--incoming', {
-          opacity: m.inOpacity,
-          transform: m.inTransform,
-        })}
-      </div>
-    )
-  }
 
   return (
     <section
@@ -272,7 +291,26 @@ export function ScrollBarrel({ onSlideChange, onWebglReveal }) {
       data-content-slide="0"
     >
       <div className="barrel-sticky">
-        {renderBlendLayer()}
+        <div ref={blendRef} className="barrel-blend">
+          <img
+            ref={imgARef}
+            src={SLIDES[0].src}
+            alt={SLIDES[0].label}
+            className="barrel-blend__img barrel-blend__img--field barrel-blend__img--outgoing"
+            style={{ transform: imgTransform(1) }}
+            loading="eager"
+          />
+          <div ref={wipeRef} className="barrel-blend__wipe-layer">
+            <img
+              ref={imgBRef}
+              src={SLIDES[1].src}
+              alt={SLIDES[1].label}
+              className="barrel-blend__img barrel-blend__img--soil barrel-blend__img--incoming"
+              style={{ transform: imgTransform(1) }}
+              loading="eager"
+            />
+          </div>
+        </div>
 
         <div className="barrel-scene barrel-scene--hidden">
           <div ref={barrelRef} className="barrel-drum">

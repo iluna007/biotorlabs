@@ -179,9 +179,63 @@ button { font-family: inherit; }
   max-width: min(520px, 88vw);
 }
 
+.section-overlay--center {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: min(640px, 92vw);
+  text-align: center;
+}
+
+.section-overlay--center .section-body,
+.section-overlay--center .why-biotor-cards {
+  text-align: left;
+}
+
 @media (min-width: 1100px) {
   .section-overlay--left { margin-left: clamp(2rem, 12vw, 14rem); }
   .section-overlay--right { margin-right: clamp(2rem, 12vw, 14rem); }
+}
+
+/* Ciencia — mecanismos en cuadrícula 2×2 */
+.science-mechanisms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+}
+
+.science-mechanism-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: clamp(0.9rem, 1.5vw, 1.1rem) clamp(0.95rem, 1.6vw, 1.15rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-bg-soft);
+  backdrop-filter: blur(8px);
+}
+
+.science-mechanism-card__icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.science-mechanism-card__title {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.35;
+}
+
+.science-mechanism-card__desc {
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .science-mechanisms-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── HERO ──────────────────────────────────────────────────────────────── */
@@ -2399,11 +2453,10 @@ html.light-mode .about-page__scrim {
   overflow: hidden;
   background: #050f08;
   transform-origin: 50% 50%;
-  perspective: 1400px;
 }
 
 .barrel-blend--transition {
-  will-change: transform;
+  /* Sin transform 3D — el wipe diagonal es 2D puro */
 }
 
 .barrel-blend__img {
@@ -2418,7 +2471,7 @@ html.light-mode .about-page__scrim {
   object-position: center;
   display: block;
   transform-origin: 50% 50%;
-  will-change: transform, opacity;
+  will-change: transform;
   backface-visibility: hidden;
 }
 
@@ -2432,6 +2485,7 @@ html.light-mode .about-page__scrim {
 
 .barrel-blend__img--outgoing {
   z-index: 1;
+  /* Sin opacity animation — la imagen A siempre visible detrás */
 }
 
 .barrel-blend__img--solo {
@@ -2440,6 +2494,20 @@ html.light-mode .about-page__scrim {
 
 .barrel-blend__img--incoming {
   z-index: 2;
+  /* Sin opacity animation — el clip-path hace el trabajo */
+}
+
+.barrel-blend__wipe-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  will-change: clip-path;
+  contain: layout style paint;
+}
+
+.barrel-blend__wipe-layer .barrel-blend__img {
+  z-index: 1;
 }
 
 .barrel-scene {
@@ -2610,10 +2678,13 @@ html.light-mode .about-page__scrim {
 
 .barrel-phase__inner--split {
   display: grid;
-  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   gap: clamp(1.25rem, 3vw, 2.5rem);
-  max-width: 1080px;
+  max-width: min(1120px, 96vw);
   align-items: start;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .barrel-stats {
@@ -2623,6 +2694,11 @@ html.light-mode .about-page__scrim {
 
 .barrel-science-block {
   min-width: 0;
+}
+
+.barrel-science-content {
+  max-width: none;
+  width: 100%;
 }
 
 @media (max-width: 900px) {
@@ -2667,6 +2743,33 @@ html.light-mode .about-page__scrim {
 
 .hero-section--barrel-overlay .hero-inner {
   width: 100%;
+  justify-content: center;
+}
+
+.hero-section--barrel-overlay .hero-copy--centered {
+  max-width: min(920px, 94vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-section--barrel-overlay .hero-copy--centered h1 {
+  white-space: nowrap;
+  margin-bottom: 1.25rem;
+}
+
+.hero-section--barrel-overlay .hero-copy--centered .hero-sublines,
+.hero-section--barrel-overlay .hero-copy--centered .hero-social,
+.hero-section--barrel-overlay .hero-copy--centered > div:last-of-type {
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .hero-section--barrel-overlay .hero-copy--centered h1 {
+    font-size: clamp(2.1rem, 7.5vw, 3.4rem);
+    white-space: normal;
+  }
 }
 
 .hero-section--barrel-overlay .hero-scroll-hint {

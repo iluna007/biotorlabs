@@ -9,7 +9,7 @@ export function WhyBiotor() {
       minHeight: '100vh', flexDirection: 'column',
       justifyContent: 'center', padding: '10vh 0',
     }}>
-      <SectionOverlay triggerSection="#why-biotor" align="left">
+      <SectionOverlay triggerSection="#why-biotor" align="center">
         <p className="section-eyebrow">{whyBiotor.eyebrow}</p>
         <h2 className="section-title" style={{
           fontSize: 'clamp(2rem, 4vw, 3.2rem)', marginBottom: '1rem',
@@ -20,7 +20,7 @@ export function WhyBiotor() {
         <p className="section-body" style={{ fontSize: '0.9rem', marginBottom: '2rem' }}>
           {whyBiotor.body}
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="why-biotor-cards" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {whyBiotor.differentiators.map(d => (
             <div key={d.title} style={{
               display: 'flex', gap: '1rem', padding: '1.2rem 1.4rem',
