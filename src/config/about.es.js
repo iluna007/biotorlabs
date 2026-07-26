@@ -52,34 +52,34 @@ export const ABOUT_ES = {
   },
 
   what: {
-    eyebrow: 'Áreas de Especialidad Biológica',
-    title: 'De la investigación a la cosecha',
-    intro: 'Biotor se centra en comprender los mecanismos de los microorganismos como formas de control natural de plagas y promotores del crecimiento de las plantas y sus raíces.',
+    eyebrow: 'Selección rigurosa',
+    title: 'Validación en campo',
+    intro: 'Cada cepa y cada bioproducto pasa por un protocolo exigente antes de llegar al agricultor: laboratorio, selección por desempeño, validación en campo y acompañamiento técnico continuo.',
     cepario: 'Mediante aislamientos microbianos dirigidos, contamos con un cepario de más de 100 microorganismos seleccionados de diversos ecosistemas.',
     steps: [
       {
         num: '01',
-        title: 'Investigar',
-        body: 'Realizamos una exhaustiva prospección y selección de los microorganismos que, por sus características, pueden ayudar a los agricultores a maximizar sus cosechas.',
+        title: 'Evaluación en laboratorio',
+        body: 'Antes de que llegue a tu campo, cada cepa pasó por meses de evaluación: selección, microscopía, notación técnica y pruebas de viabilidad.',
         icon: '🔬',
       },
       {
         num: '02',
-        title: 'Desarrollar',
-        body: 'Según las necesidades del mercado, se estudian y prueban los candidatos en nuestro Departamento de Innovación y Desarrollo de Soluciones (IDS). El resultado es una cepa competitiva y exclusiva que se convierte en una solución biotecnológica.',
+        title: 'Selección por desempeño',
+        body: 'No comercializamos por catálogo. Desarrollamos tecnología que demuestra su valor en las condiciones reales de tu cultivo.',
         icon: '🧬',
       },
       {
         num: '03',
-        title: 'Producir',
-        body: 'Los resultados de nuestras investigaciones son los productos que desarrollamos, evaluamos y producimos en nuestras instalaciones, bajo un estricto control de calidad que asegura la consistencia.',
-        icon: '🏭',
+        title: 'Validación en campo',
+        body: 'Ensayos con cultivos reales, productores reales y datos verificables. Los productos no se aprueban por marketing — se aprueban en campo.',
+        icon: '🌱',
       },
       {
         num: '04',
-        title: 'Comercializar',
-        body: 'Nuestro Equipo IDS, con el soporte de nuestro Laboratorio de Diagnóstico, brinda apoyo especializado al agricultor y distribuidor exclusivo en cada mercado.',
-        icon: '🌍',
+        title: 'Soporte técnico continuo',
+        body: 'Alianza genuina: acompañamiento real antes, durante y después de cada aplicación. No vendemos y desaparecemos.',
+        icon: '🤝',
       },
     ],
     specialties: [

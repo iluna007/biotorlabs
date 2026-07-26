@@ -48,12 +48,7 @@ function splitParagraph(text, maxLen = 88) {
   return lines
 }
 
-const STEP_IMAGES = [
-  ASSETS.about.research,
-  ASSETS.about.microscope,
-  ASSETS.about.facility,
-  ASSETS.about.cropsField,
-]
+const PROCESS_STEP_IMAGES = ASSETS.about.processSteps
 
 export default function AboutPage() {
   const heroRef = useRef(null)
@@ -81,37 +76,39 @@ export default function AboutPage() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.about-editorial__text').forEach((el) => {
-        gsap.fromTo(el,
-          { x: -70, opacity: 0 },
-          {
-            x: 0, opacity: 1, duration: 1.3, ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none reverse' },
-          },
-        )
-      })
-
       gsap.utils.toArray('.about-editorial__media, .about-reveal-media').forEach((el) => {
+        const isReverse = Boolean(el.closest('.about-editorial--reverse'))
         gsap.fromTo(el,
-          { x: 50, opacity: 0 },
+          { x: isReverse ? -50 : 50, opacity: 0, scale: 0.96 },
           {
-            x: 0, opacity: 1, duration: 1.3, ease: 'power3.out', delay: 0.15,
+            x: 0, opacity: 1, scale: 1, duration: 1.3, ease: 'power3.out', delay: 0.15,
             scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none reverse' },
           },
         )
       })
 
-      gsap.utils.toArray('.about-editorial--reverse .about-editorial__text').forEach((el) => {
+      gsap.utils.toArray('.about-editorial__cards .about-card').forEach((el, i) => {
         gsap.fromTo(el,
-          { x: 70, opacity: 0 },
+          { y: 36, opacity: 0 },
           {
-            x: 0, opacity: 1, duration: 1.3, ease: 'power3.out',
+            y: 0, opacity: 1, duration: 1.05, ease: 'power2.out', delay: i * 0.14,
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-process-intro__media').forEach((el) => {
+        gsap.fromTo(el,
+          { x: 50, opacity: 0, scale: 0.96 },
+          {
+            x: 0, opacity: 1, scale: 1, duration: 1.25, ease: 'power3.out', delay: 0.12,
             scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none reverse' },
           },
         )
       })
 
       gsap.utils.toArray('.about-card').forEach((el, i) => {
+        if (el.closest('.about-editorial__cards')) return
         const dir = i % 2 === 0 ? -50 : 50
         gsap.fromTo(el,
           { x: dir, opacity: 0 },
@@ -126,8 +123,18 @@ export default function AboutPage() {
         gsap.fromTo(el,
           { y: 70, opacity: 0 },
           {
-            y: 0, opacity: 1, duration: 1.15, ease: 'power3.out', delay: i * 0.1,
+            y: 0, opacity: 1, duration: 1.15, ease: 'power3.out', delay: (i % 2) * 0.12,
             scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-process-step__media').forEach((el) => {
+        gsap.fromTo(el,
+          { scale: 0.94, opacity: 0 },
+          {
+            scale: 1, opacity: 1, duration: 1.0, ease: 'power2.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' },
           },
         )
       })
@@ -325,10 +332,10 @@ export default function AboutPage() {
           </div>
         </header>
 
-        <section id="origins" className="about-chapter" data-chapter="origins">
+        <section id="origins" className="about-chapter about-chapter--origins" data-chapter="origins">
           <div className="about-editorial about-editorial--feature">
             <div className="about-editorial__text">
-              <AboutTextReveal>
+              <AboutTextReveal start="top 85%">
                 <p className="section-eyebrow about-line-mask"><span className="about-line">{ABOUT.who.eyebrow}</span></p>
                 <h2 className="section-title about-editorial__title about-line-mask">
                   <span className="about-line">{ABOUT.who.title}</span>
@@ -337,7 +344,7 @@ export default function AboutPage() {
               </AboutTextReveal>
               <div className="about-editorial__cards">
                 {[ABOUT.who.vision, ABOUT.who.mission].map((item) => (
-                  <div key={item.label} className="about-card">
+                  <div key={item.label} className="about-card about-card--origins">
                     <p className="about-card__label">{item.label}</p>
                     <p className="about-card__text">{item.text}</p>
                   </div>
@@ -347,7 +354,7 @@ export default function AboutPage() {
             <AboutRevealImage
               src={ASSETS.about.brotesField}
               alt="Brotes en campo"
-              className="about-editorial__media about-editorial__media--tall"
+              className="about-editorial__media about-editorial__media--tall about-origins-media"
               caption={page.imageCaptions?.brotes}
             />
           </div>
@@ -374,7 +381,11 @@ export default function AboutPage() {
           <div className="about-process-grid">
             {ABOUT.what.steps.map((step, i) => (
               <article key={step.num} className={`about-process-step about-process-step--${i + 1}`}>
-                <AboutRevealImage src={STEP_IMAGES[i]} alt={step.title} className="about-process-step__media" />
+                <AboutRevealImage
+                  src={PROCESS_STEP_IMAGES[i]}
+                  alt={step.title}
+                  className="about-process-step__media"
+                />
                 <div className="about-process-step__body">
                   <span className="about-step__num">{step.num}</span>
                   <h3 className="about-step__title"><span aria-hidden="true">{step.icon}</span> {step.title}</h3>

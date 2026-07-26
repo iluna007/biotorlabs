@@ -39,6 +39,15 @@ export const ASSETS = {
     research: '/images/about/research.webp',
     cropsField: '/images/about/crops-field.webp',
     microscope: '/images/about/microscope.webp',
+    // 01 Evaluación en laboratorio, 02 Selección por desempeño,
+    // 03 Validación en campo, 04 Soporte técnico continuo
+    // (fuentes: shutterstock_138908741, _1317121628, _1203465091, _1882125208)
+    processSteps: [
+      '/images/about/process-lab-eval.webp',
+      '/images/about/process-performance.webp',
+      '/images/about/process-field.webp',
+      '/images/about/process-support.webp',
+    ],
   },
 }
 

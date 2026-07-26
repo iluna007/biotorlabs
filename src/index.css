@@ -2069,11 +2069,6 @@ html.light-mode .about-page__scrim {
   backdrop-filter: blur(14px);
 }
 
-.about-process-step--1 { transform: translateY(0); }
-.about-process-step--2 { transform: translateY(1.5rem); }
-.about-process-step--3 { transform: translateY(0.5rem); }
-.about-process-step--4 { transform: translateY(2rem); }
-
 .about-process-step__media .about-reveal-media__frame {
   aspect-ratio: 16 / 10;
 }
@@ -2344,16 +2339,6 @@ html.light-mode .about-page__scrim {
     order: unset;
   }
 
-  .about-process-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-process-step--2,
-  .about-process-step--3,
-  .about-process-step--4 {
-    transform: none;
-  }
-
   .about-chapter-beat {
     position: relative;
     inset: auto;
@@ -2407,6 +2392,12 @@ html.light-mode .about-page__scrim {
 
   .about-pinned-chapter__stack {
     max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-process-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -8,6 +8,12 @@ import AboutPage from './pages/AboutPage.jsx'
 import ProductPage from './pages/ProductPage.jsx'
 import './index.css'
 
+// Prevenir que el browser restaure la posición de scroll anterior al navegar —
+// esto causa el flash de "datos reales" antes de que la app tome control.
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual'
+}
+
 // NOTA: StrictMode removido intencionalmente.
 // React 19 StrictMode ejecuta useLayoutEffect dos veces,
 // lo que llama a renderer.dispose() en el canvas WebGL

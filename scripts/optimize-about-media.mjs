@@ -20,6 +20,10 @@ const IMAGES = [
   { out: 'research.webp', from: 'laboratorio/shutterstock_1961857333.jpg', w: 1000, q: 82 },
   { out: 'crops-field.webp', from: 'Brotes (10).jpg', w: 1200, q: 82 },
   { out: 'microscope.webp', from: 'laboratorio/shutterstock_2106624800.jpg', w: 1000, q: 82 },
+  { out: 'process-lab-eval.webp', from: 'laboratorio/shutterstock_138908741.jpg', w: 1000, q: 82 },
+  { out: 'process-performance.webp', from: 'laboratorio/shutterstock_1317121628.jpg', w: 1000, q: 82 },
+  { out: 'process-field.webp', from: 'laboratorio/shutterstock_1203465091.jpg', w: 1000, q: 82 },
+  { out: 'process-support.webp', from: 'laboratorio/shutterstock_1882125208.jpg', w: 1000, q: 82 },
 ]
 
 const VIDEO_SRC = path.join(SRC, 'videos/shutterstock_1052910950.mp4')

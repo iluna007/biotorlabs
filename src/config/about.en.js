@@ -52,34 +52,34 @@ export const ABOUT_EN = {
   },
 
   what: {
-    eyebrow: 'Biological Specialty Areas',
-    title: 'From research to harvest',
-    intro: 'Biotor focuses on understanding the mechanisms of microorganisms as natural forms of pest control and promoters of plant and root growth.',
+    eyebrow: 'Rigorous selection',
+    title: 'Field validation',
+    intro: 'Every strain and bioproduct goes through a demanding protocol before reaching the farmer: laboratory evaluation, performance-based selection, field validation, and ongoing technical support.',
     cepario: 'Through targeted microbial isolations, we maintain a culture collection of more than 100 microorganisms selected from diverse ecosystems.',
     steps: [
       {
         num: '01',
-        title: 'Research',
-        body: 'We conduct exhaustive prospecting and selection of microorganisms that, by their characteristics, can help farmers maximize their harvests.',
+        title: 'Laboratory evaluation',
+        body: 'Before it reaches your field, each strain undergoes months of evaluation: selection, microscopy, technical notation, and viability testing.',
         icon: '🔬',
       },
       {
         num: '02',
-        title: 'Develop',
-        body: 'According to market needs, candidates are studied and tested in our Innovation and Solutions Development Department (IDS). The result is a competitive and exclusive strain that becomes a biotechnological solution.',
+        title: 'Performance-based selection',
+        body: 'We do not commercialize from a catalog. We develop technology that proves its value under the real conditions of your crop.',
         icon: '🧬',
       },
       {
         num: '03',
-        title: 'Produce',
-        body: 'The results of our research become the products we develop, evaluate, and produce at our facilities, under strict quality control that ensures consistency.',
-        icon: '🏭',
+        title: 'Field validation',
+        body: 'Trials with real crops, real growers, and verifiable data. Products are not approved by marketing — they are approved in the field.',
+        icon: '🌱',
       },
       {
         num: '04',
-        title: 'Commercialize',
-        body: 'Our IDS Team, with the support of our Diagnostic Laboratory, provides specialized assistance to the farmer and exclusive distributor in each market.',
-        icon: '🌍',
+        title: 'Ongoing technical support',
+        body: 'A genuine partnership: real support before, during, and after every application. We do not sell and disappear.',
+        icon: '🤝',
       },
     ],
     specialties: [
