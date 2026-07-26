@@ -17,7 +17,8 @@ function spiralStrength(t) {
 }
 
 /** Vueltas completas de la cámara mientras las raíces crecen (0→1). */
-const SPIRAL_TURNS = 2.4
+const SPIRAL_TURNS_DESKTOP = 3.0
+const SPIRAL_TURNS_MOBILE = 1.5
 
 const SPIRAL_PIVOT_XZ = { x: 0.04, z: 0.02 }
 
@@ -25,13 +26,14 @@ const SPIRAL_PIVOT_XZ = { x: 0.04, z: 0.02 }
  * Planta en foco al inicio; descenso gradual; espiral en la segunda mitad del recorrido.
  */
 const CAMERA_KEYS = [
-  { t: 0.0, pos: [0.52, 1.72, 5.85], target: [0.0, 1.2, 0.0], fov: 46 },
-  { t: 0.14, pos: [0.56, 1.38, 5.72], target: [0.0, 0.98, 0.0], fov: 46.5 },
-  { t: 0.3, pos: [0.66, 0.62, 5.42], target: [0.02, 0.42, 0.0], fov: 48 },
-  { t: 0.5, pos: [0.76, -1.15, 5.12], target: [0.04, -1.35, 0.0], fov: 49.5 },
-  { t: 0.68, pos: [0.58, -3.45, 4.82], target: [0.07, -3.65, 0.0], fov: 50.5 },
-  { t: 0.84, pos: [0.34, -5.55, 4.48], target: [0.09, -5.35, 0.0], fov: 50 },
-  { t: 1.0, pos: [0.22, -6.7, 4.08], target: [0.07, -6.3, 0.0], fov: 49.5 },
+  { t: 0.0, pos: [0.52, 1.72, 5.85], target: [0.0, 1.2, 0.0], fov: 44 },
+  { t: 0.12, pos: [0.54, 1.38, 5.74], target: [0.0, 0.98, 0.0], fov: 44.5 },
+  { t: 0.26, pos: [0.62, 0.45, 5.45], target: [0.02, 0.28, 0.0], fov: 46.5 },
+  { t: 0.42, pos: [0.74, -1.40, 5.12], target: [0.04, -1.6, 0.0], fov: 48.5 },
+  { t: 0.60, pos: [0.60, -3.65, 4.82], target: [0.06, -3.85, 0.0], fov: 50 },
+  { t: 0.76, pos: [0.38, -5.65, 4.48], target: [0.08, -5.45, 0.0], fov: 50 },
+  { t: 0.90, pos: [0.24, -6.55, 4.18], target: [0.07, -6.25, 0.0], fov: 49.5 },
+  { t: 1.0, pos: [0.16, -7.20, 3.88], target: [0.06, -6.80, 0.0], fov: 49 },
 ]
 
 function interpolateKeys(keys, t, field) {
@@ -66,8 +68,8 @@ function lerpCameraField(base, next, field, blend) {
 }
 
 /** Vista de superficie — planta detrás del contenido "Detrás de la Ciencia" */
-export function getSurfacePlantCamera() {
-  return getUndergroundCamera(0)
+export function getSurfacePlantCamera(isMobile = false) {
+  return getUndergroundCamera(0, isMobile)
 }
 
 export function deriveSurfacePlantState() {
@@ -83,7 +85,7 @@ export function deriveSurfacePlantState() {
 }
 
 /** Camera path that follows root growth underground */
-export function getUndergroundCamera(rootGrowth) {
+export function getUndergroundCamera(rootGrowth, isMobile = false) {
   const t = clamp01(rootGrowth)
   const pos = interpolateKeys(CAMERA_KEYS, t, 'pos')
   const target = interpolateKeys(CAMERA_KEYS, t, 'target')
@@ -95,19 +97,20 @@ export function getUndergroundCamera(rootGrowth) {
     fov,
   }
 
-  return applyUndergroundSpiralOrbit(base, t)
+  return applyUndergroundSpiralOrbit(base, t, isMobile)
 }
 
 /**
  * Espiral suave: en t≈0 coincide con la base (planta en foco);
  * giro y profundidad extra entran gradualmente con spiralStrength.
  */
-export function applyUndergroundSpiralOrbit(camera, rootGrowth) {
+export function applyUndergroundSpiralOrbit(camera, rootGrowth, isMobile = false) {
+  const spiralTurns = isMobile ? SPIRAL_TURNS_MOBILE : SPIRAL_TURNS_DESKTOP
   const t = clamp01(rootGrowth)
   const journey = journeyEase(t)
   const strength = spiralStrength(t)
 
-  const angle = journey * SPIRAL_TURNS * Math.PI * 2
+  const angle = journey * spiralTurns * Math.PI * 2
   const cosA = Math.cos(angle)
   const sinA = Math.sin(angle)
 

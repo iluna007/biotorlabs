@@ -44,6 +44,7 @@ const MAX_ROTATION = 360 - FACE_DEG
 const CONTENT_DELAY = BARREL_CONTENT_DELAY
 const LAB_SLIDE = 2
 const PROGRESS_STEPS = 4
+const WIPE_OUT_FRAC = 0.25
 
 function buildPhases(phaseVh) {
   return phaseVh.map((heightVh, i) => ({
@@ -53,8 +54,8 @@ function buildPhases(phaseVh) {
   }))
 }
 
-function getProgressStep(visualSlide, scrollProgress) {
-  if (scrollProgress >= 0.975) return 3
+function getProgressStep(visualSlide, scrollProgress, wipeOutProgress = 0) {
+  if (wipeOutProgress > 0.05 || scrollProgress >= 0.975) return 3
   return Math.min(visualSlide, PROGRESS_STEPS - 2)
 }
 
@@ -91,6 +92,9 @@ function getPhaseState(progress, phaseVh) {
       const visualSlide = getVisualSlide(i)
       const contentVisible = i === 0 || local >= CONTENT_DELAY
       const contentSlide = contentVisible ? i : Math.max(0, i - 1)
+      const wipeOutProgress = (i === 2 && local > (1 - WIPE_OUT_FRAC))
+        ? (local - (1 - WIPE_OUT_FRAC)) / WIPE_OUT_FRAC
+        : 0
 
       return {
         visualSlide,
@@ -99,6 +103,7 @@ function getPhaseState(progress, phaseVh) {
         local,
         rotation,
         phaseIndex: i,
+        wipeOutProgress,
       }
     }
   }
@@ -110,15 +115,35 @@ function getPhaseState(progress, phaseVh) {
     local: 1,
     rotation: MAX_ROTATION,
     phaseIndex: 2,
+    wipeOutProgress: 1,
   }
 }
 
-function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }) {
+function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }, wipeOutProgress = 0) {
   const { root, imgA, imgB, imgC, wipeLayer, wipeLayer2 } = refs
   if (!root || !imgA || !imgB || !imgC || !wipeLayer || !wipeLayer2) return
 
-  const blend = getBarrelImageBlend(rotation, N)
   const fullWipe = getDiagonalWipeClips(1).incoming
+
+  if (wipeOutProgress > 0) {
+    imgA.style.visibility = 'hidden'
+    imgA.style.opacity = '0'
+    imgB.style.transform = imgPanTransform(0)
+    imgC.style.transform = imgPanTransform(parallax.panY)
+    wipeLayer.style.display = 'block'
+    wipeLayer.style.clipPath = fullWipe
+    wipeLayer2.style.display = 'block'
+    wipeLayer2.style.clipPath = fullWipe
+    root.style.visibility = 'visible'
+    root.style.background = ''
+    const { outgoingWebgl } = getDiagonalWipeClips(wipeOutProgress)
+    root.style.clipPath = outgoingWebgl
+    return
+  }
+
+  root.style.clipPath = ''
+
+  const blend = getBarrelImageBlend(rotation, N)
 
   const hideWipes = () => {
     wipeLayer.style.display = 'none'
@@ -258,7 +283,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
 
     const syncUiState = (state, scrollProgress) => {
       const prev = lastUiRef.current
-      const nextStep = getProgressStep(state.visualSlide, scrollProgress)
+      const nextStep = getProgressStep(state.visualSlide, scrollProgress, state.wipeOutProgress ?? 0)
 
       if (prev.visualSlide !== state.visualSlide) {
         setVisualSlide(state.visualSlide)
@@ -297,7 +322,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
         parallax = { ...parallax, panY: parallax.panY * 0.45 }
       }
 
-      updateBlendVisuals(state.rotation, blendRefs, parallax)
+      updateBlendVisuals(state.rotation, blendRefs, parallax, state.wipeOutProgress ?? 0)
 
       onBarrelPhaseUpdate?.({
         phaseIndex: state.phaseIndex,
@@ -305,6 +330,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
         contentVisible: state.contentVisible,
         contentSlide: state.contentSlide,
         inBarrel: self.isActive,
+        wipeOutProgress: state.wipeOutProgress ?? 0,
       })
       syncUiState(state, progress)
 

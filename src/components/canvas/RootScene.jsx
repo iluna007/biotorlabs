@@ -74,7 +74,9 @@ export function RootScene({
 
   const renderActiveRef = useRef(renderActive)
 
-  const initialPlantCam = getSurfacePlantCamera()
+  const isMobileRef = useRef(typeof window !== 'undefined' && window.innerWidth <= 768)
+
+  const initialPlantCam = getSurfacePlantCamera(isMobileRef.current)
 
   const fovTargetRef = useRef(initialPlantCam.fov)
 
@@ -252,6 +254,8 @@ export function RootScene({
 
     const onResize = () => {
 
+      isMobileRef.current = window.innerWidth <= 768
+
       const cam = cameraRef.current
 
       const r = rendererRef.current
@@ -308,7 +312,7 @@ export function RootScene({
 
       const uT = resolveUndergroundProgress(rootGrowthProgress, barrelPhase2Progress)
 
-      const cam = getUndergroundCamera(uT)
+      const cam = getUndergroundCamera(uT, isMobileRef.current)
 
       const camera = cameraRef.current
 
@@ -388,7 +392,7 @@ export function RootScene({
 
       const uT = resolveUndergroundProgress(rootGrowthProgress, barrelPhase2Progress)
 
-      const cam = getUndergroundCamera(uT)
+      const cam = getUndergroundCamera(uT, isMobileRef.current)
 
       const onSurface = isPlantSurfaceView(barrelPhase2Progress)
 
