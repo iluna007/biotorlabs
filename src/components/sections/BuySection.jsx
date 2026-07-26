@@ -11,8 +11,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 function ProductCard({ product, isActive, style, ui }) {
   return (
-    <div className="product-card-inner" style={{
-      padding: '2.5rem 3rem',
+    <div className="product-card-inner product-card-inner--buy" style={{
       border: `1px solid ${product.color}${isActive ? '50' : '20'}`,
       borderRadius: '12px',
       background: isActive

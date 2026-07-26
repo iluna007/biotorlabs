@@ -62,16 +62,21 @@ export function getBarrelImageBlend(rotation, faceCount = 3) {
 }
 
 /** Rotación ligada al scroll — pausa durante fases de exploración */
-export function getBarrelRotationFromProgress(progress, faceCount = 3, contentDelay = BARREL_CONTENT_DELAY) {
+export function getBarrelRotationFromProgress(
+  progress,
+  faceCount = 3,
+  contentDelay = BARREL_CONTENT_DELAY,
+  phaseVh = BARREL_PHASE_VH,
+) {
   const faceDeg = 360 / faceCount
-  const total = BARREL_TOTAL_VH
+  const total = phaseVh.reduce((sum, h) => sum + h, 0)
   const p = Math.max(0, Math.min(1, progress))
 
-  const phase0End = BARREL_PHASE_VH[0] / total
-  const trans1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1] * contentDelay) / total
-  const phase1End = (BARREL_PHASE_VH[0] + BARREL_PHASE_VH[1]) / total
+  const phase0End = phaseVh[0] / total
+  const trans1End = (phaseVh[0] + phaseVh[1] * contentDelay) / total
+  const phase1End = (phaseVh[0] + phaseVh[1]) / total
 
-  const phase2Duration = BARREL_PHASE_VH[2] / total
+  const phase2Duration = phaseVh[2] / total
   const trans2End = phase1End + phase2Duration * contentDelay
 
   if (p <= phase0End) return 0

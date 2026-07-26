@@ -5,16 +5,7 @@ export function Testimonials() {
   const { testimonials } = useContent()
 
   return (
-    <section
-      id="testimonials"
-      className="section"
-      style={{
-        minHeight: '100vh',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '10vh 0',
-      }}
-    >
+    <section id="testimonials" className="section section--testimonials">
       <SectionOverlay triggerSection="#testimonials" align="center">
         <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>
           {testimonials.eyebrow}
@@ -29,17 +20,7 @@ export function Testimonials() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {testimonials.items.map((t, i) => (
-            <blockquote
-              key={`${t.author}-${i}`}
-              style={{
-                padding: '1.5rem',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--surface-bg-soft)',
-                backdropFilter: 'blur(8px)',
-                margin: 0,
-              }}
-            >
+            <blockquote key={`${t.author}-${i}`} className="testimonial-card">
               <p style={{
                 fontSize: '0.92rem',
                 color: 'var(--cream)',

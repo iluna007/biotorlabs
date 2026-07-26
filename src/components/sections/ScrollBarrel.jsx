@@ -5,8 +5,6 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ASSETS } from '../../config/assets'
 import {
-  BARREL_PHASE_VH,
-  BARREL_TOTAL_VH,
   BARREL_CONTENT_DELAY,
   computeBarrelRadius,
   getBarrelImageBlend,
@@ -14,6 +12,7 @@ import {
   getBarrelRotationFromProgress,
   getExplorationParallax,
 } from '../../config/barrelScroll'
+import { getBarrelPhaseVh, getBarrelTotalVh, isCoarsePointer, isMobileViewport } from '../../utils/responsive'
 import { Hero } from './Hero'
 import { StatsBar } from './StatsBar'
 import { Science } from './Science'
@@ -39,19 +38,20 @@ const SLIDES = [
   },
 ]
 
-const PHASES = BARREL_PHASE_VH.map((heightVh, i) => ({
-  heightVh,
-  slide: i,
-  rotation: i * (360 / SLIDES.length),
-}))
-
 const N = SLIDES.length
 const FACE_DEG = 360 / N
-const TOTAL_VH = BARREL_TOTAL_VH
 const MAX_ROTATION = 360 - FACE_DEG
 const CONTENT_DELAY = BARREL_CONTENT_DELAY
 const LAB_SLIDE = 2
 const PROGRESS_STEPS = 4
+
+function buildPhases(phaseVh) {
+  return phaseVh.map((heightVh, i) => ({
+    heightVh,
+    slide: i,
+    rotation: i * (360 / SLIDES.length),
+  }))
+}
 
 function getProgressStep(visualSlide, scrollProgress) {
   if (scrollProgress >= 0.975) return 3
@@ -74,17 +74,19 @@ function isCanaOverlayActive(rotation) {
   return blend.from === 0
 }
 
-function getPhaseState(progress) {
-  const rotation = getBarrelRotationFromProgress(progress, N, CONTENT_DELAY)
+function getPhaseState(progress, phaseVh) {
+  const totalVh = getBarrelTotalVh(phaseVh)
+  const phases = buildPhases(phaseVh)
+  const rotation = getBarrelRotationFromProgress(progress, N, CONTENT_DELAY, phaseVh)
 
   let accumulated = 0
-  for (let i = 0; i < PHASES.length; i++) {
-    const phase = PHASES[i]
-    const start = accumulated / TOTAL_VH
+  for (let i = 0; i < phases.length; i++) {
+    const phase = phases[i]
+    const start = accumulated / totalVh
     accumulated += phase.heightVh
-    const end = accumulated / TOTAL_VH
+    const end = accumulated / totalVh
 
-    if (progress <= end || i === PHASES.length - 1) {
+    if (progress <= end || i === phases.length - 1) {
       const local = Math.max(0, Math.min(1, (progress - start) / (end - start || 1)))
       const visualSlide = getVisualSlide(i)
       const contentVisible = i === 0 || local >= CONTENT_DELAY
@@ -206,8 +208,12 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
   const [contentVisible, setContentVisible] = useState(true)
   const [visualSlide, setVisualSlide] = useState(0)
   const [progressStep, setProgressStep] = useState(0)
+  const [phaseVh, setPhaseVh] = useState(() => getBarrelPhaseVh())
+  const [totalVh, setTotalVh] = useState(() => getBarrelTotalVh(getBarrelPhaseVh()))
   const [radius, setRadius] = useState(() => computeBarrelRadius(N))
   const radiusRef = useRef(radius)
+  const phaseVhRef = useRef(phaseVh)
+  const nativePhase1ScrollRef = useRef(isCoarsePointer())
   const lastUiRef = useRef({
     visualSlide: 0,
     contentSlide: 0,
@@ -217,7 +223,13 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
 
   const activeProgressStep = modelStepActive ? 3 : progressStep
 
-  const syncRadius = useCallback(() => {
+  const syncViewport = useCallback(() => {
+    const nextPhaseVh = getBarrelPhaseVh()
+    phaseVhRef.current = nextPhaseVh
+    setPhaseVh(nextPhaseVh)
+    setTotalVh(getBarrelTotalVh(nextPhaseVh))
+    nativePhase1ScrollRef.current = isCoarsePointer()
+
     const r = computeBarrelRadius(N, window.innerHeight)
     radiusRef.current = r
     setRadius(r)
@@ -232,7 +244,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
     const wrapper = wrapperRef.current
     if (!barrel || !wrapper) return
 
-    syncRadius()
+    syncViewport()
     gsap.set(barrel, { rotateX: 0, z: -radiusRef.current })
 
     const blendRefs = {
@@ -270,17 +282,20 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
 
     const applyBarrelState = (self) => {
       const progress = typeof self.progress === 'number' ? self.progress : 0
-      const state = getPhaseState(progress)
+      const state = getPhaseState(progress, phaseVhRef.current)
 
       wrapper.dataset.activeSlide = String(state.visualSlide)
       wrapper.dataset.contentSlide = String(state.contentSlide)
       wrapper.dataset.canaOverlay = isCanaOverlayActive(state.rotation) ? '1' : '0'
 
-      const parallax = getExplorationParallax(
+      let parallax = getExplorationParallax(
         state.phaseIndex,
         state.local,
         CONTENT_DELAY,
       )
+      if (isMobileViewport()) {
+        parallax = { ...parallax, panY: parallax.panY * 0.45 }
+      }
 
       updateBlendVisuals(state.rotation, blendRefs, parallax)
 
@@ -293,7 +308,12 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
       })
       syncUiState(state, progress)
 
-      if (phase1InnerRef.current && phase1ScrollRef.current && state.contentVisible) {
+      if (
+        !nativePhase1ScrollRef.current &&
+        phase1InnerRef.current &&
+        phase1ScrollRef.current &&
+        state.contentVisible
+      ) {
         const inner = phase1InnerRef.current
         const viewport = phase1ScrollRef.current.clientHeight
         const overflow = Math.max(0, inner.scrollHeight - viewport)
@@ -320,7 +340,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
     applyBarrelState(trigger)
 
     const onResize = () => {
-      syncRadius()
+      syncViewport()
       ScrollTrigger.refresh()
       applyBarrelState(trigger)
     }
@@ -330,7 +350,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
       window.removeEventListener('resize', onResize)
       trigger.kill()
     }
-  }, [onBarrelPhaseUpdate, syncRadius, modelStepActive])
+  }, [onBarrelPhaseUpdate, syncViewport, totalVh, modelStepActive])
 
   const showPhase = (index) => {
     if (index === 0) {
@@ -345,7 +365,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
       id="hero"
       className="barrel-wrapper section--interactive"
       style={{
-        height: `${TOTAL_VH}vh`,
+        height: `${totalVh}vh`,
         '--barrel-r': `${radius}px`,
         '--barrel-perspective': `${Math.round(radius * 3.4)}px`,
       }}

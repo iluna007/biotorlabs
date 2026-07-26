@@ -37,17 +37,7 @@ export function StatCounter({ value, unit, label, triggerEl }) {
   }, [value, triggerEl])
 
   return (
-    <div
-      style={{
-        textAlign: 'center',
-        padding: '1.5rem',
-        border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-sm)',
-        background: 'var(--surface-bg)',
-        backdropFilter: 'blur(8px)',
-        minWidth: '140px',
-      }}
-    >
+    <div className="stat-counter">
       <div className="stat-counter__num">
         <span ref={numRef}>0</span>
         <span className="stat-counter__unit">{unit}</span>

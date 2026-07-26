@@ -263,7 +263,7 @@ export function RootScene({
       cam.updateProjectionMatrix()
 
       r.setSize(window.innerWidth, window.innerHeight)
-
+      r.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.25 : 1.5))
     }
 
     window.addEventListener('resize', onResize)

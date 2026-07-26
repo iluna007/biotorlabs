@@ -5,8 +5,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 export function SectionOverlay({ children, triggerSection, align = 'left' }) {
-  const alignSelf =
-    align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start'
+  const alignClass =
+    align === 'right'
+      ? 'section-overlay--right'
+      : align === 'center'
+        ? 'section-overlay--center'
+        : 'section-overlay--left'
   const ref = useRef(null)
 
   useEffect(() => {
@@ -31,18 +35,7 @@ export function SectionOverlay({ children, triggerSection, align = 'left' }) {
   }, [triggerSection])
 
   return (
-    <div
-      ref={ref}
-      style={{
-        maxWidth: align === 'center' ? 'min(640px, 92vw)' : '520px',
-        width: '100%',
-        padding: '0 3rem',
-        alignSelf,
-        marginLeft: align === 'center' ? 'auto' : undefined,
-        marginRight: align === 'center' ? 'auto' : undefined,
-        textAlign: align === 'center' ? 'center' : undefined,
-      }}
-    >
+    <div ref={ref} className={`section-overlay ${alignClass}`}>
       {children}
     </div>
   )
