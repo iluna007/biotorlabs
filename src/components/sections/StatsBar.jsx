@@ -73,7 +73,7 @@ export function StatsBar({ embedded = false, runAnimation = false }) {
 
   if (embedded) {
     return (
-      <div ref={ref} className="barrel-stats">
+      <div ref={ref} className="barrel-stats stats-bar">
         {inner}
       </div>
     )

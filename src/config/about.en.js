@@ -126,7 +126,6 @@ export const ABOUT_EN = {
       { id: 'philosophy', label: 'Philosophy' },
       { id: 'process', label: 'Process' },
       { id: 'team', label: 'Team' },
-      { id: 'contact', label: 'Contact' },
     ],
     flowLabel: 'Discover · Trust · Connect',
     trustLabel: 'Trust signals',

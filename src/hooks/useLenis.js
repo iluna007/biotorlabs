@@ -12,12 +12,12 @@ export function useLenis(enabled = true) {
     if (!enabled) return undefined
 
     const lenis = new Lenis({
-      duration: 0.7,
+      duration: 1.4,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.2,
-      touchMultiplier: 1.2,
+      wheelMultiplier: 0.65,
+      touchMultiplier: 1.0,
     })
 
     lenisRef.current = lenis

@@ -6,7 +6,6 @@ import { useLenis } from '../hooks/useLenis'
 import { ASSETS } from '../config/assets'
 import { Navbar } from '../components/ui/Navbar'
 import { Footer } from '../components/ui/Footer'
-import { SocialLinks } from '../components/ui/SocialLinks'
 import { AboutScene } from '../components/canvas/AboutScene'
 import { AboutWebGLGallery } from '../components/canvas/AboutWebGLGallery'
 import { AboutTextReveal, AboutLines } from '../components/about/AboutTextReveal'
@@ -81,29 +80,98 @@ export default function AboutPage() {
   }, [])
 
   useEffect(() => {
-    const steps = gsap.utils.toArray('.about-process-step')
-    if (!steps.length) return
-
     const ctx = gsap.context(() => {
-      steps.forEach((step, i) => {
-        gsap.fromTo(step,
-          { y: 56, opacity: 0 },
+      gsap.utils.toArray('.about-editorial__text').forEach((el) => {
+        gsap.fromTo(el,
+          { x: -70, opacity: 0 },
           {
-            y: 0,
-            opacity: 1,
-            duration: 0.85,
-            ease: 'power2.out',
-            delay: i * 0.04,
-            scrollTrigger: {
-              trigger: step,
-              start: 'top 88%',
-              toggleActions: 'play none none reverse',
-            },
+            x: 0, opacity: 1, duration: 1.3, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-editorial__media, .about-reveal-media').forEach((el) => {
+        gsap.fromTo(el,
+          { x: 50, opacity: 0 },
+          {
+            x: 0, opacity: 1, duration: 1.3, ease: 'power3.out', delay: 0.15,
+            scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-editorial--reverse .about-editorial__text').forEach((el) => {
+        gsap.fromTo(el,
+          { x: 70, opacity: 0 },
+          {
+            x: 0, opacity: 1, duration: 1.3, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-card').forEach((el, i) => {
+        const dir = i % 2 === 0 ? -50 : 50
+        gsap.fromTo(el,
+          { x: dir, opacity: 0 },
+          {
+            x: 0, opacity: 1, duration: 1.1, ease: 'power2.out', delay: i * 0.12,
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-process-step').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 70, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1.15, ease: 'power3.out', delay: i * 0.1,
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-team-card').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 55, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 0.95, ease: 'power2.out', delay: i * 0.09,
+            scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-specialty').forEach((el, i) => {
+        gsap.fromTo(el,
+          { x: -40, opacity: 0 },
+          {
+            x: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: i * 0.08,
+            scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-country-tag').forEach((el, i) => {
+        gsap.fromTo(el,
+          { x: 30, opacity: 0 },
+          {
+            x: 0, opacity: 1, duration: 0.75, ease: 'power2.out', delay: i * 0.06,
+            scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none reverse' },
+          },
+        )
+      })
+
+      gsap.utils.toArray('.about-presence').forEach((el) => {
+        gsap.fromTo(el,
+          { y: 40, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1.0, ease: 'power2.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
           },
         )
       })
     })
-
     return () => ctx.revert()
   }, [])
 
@@ -357,27 +425,6 @@ export default function AboutPage() {
               {ABOUT.who.countries.map((country) => (
                 <span key={country} className="about-country-tag">{country}</span>
               ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="contact" className="about-chapter about-chapter--contact" data-chapter="contact">
-          <AboutTextReveal>
-            <p className="section-eyebrow about-line-mask"><span className="about-line">{page.contactEyebrow}</span></p>
-            <h2 className="section-title about-line-mask"><span className="about-line">{page.contactTitle}</span></h2>
-          </AboutTextReveal>
-          <div className="about-contact-grid">
-            <div>
-              <p className="about-contact__label">{page.locationLabel}</p>
-              <p className="section-body">{ABOUT.contact.address}</p>
-            </div>
-            <div>
-              <p className="about-contact__label">{page.emailLabel}</p>
-              <a href={`mailto:${ABOUT.contact.email}`} className="about-contact__link">{ABOUT.contact.email}</a>
-            </div>
-            <div>
-              <p className="about-contact__label">{page.socialLabel}</p>
-              <SocialLinks className="about-contact-social" variant="icon" iconSize={22} ariaLabel={ui.socialNavLabel} />
             </div>
           </div>
         </section>

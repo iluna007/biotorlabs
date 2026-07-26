@@ -1,11 +1,16 @@
+import { useRef } from 'react'
 import { SectionOverlay } from '../ui/SectionOverlay'
 import { StatCounter } from '../ui/StatCounter'
 import { useContent } from '../../context/SitePreferencesContext'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 export function Results() {
+  const sectionRef = useRef(null)
   const { results } = useContent()
+  useScrollReveal(sectionRef)
+
   return (
-    <section id="results" className="section section--results">
+    <section id="results" ref={sectionRef} className="section section--results">
       <SectionOverlay triggerSection="#results" align="center">
         <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>{results.eyebrow}</p>
         <h2 className="section-title section-title--results">
@@ -22,6 +27,7 @@ export function Results() {
           {results.stats.map(stat => (
             <StatCounter
               key={stat.label}
+              className="results-card"
               value={stat.value}
               unit={stat.unit}
               label={stat.label}

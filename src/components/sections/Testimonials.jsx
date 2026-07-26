@@ -1,11 +1,15 @@
+import { useRef } from 'react'
 import { SectionOverlay } from '../ui/SectionOverlay'
 import { useContent } from '../../context/SitePreferencesContext'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 export function Testimonials() {
+  const sectionRef = useRef(null)
   const { testimonials } = useContent()
+  useScrollReveal(sectionRef)
 
   return (
-    <section id="testimonials" className="section section--testimonials">
+    <section id="testimonials" ref={sectionRef} className="section section--testimonials">
       <SectionOverlay triggerSection="#testimonials" align="center">
         <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>
           {testimonials.eyebrow}

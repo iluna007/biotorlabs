@@ -1,7 +1,7 @@
 import { BARREL_CONTENT_DELAY } from '../config/barrelScroll'
 
 /** Fracción de fase 2 dedicada a planta en superficie (antes de raíces). */
-export const SURFACE_END = 0.45
+export const SURFACE_END = 0.85
 
 /** Progreso subterráneo al terminar el barril (continúa en el resto de la página). */
 export const PHASE2_UNDERGROUND_MAX = 0.72

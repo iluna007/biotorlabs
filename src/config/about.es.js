@@ -126,7 +126,6 @@ export const ABOUT_ES = {
       { id: 'philosophy', label: 'Filosofía' },
       { id: 'process', label: 'Proceso' },
       { id: 'team', label: 'Equipo' },
-      { id: 'contact', label: 'Contacto' },
     ],
     flowLabel: 'Descubrir · Confiar · Contactar',
     trustLabel: 'Señales de confianza',

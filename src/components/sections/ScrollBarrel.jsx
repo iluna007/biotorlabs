@@ -356,7 +356,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
       trigger: wrapper,
       start: 'top top',
       end: 'bottom bottom',
-      scrub: 0.05,
+      scrub: 0.35,
       onUpdate: applyBarrelState,
       onLeave: () => {
         onBarrelPhaseUpdate?.((prev) => ({ ...prev, inBarrel: false }))

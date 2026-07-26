@@ -8,25 +8,35 @@ export function LoadingScreen({ onComplete }) {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    gsap.to(
-      { p: 0 },
-      {
-        p: 100,
-        duration: 2.2,
-        ease: 'power1.inOut',
-        onUpdate: function () {
-          setProgress(Math.floor(this.targets()[0].p))
+    let cancelled = false
+
+    document.fonts.ready.then(() => {
+      if (cancelled) return
+
+      gsap.to(
+        { p: 0 },
+        {
+          p: 100,
+          duration: 3.0,
+          ease: 'power1.inOut',
+          onUpdate: function () {
+            setProgress(Math.floor(this.targets()[0].p))
+          },
+          onComplete: () => {
+            gsap.to(ref.current, {
+              opacity: 0,
+              duration: 0.9,
+              delay: 0.4,
+              onComplete: onComplete,
+            })
+          },
         },
-        onComplete: () => {
-          gsap.to(ref.current, {
-            opacity: 0,
-            duration: 0.8,
-            delay: 0.3,
-            onComplete: onComplete,
-          })
-        },
-      },
-    )
+      )
+    })
+
+    return () => {
+      cancelled = true
+    }
   }, [onComplete])
 
   return (

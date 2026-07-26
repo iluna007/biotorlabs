@@ -13,14 +13,14 @@ function journeyEase(t) {
 
 /** Rampa 0→1 de efectos de espiral (sin saltos al inicio). */
 function spiralStrength(t) {
-  return easeInOut(clamp01(t / 0.42))
+  return easeInOut(clamp01((t - 0.2) / 0.5))
 }
 
 /** Vueltas completas de la cámara mientras las raíces crecen (0→1). */
-const SPIRAL_TURNS_DESKTOP = 3.0
-const SPIRAL_TURNS_MOBILE = 1.5
+const SPIRAL_TURNS_DESKTOP = 1.6
+const SPIRAL_TURNS_MOBILE = 0.0
 
-const SPIRAL_PIVOT_XZ = { x: 0.04, z: 0.02 }
+const SPIRAL_PIVOT_XZ = { x: 0.02, z: 0.01 }
 
 /**
  * Planta en foco al inicio; descenso gradual; espiral en la segunda mitad del recorrido.
@@ -120,7 +120,7 @@ export function applyUndergroundSpiralOrbit(camera, rootGrowth, isMobile = false
     z: SPIRAL_PIVOT_XZ.z,
   }
 
-  const wobble = 1 + Math.sin(angle * 2) * 0.045 * strength
+  const wobble = 1.0
   const radiusScale = lerp(1, lerp(1.03, 0.91, journey) * wobble, strength)
 
   const ox = camera.pos.x - pivot.x

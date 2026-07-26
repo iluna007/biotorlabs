@@ -6,12 +6,13 @@ import { useContent } from '../../context/SitePreferencesContext'
 import { ProductPackImage } from '../ui/ProductPackImage'
 import { productPath } from '../../utils/products'
 import { dispatchActiveProduct } from '../../utils/productPack3d'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 gsap.registerPlugin(ScrollTrigger)
 
 function ProductCard({ product, isActive, style, ui }) {
   return (
-    <div className="product-card-inner product-card-inner--buy" style={{
+    <div className="product-card-inner product-card-inner--buy buy-product-card" style={{
       border: `1px solid ${product.color}${isActive ? '50' : '20'}`,
       borderRadius: '12px',
       background: isActive
@@ -105,6 +106,7 @@ export function BuySection() {
   const cardRef = useRef(null)
   const sectionRef = useRef(null)
   const touchStartX = useRef(null)
+  useScrollReveal(sectionRef)
 
   const total = products.length
   const current = products[active]
@@ -172,21 +174,6 @@ export function BuySection() {
     if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
     touchStartX.current = null
   }
-
-  useEffect(() => {
-    if (!sectionRef.current) return
-    gsap.fromTo(sectionRef.current.querySelector('.carousel-header'),
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          once: true,
-        },
-      },
-    )
-  }, [])
 
   return (
     <section
