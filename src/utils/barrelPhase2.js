@@ -4,7 +4,9 @@ import { BARREL_CONTENT_DELAY } from '../config/barrelScroll'
 export const SURFACE_END = 0.85
 
 /** Progreso subterráneo al terminar el barril (continúa en el resto de la página). */
-export const PHASE2_UNDERGROUND_MAX = 0.72
+export const PHASE2_UNDERGROUND_MAX = 0.30
+
+const clamp01 = (v) => Math.max(0, Math.min(1, v))
 
 /** Progreso 0→1 de "Detrás de la Ciencia" dentro del barril, o null fuera de fase 2. */
 export function getBarrelPhase2Explore(barrelPhase) {
@@ -26,7 +28,7 @@ export function isPlantSurfaceView(barrelPhase2Progress) {
 
 /** Continúa el viaje subterráneo tras el barril (desde #results). */
 export function mapPostBarrelRootProgress(rootGrowthProgress) {
-  return Math.max(0, Math.min(1, rootGrowthProgress))
+  return PHASE2_UNDERGROUND_MAX + clamp01(rootGrowthProgress) * (1 - PHASE2_UNDERGROUND_MAX)
 }
 
 /**

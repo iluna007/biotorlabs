@@ -99,7 +99,6 @@ export function RootScene({
   ))
   const camLerpRef = useRef(0.04)
   const wasUndergroundRef = useRef(false)
-  const undergroundPeakRef = useRef(0)
 
   const [glScene, setGlScene] = useState(null)
 
@@ -116,10 +115,6 @@ export function RootScene({
 
   if (undergroundActive && !onSurface) {
     undergroundT = resolveUndergroundProgress(rootGrowthProgress, barrelPhase2Progress)
-    undergroundPeakRef.current = Math.max(undergroundPeakRef.current, undergroundT)
-    undergroundT = undergroundPeakRef.current
-  } else {
-    undergroundPeakRef.current = 0
   }
 
   const rootShaderProgress = getRootShaderProgress(undergroundT)
@@ -398,7 +393,7 @@ export function RootScene({
 
 
 
-      camLerpRef.current = 0.07
+      camLerpRef.current = 0.055
 
       camTargetPos.current.set(cam.pos.x, cam.pos.y, cam.pos.z)
 

@@ -62,6 +62,8 @@ export default function App() {
 
   })
 
+  const [undergroundLatched, setUndergroundLatched] = useState(false)
+
   const location = useLocation()
 
   const { theme } = useSitePreferences()
@@ -78,26 +80,30 @@ export default function App() {
 
   const barrelPhase2Progress = getBarrelPhase2Explore(barrelPhase)
 
-
+  useEffect(() => {
+    if (wipeOutProgress > 0.5) {
+      setUndergroundLatched(true)
+    } else if (barrelPhase.inBarrel && barrelPhase.phaseIndex < 2) {
+      setUndergroundLatched(false)
+    } else if (
+      barrelPhase.inBarrel &&
+      barrelPhase.phaseIndex === 2 &&
+      wipeOutProgress < 0.02
+    ) {
+      setUndergroundLatched(false)
+    }
+  }, [wipeOutProgress, barrelPhase.inBarrel, barrelPhase.phaseIndex])
 
   const webglVisible =
-
+    undergroundLatched ||
     resultsReveal > 0.02 ||
-
     rootGrowthProgress > 0.01 ||
-
     wipeOutProgress > 0.05
 
-
-
-  const webglOpacity = Math.min(1, Math.max(
-
+  const webglOpacity = undergroundLatched ? 1 : Math.min(1, Math.max(
     resultsReveal,
-
     rootGrowthProgress > 0.02 ? 1 : 0,
-
     wipeOutProgress > 0.02 ? Math.min(1, wipeOutProgress / 0.12) : 0,
-
   ))
 
 
