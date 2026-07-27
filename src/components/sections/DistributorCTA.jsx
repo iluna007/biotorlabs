@@ -1,15 +1,23 @@
+import { useRef } from 'react'
 import { useContent } from '../../context/SitePreferencesContext'
+import { useSectionReveal } from '../../hooks/useSectionReveal'
 
 export function DistributorCTA() {
+  const sectionRef = useRef(null)
   const { distributorCTA } = useContent()
+  useSectionReveal(sectionRef)
 
   return (
-    <section className="section--interactive" style={{
-      position: 'relative', zIndex: 10,
-      padding: '4rem var(--pad-x)',
-      display: 'flex', justifyContent: 'center',
-      pointerEvents: 'none',
-    }}>
+    <section
+      ref={sectionRef}
+      className="section--interactive"
+      style={{
+        position: 'relative', zIndex: 10,
+        padding: '4rem var(--pad-x)',
+        display: 'flex', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}
+    >
       <div style={{
         maxWidth: '860px', width: '100%',
         padding: 'clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem)',
@@ -23,7 +31,7 @@ export function DistributorCTA() {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        <div style={{ flex: '1 1 320px' }}>
+        <div style={{ flex: '1 1 320px' }} data-reveal="left">
           <p className="section-eyebrow" style={{ marginBottom: '0.6rem' }}>
             {distributorCTA.eyebrow}
           </p>
@@ -37,10 +45,13 @@ export function DistributorCTA() {
             {distributorCTA.body}
           </p>
         </div>
-        <div style={{
-          display: 'flex', flexDirection: 'column', gap: '0.8rem',
-          flexShrink: 0, pointerEvents: 'all',
-        }}>
+        <div
+          data-reveal="right"
+          style={{
+            display: 'flex', flexDirection: 'column', gap: '0.8rem',
+            flexShrink: 0, pointerEvents: 'all',
+          }}
+        >
           <button
             type="button"
             className="btn-primary"

@@ -29,6 +29,13 @@ export const ASSETS = {
     lab: '/images/hero/lab-barrel.webp',
   },
 
+  howItWorks: [
+    '/images/about/process-lab-eval.webp',
+    '/images/about/process-performance.webp',
+    '/images/about/process-field.webp',
+    '/images/about/process-support.webp',
+  ],
+
   about: {
     video: '/images/about/hero-bg.mp4',
     poster: '/images/about/hero-poster.webp',

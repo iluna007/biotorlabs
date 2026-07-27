@@ -1,3 +1,40 @@
+/* ─── TIPOGRAFÍAS CORPORATIVAS (self-host en /public/fonts) ─────────────── */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gill Sans Corp';
+  src: url('/fonts/GillSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DIN Corp';
+  src: url('/fonts/DIN-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ─── IDENTIDAD VISUAL — DOS 12 Studio / Biotor Labs ───────────────────── */
 :root {
   /* Paleta oficial */
@@ -48,9 +85,9 @@
   --stat-label-color:    var(--green-light);
 
   /* Tipografías */
-  --font-display: 'DM Serif Display', Georgia, serif;
-  --font-body:    'Outfit', system-ui, sans-serif;
-  --font-mono:    'IBM Plex Mono', monospace;
+  --font-display: 'Gill Sans Corp', 'DM Serif Display', Georgia, serif;
+  --font-body:    'Montserrat', 'Outfit', system-ui, sans-serif;
+  --font-mono:    'DIN Corp', 'IBM Plex Mono', monospace;
 
   --nav-h:        clamp(4.5rem, 10vw, 6.5rem);
   --logo-nav-h:   clamp(3rem, 5vw + 1.5rem, 5.5rem);
@@ -67,7 +104,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html   { font-size: 16px; scroll-behavior: auto; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body   { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-weight: 400; overflow-x: hidden; min-height: 100vh; min-height: 100svh; }
-body.is-loading { overflow: hidden; }
 img    { max-width: 100%; display: block; }
 button { font-family: inherit; }
 
@@ -270,9 +306,132 @@ button { font-family: inherit; }
   line-height: 1.55;
 }
 
+.science-mechanism-card--illustrated {
+  overflow: hidden;
+  padding-top: 0;
+}
+
+.science-mechanism-card__media {
+  margin: -1px -1px 1rem;
+  height: 130px;
+  overflow: hidden;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.science-mechanism-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.science-mechanism-card:hover .science-mechanism-card__media img {
+  transform: scale(1.06);
+}
+
+@media (max-width: 768px) {
+  .science-mechanism-card__media {
+    height: 100px;
+  }
+}
+
 @media (max-width: 720px) {
-  .science-mechanisms-grid {
+  .science-mechanisms-grid:not(.science-mechanisms-grid--row) {
     grid-template-columns: 1fr;
+  }
+}
+
+/* HowItWorks — fila horizontal 1×4 (validación en campo) */
+.science-mechanisms-grid--row {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  width: 100%;
+  margin-inline: auto;
+}
+
+.science-mechanisms-grid--row .science-mechanism-card {
+  padding: clamp(0.55rem, 1vw, 0.75rem) clamp(0.7rem, 1.25vw, 1rem) clamp(0.85rem, 1.4vw, 1.05rem);
+  min-width: 0;
+}
+
+.science-mechanisms-grid--row .science-mechanism-card--illustrated {
+  padding-top: clamp(0.55rem, 1vw, 0.75rem);
+}
+
+.science-mechanisms-grid--row .science-mechanism-card__media {
+  height: clamp(88px, 11vw, 118px);
+  margin: 0 0 0.75rem;
+  border-radius: calc(var(--radius-sm) - 1px);
+}
+
+.science-mechanisms-grid--row .science-mechanism-card__title {
+  font-size: clamp(0.74rem, 1.15vw, 0.88rem);
+  line-height: 1.32;
+}
+
+.science-mechanisms-grid--row .science-mechanism-card__desc {
+  font-size: clamp(0.68rem, 1vw, 0.78rem);
+  line-height: 1.45;
+}
+
+.barrel-phase__inner--how.barrel-phase__inner--grid {
+  width: min(60vw, 1200px);
+  max-width: 60vw;
+  max-height: none;
+  overflow: visible;
+  padding-bottom: 1.25rem;
+}
+
+.barrel-phase-content--center.barrel-phase-content--grid {
+  max-width: 100%;
+  width: 100%;
+}
+
+.barrel-phase-content--grid .section-title {
+  font-size: clamp(1.55rem, 2.8vw, 2.2rem) !important;
+  margin-bottom: 1rem !important;
+}
+
+.barrel-phase--2 .science-mechanisms-grid--row {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
+}
+
+.barrel-phase--2.is-active .science-mechanisms-grid--row {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.barrel-phase--2 .science-mechanisms-grid--row .science-mechanism-card {
+  opacity: 0;
+  transform: translateY(36px) scale(0.94);
+  filter: blur(3px);
+  transition:
+    opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s ease;
+}
+
+.barrel-phase--2.is-active .science-mechanisms-grid--row .science-mechanism-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: calc(0.34s + var(--step-i, 0) * 0.12s);
+}
+
+@media (max-width: 900px) {
+  .barrel-phase__inner--how.barrel-phase__inner--grid {
+    width: min(92vw, 1200px);
+    max-width: 92vw;
+  }
+
+  .science-mechanisms-grid--row {
+    gap: 0.55rem;
+  }
+
+  .science-mechanisms-grid--row .science-mechanism-card__media {
+    height: clamp(64px, 16vw, 88px);
   }
 }
 
@@ -2872,15 +3031,6 @@ html.light-mode .about-page__scrim {
   transition: opacity 1.2s ease 0.18s, transform 1.2s ease 0.18s;
 }
 .barrel-phase--2.is-active .section-title { opacity: 1; transform: translateY(0); }
-.barrel-phase--2 .science-mechanism-card {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 1.1s ease, transform 1.1s ease;
-}
-.barrel-phase--2.is-active .science-mechanism-card:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
-.barrel-phase--2.is-active .science-mechanism-card:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.48s; }
-.barrel-phase--2.is-active .science-mechanism-card:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.60s; }
-.barrel-phase--2.is-active .science-mechanism-card:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.72s; }
 
 .barrel-phase--1 .stats-bar {
   opacity: 0;
@@ -2897,10 +3047,14 @@ html.light-mode .about-page__scrim {
   pointer-events: all;
 }
 
-.barrel-phase--1,
-.barrel-phase--2 {
+.barrel-phase--1 {
   padding-top: calc(var(--nav-h) + 0.5rem);
   padding-bottom: 4.5rem;
+}
+
+.barrel-phase--2 {
+  padding-top: calc(var(--nav-h) + 0.35rem);
+  padding-bottom: 2rem;
 }
 
 .barrel-phase__inner {
@@ -2946,7 +3100,8 @@ html.light-mode .about-page__scrim {
 }
 
 .barrel-phase__inner--grid {
-  max-width: min(920px, 96vw);
+  width: min(60vw, 1200px);
+  max-width: 60vw;
 }
 
 .barrel-phase__inner--split {
@@ -3315,7 +3470,7 @@ html.light-mode .barrel-face::after {
 }
 
 @media (max-width: 768px) {
-  .science-mechanisms-grid {
+  .science-mechanisms-grid:not(.science-mechanisms-grid--row) {
     grid-template-columns: 1fr;
   }
 

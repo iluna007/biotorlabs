@@ -1,21 +1,21 @@
 import { useRef } from 'react'
 import { SectionOverlay } from '../ui/SectionOverlay'
 import { useContent } from '../../context/SitePreferencesContext'
-import { useScrollReveal } from '../../hooks/useScrollReveal'
+import { useSectionReveal } from '../../hooks/useSectionReveal'
 
 export function Testimonials() {
   const sectionRef = useRef(null)
   const { testimonials } = useContent()
-  useScrollReveal(sectionRef)
+  useSectionReveal(sectionRef)
 
   return (
     <section id="testimonials" ref={sectionRef} className="section section--testimonials">
       <SectionOverlay triggerSection="#testimonials" align="center">
-        <p className="section-eyebrow" style={{ marginBottom: '1.2rem' }}>
+        <p className="section-eyebrow" data-reveal="up" style={{ marginBottom: '1.2rem' }}>
           {testimonials.eyebrow}
         </p>
 
-        <h2 className="section-title" style={{
+        <h2 className="section-title" data-reveal="up" style={{
           fontSize: 'clamp(2rem, 4vw, 3rem)',
           marginBottom: '2rem',
         }}>
@@ -24,7 +24,7 @@ export function Testimonials() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {testimonials.items.map((t, i) => (
-            <blockquote key={`${t.author}-${i}`} className="testimonial-card">
+            <blockquote key={`${t.author}-${i}`} className="testimonial-card" data-reveal="up">
               <p style={{
                 fontSize: '0.92rem',
                 color: 'var(--cream)',

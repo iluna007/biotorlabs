@@ -1,6 +1,6 @@
 /**
  * Optimiza video e imágenes de la página Nosotros → public/images/about/
- * Fuentes en public/images/Recursos/ (no versionadas).
+ * Fuentes en assets-source/Recursos/ (no se publican en dist/).
  */
 import sharp from 'sharp'
 import { mkdir, copyFile } from 'node:fs/promises'
@@ -9,7 +9,7 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 const ROOT = path.resolve('public/images')
-const SRC = path.join(ROOT, 'Recursos')
+const SRC = path.resolve('assets-source/Recursos')
 const OUT = path.join(ROOT, 'about')
 
 const IMAGES = [

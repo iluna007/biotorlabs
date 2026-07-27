@@ -15,6 +15,7 @@
     "optimize-about-media": "node scripts/optimize-about-media.mjs"
   },
   "dependencies": {
+    "@fontsource/montserrat": "^5.3.0",
     "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",

@@ -70,7 +70,7 @@ export function RootScene({
 
   const rendererRef = useRef(null)
 
-  const clockRef = useRef(new THREE.Clock())
+  const timerRef = useRef(new THREE.Timer())
 
   const renderActiveRef = useRef(renderActive)
 
@@ -203,7 +203,7 @@ export function RootScene({
 
     let rafId
 
-    const animate = () => {
+    const animate = (timestamp) => {
 
       rafId = requestAnimationFrame(animate)
 
@@ -219,7 +219,9 @@ export function RootScene({
 
 
 
-      const elapsed = clockRef.current.getElapsedTime()
+      timerRef.current.update(timestamp)
+
+      const elapsed = timerRef.current.getElapsed()
 
       runSceneTicks(sc, elapsed)
 
@@ -274,6 +276,8 @@ export function RootScene({
       cancelAnimationFrame(rafId)
 
       window.removeEventListener('resize', onResize)
+
+      timerRef.current?.dispose()
 
       rendererRef.current?.dispose()
 

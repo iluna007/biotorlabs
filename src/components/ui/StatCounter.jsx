@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export function StatCounter({ value, unit, label, triggerEl, className = '' }) {
+export function StatCounter({ value, unit, label, triggerEl, className = '', ...rest }) {
   const numRef = useRef(null)
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function StatCounter({ value, unit, label, triggerEl, className = '' }) {
   }, [value, triggerEl])
 
   return (
-    <div className={`stat-counter${className ? ` ${className}` : ''}`}>
+    <div className={`stat-counter${className ? ` ${className}` : ''}`} {...rest}>
       <div className="stat-counter__num">
         <span ref={numRef}>0</span>
         <span className="stat-counter__unit">{unit}</span>

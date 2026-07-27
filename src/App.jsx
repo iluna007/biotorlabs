@@ -18,8 +18,6 @@ import { useResultsReveal } from './hooks/useResultsReveal'
 
 import { RootScene } from './components/canvas/RootScene'
 
-import { LoadingScreen } from './components/ui/LoadingScreen'
-
 import { Navbar } from './components/ui/Navbar'
 
 import { Footer } from './components/ui/Footer'
@@ -44,8 +42,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function App() {
 
-  const [loaded, setLoaded] = useState(false)
-
   const [barrelPhase, setBarrelPhase] = useState({
 
     phaseIndex: 0,
@@ -68,13 +64,13 @@ export default function App() {
 
   const { theme } = useSitePreferences()
 
-  useLenis(loaded)
+  useLenis()
 
-  const { progress } = useScrollProgress(loaded)
+  const { progress } = useScrollProgress()
 
-  const rootGrowthProgress = useRootGrowthProgress(loaded)
+  const rootGrowthProgress = useRootGrowthProgress()
 
-  const resultsReveal = useResultsReveal(loaded)
+  const resultsReveal = useResultsReveal()
 
   const wipeOutProgress = barrelPhase.wipeOutProgress ?? 0
 
@@ -146,30 +142,6 @@ export default function App() {
 
 
 
-  const handleLoadComplete = useCallback(() => {
-
-    window.scrollTo(0, 0)
-
-    document.documentElement.scrollTop = 0
-
-    document.body.scrollTop = 0
-
-    document.body.classList.remove('is-loading')
-
-    setLoaded(true)
-
-    requestAnimationFrame(() => {
-
-      window.scrollTo(0, 0)
-
-      ScrollTrigger.refresh()
-
-    })
-
-  }, [])
-
-
-
   const handleBarrelPhaseUpdate = useCallback((next) => {
 
     if (typeof next === 'function') {
@@ -212,21 +184,19 @@ export default function App() {
 
   useEffect(() => {
 
-    if (!loaded) return
-
     const t1 = setTimeout(() => ScrollTrigger.refresh(), 100)
 
     const t2 = setTimeout(() => ScrollTrigger.refresh(), 450)
 
     return () => { clearTimeout(t1); clearTimeout(t2) }
 
-  }, [loaded])
+  }, [])
 
 
 
   useEffect(() => {
 
-    if (!loaded || location.hash !== '#buy') return
+    if (location.hash !== '#buy') return
 
     const t = setTimeout(() => {
 
@@ -236,7 +206,7 @@ export default function App() {
 
     return () => clearTimeout(t)
 
-  }, [loaded, location.hash, location.search])
+  }, [location.hash, location.search])
 
 
 
@@ -244,39 +214,33 @@ export default function App() {
 
     <>
 
-      {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
-
       <div className={`page-content${webglVisible ? ' page-content--webgl-visible' : ''}`}>
 
-        {loaded && (
+        <RootScene
 
-          <RootScene
+          scrollProgress={progress}
 
-            scrollProgress={progress}
+          rootGrowthProgress={rootGrowthProgress}
 
-            rootGrowthProgress={rootGrowthProgress}
+          undergroundActive={webglVisible}
 
-            undergroundActive={webglVisible}
+          barrelPhase2Progress={barrelPhase2Progress}
 
-            barrelPhase2Progress={barrelPhase2Progress}
+          renderActive={webglVisible || barrelPhase.phaseIndex >= 2}
 
-            renderActive={webglVisible || barrelPhase.phaseIndex >= 2}
+          theme={theme}
 
-            theme={theme}
+          style={{
 
-            style={{
+            opacity: webglOpacity,
 
-              opacity: webglOpacity,
+            pointerEvents: 'none',
 
-              pointerEvents: 'none',
+            willChange: 'opacity',
 
-              willChange: 'opacity',
+          }}
 
-            }}
-
-          />
-
-        )}
+        />
 
         <Navbar />
 
@@ -286,7 +250,7 @@ export default function App() {
 
           onBarrelPhaseUpdate={handleBarrelPhaseUpdate}
 
-          modelStepActive={loaded && (resultsReveal > 0.02 || wipeOutProgress > 0.05)}
+          modelStepActive={resultsReveal > 0.02 || wipeOutProgress > 0.05}
 
         />
 
@@ -311,4 +275,3 @@ export default function App() {
   )
 
 }
-

@@ -91,13 +91,16 @@ export function AboutScene() {
     const points = new THREE.Points(geo, mat)
     scene.add(points)
 
-    const clock = new THREE.Clock()
+    const timer = new THREE.Timer()
+    timer.connect(document)
     let rafId
-    const animate = () => {
+    const animate = (timestamp) => {
       rafId = requestAnimationFrame(animate)
+      timer.update(timestamp)
       if (!prefersReducedMotion) {
-        mat.uniforms.uTime.value = clock.getElapsedTime()
-        points.rotation.y = clock.getElapsedTime() * 0.03
+        const elapsed = timer.getElapsed()
+        mat.uniforms.uTime.value = elapsed
+        points.rotation.y = elapsed * 0.03
       }
       renderer.render(scene, camera)
     }
@@ -113,6 +116,7 @@ export function AboutScene() {
     return () => {
       cancelAnimationFrame(rafId)
       window.removeEventListener('resize', onResize)
+      timer.dispose()
       geo.dispose()
       mat.dispose()
       renderer.dispose()

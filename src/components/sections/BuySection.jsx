@@ -6,13 +6,13 @@ import { useContent } from '../../context/SitePreferencesContext'
 import { ProductPackImage } from '../ui/ProductPackImage'
 import { productPath } from '../../utils/products'
 import { dispatchActiveProduct } from '../../utils/productPack3d'
-import { useScrollReveal } from '../../hooks/useScrollReveal'
+import { useSectionReveal } from '../../hooks/useSectionReveal'
 
 gsap.registerPlugin(ScrollTrigger)
 
-function ProductCard({ product, isActive, style, ui }) {
+function ProductCard({ product, isActive, style, ui, ...rest }) {
   return (
-    <div className="product-card-inner product-card-inner--buy buy-product-card" style={{
+    <div className="product-card-inner product-card-inner--buy buy-product-card" {...rest} style={{
       border: `1px solid ${product.color}${isActive ? '50' : '20'}`,
       borderRadius: '12px',
       background: isActive
@@ -106,7 +106,7 @@ export function BuySection() {
   const cardRef = useRef(null)
   const sectionRef = useRef(null)
   const touchStartX = useRef(null)
-  useScrollReveal(sectionRef)
+  useSectionReveal(sectionRef)
 
   const total = products.length
   const current = products[active]
@@ -192,10 +192,10 @@ export function BuySection() {
       onTouchEnd={onTouchEnd}
     >
       <div className="carousel-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <p className="section-eyebrow" style={{ marginBottom: '0.8rem' }}>
+        <p className="section-eyebrow" data-reveal="up" style={{ marginBottom: '0.8rem' }}>
           {buyCarousel.eyebrow}
         </p>
-        <h2 className="section-title" style={{
+        <h2 className="section-title" data-reveal="up" style={{
           fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
           letterSpacing: '-0.02em', lineHeight: 1.0,
           marginBottom: '0.8rem',
@@ -207,20 +207,23 @@ export function BuySection() {
             transition: 'all 0.4s',
           }}>{buyCarousel.titleAccent}</span>
         </h2>
-        <p className="section-body" style={{ fontSize: '0.88rem', maxWidth: '480px', margin: '0 auto' }}>
+        <p className="section-body" data-reveal="up" style={{ fontSize: '0.88rem', maxWidth: '480px', margin: '0 auto' }}>
           {buyCarousel.subtitle}
         </p>
       </div>
 
       <div style={{ width: '100%', maxWidth: '860px', position: 'relative' }}>
         <div ref={cardRef} style={{ width: '100%' }}>
-          <ProductCard product={current} isActive={true} ui={ui} />
+          <ProductCard product={current} isActive={true} ui={ui} data-reveal="up" />
         </div>
 
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          marginTop: '1.5rem', paddingLeft: '0.5rem', paddingRight: '0.5rem',
-        }}>
+        <div
+          data-reveal="up"
+          style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            marginTop: '1.5rem', paddingLeft: '0.5rem', paddingRight: '0.5rem',
+          }}
+        >
           <button type="button" onClick={prev} className="carousel-arrow" style={{
             borderColor: `${current.color}40`, color: current.color,
           }} aria-label={ui.prevProduct}>←</button>
@@ -249,7 +252,7 @@ export function BuySection() {
           }} aria-label={ui.nextProduct}>→</button>
         </div>
 
-        <div className="product-thumbnails-grid" style={{ marginTop: '1.8rem' }}>
+        <div className="product-thumbnails-grid" data-reveal="up" style={{ marginTop: '1.8rem' }}>
           {products.map((p, i) => (
             <button
               key={p.id}
