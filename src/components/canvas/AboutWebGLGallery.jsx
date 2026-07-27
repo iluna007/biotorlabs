@@ -133,7 +133,7 @@ export function AboutWebGLGallery() {
       planesRef.current.forEach((p) => p.dispose())
       planesRef.current = []
       document.querySelectorAll('[data-about-reveal] img').forEach((img) => {
-        if (img.closest('.about-pinned-chapter')) return
+        if (img.closest('.about-pinned-chapter, .about-process-step')) return
         if (!img.complete) {
           img.addEventListener('load', () => planesRef.current.forEach((p) => p.syncBounds()), { once: true })
         }

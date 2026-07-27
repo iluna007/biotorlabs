@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 
 import { useLocation } from 'react-router-dom'
 
@@ -74,9 +74,9 @@ export default function App() {
 
   const resultsReveal = useResultsReveal(loaded)
 
-
-
   const wipeOutProgress = barrelPhase.wipeOutProgress ?? 0
+
+  const barrelPhase2Progress = getBarrelPhase2Explore(barrelPhase)
 
 
 
@@ -102,15 +102,31 @@ export default function App() {
 
 
 
-  const barrelPhase2Progress = getBarrelPhase2Explore(barrelPhase)
+  useLayoutEffect(() => {
+
+    window.scrollTo(0, 0)
+
+    document.documentElement.scrollTop = 0
+
+    document.body.scrollTop = 0
+
+  }, [])
 
 
 
   useEffect(() => {
 
-    document.body.classList.add('is-loading')
+    if (location.pathname !== '/' || location.hash === '#buy') return
 
-  }, [])
+    const url = new URL(window.location.href)
+
+    if (!url.searchParams.has('product')) return
+
+    url.searchParams.delete('product')
+
+    window.history.replaceState({}, '', `${url.pathname}${url.hash}`)
+
+  }, [location.pathname, location.hash])
 
 
 
@@ -128,9 +144,21 @@ export default function App() {
 
     window.scrollTo(0, 0)
 
+    document.documentElement.scrollTop = 0
+
+    document.body.scrollTop = 0
+
     document.body.classList.remove('is-loading')
 
     setLoaded(true)
+
+    requestAnimationFrame(() => {
+
+      window.scrollTo(0, 0)
+
+      ScrollTrigger.refresh()
+
+    })
 
   }, [])
 
@@ -158,9 +186,9 @@ export default function App() {
 
         prev.inBarrel === next.inBarrel &&
 
-        Math.abs((prev.local ?? 0) - (next.local ?? 0)) < 0.01 &&
+        Math.abs((prev.local ?? 0) - (next.local ?? 0)) < 0.008 &&
 
-        Math.abs((prev.wipeOutProgress ?? 0) - (next.wipeOutProgress ?? 0)) < 0.015
+        Math.abs((prev.wipeOutProgress ?? 0) - (next.wipeOutProgress ?? 0)) < 0.008
 
       ) {
 
@@ -212,57 +240,49 @@ export default function App() {
 
       {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
 
-
-
-      {loaded && (
-
-        <RootScene
-
-          scrollProgress={progress}
-
-          rootGrowthProgress={rootGrowthProgress}
-
-          undergroundActive={webglVisible}
-
-          barrelPhase2Progress={barrelPhase2Progress}
-
-          renderActive={webglVisible || barrelPhase.phaseIndex >= 2}
-
-          theme={theme}
-
-          style={{
-
-            opacity: webglOpacity,
-
-            pointerEvents: 'none',
-
-            willChange: 'opacity',
-
-          }}
-
-        />
-
-      )}
-
-
-
       <div className={`page-content${webglVisible ? ' page-content--webgl-visible' : ''}`}>
+
+        {loaded && (
+
+          <RootScene
+
+            scrollProgress={progress}
+
+            rootGrowthProgress={rootGrowthProgress}
+
+            undergroundActive={webglVisible}
+
+            barrelPhase2Progress={barrelPhase2Progress}
+
+            renderActive={webglVisible || barrelPhase.phaseIndex >= 2}
+
+            theme={theme}
+
+            style={{
+
+              opacity: webglOpacity,
+
+              pointerEvents: 'none',
+
+              willChange: 'opacity',
+
+            }}
+
+          />
+
+        )}
 
         <Navbar />
 
 
 
-        {loaded && (
+        <ScrollBarrel
 
-          <ScrollBarrel
+          onBarrelPhaseUpdate={handleBarrelPhaseUpdate}
 
-            onBarrelPhaseUpdate={handleBarrelPhaseUpdate}
+          modelStepActive={loaded && (resultsReveal > 0.02 || wipeOutProgress > 0.05)}
 
-            modelStepActive={resultsReveal > 0.02 || wipeOutProgress > 0.05}
-
-          />
-
-        )}
+        />
 
 
 
@@ -285,5 +305,4 @@ export default function App() {
   )
 
 }
-
 

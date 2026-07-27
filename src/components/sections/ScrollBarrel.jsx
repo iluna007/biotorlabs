@@ -134,13 +134,20 @@ function updateBlendVisuals(rotation, refs, parallax = { scale: 1.0, panY: 0 }, 
     wipeLayer.style.clipPath = fullWipe
     wipeLayer2.style.display = 'block'
     wipeLayer2.style.clipPath = fullWipe
-    root.style.visibility = 'visible'
-    root.style.background = ''
-    const { outgoingWebgl } = getDiagonalWipeClips(wipeOutProgress)
-    root.style.clipPath = outgoingWebgl
+    root.style.background = 'transparent'
+
+    if (wipeOutProgress > 0.88) {
+      root.style.visibility = 'hidden'
+      root.style.clipPath = ''
+    } else {
+      root.style.visibility = 'visible'
+      const { outgoingWebgl } = getDiagonalWipeClips(wipeOutProgress)
+      root.style.clipPath = outgoingWebgl
+    }
     return
   }
 
+  root.style.visibility = 'visible'
   root.style.clipPath = ''
 
   const blend = getBarrelImageBlend(rotation, N)
@@ -324,6 +331,11 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
 
       updateBlendVisuals(state.rotation, blendRefs, parallax, state.wipeOutProgress ?? 0)
 
+      const wipe = state.wipeOutProgress ?? 0
+      wrapper.dataset.wipeOut = wipe > 0.02 ? '1' : '0'
+      wrapper.dataset.modelActive = wipe > 0.88 || modelStepActive ? '1' : '0'
+      wrapper.style.setProperty('--wipe-out', String(wipe))
+
       onBarrelPhaseUpdate?.({
         phaseIndex: state.phaseIndex,
         local: state.local,
@@ -460,7 +472,7 @@ export function ScrollBarrel({ onBarrelPhaseUpdate, modelStepActive = false }) {
           </div>
 
           <div className={`barrel-phase barrel-phase--2${showPhase(2) ? ' is-active' : ''}`}>
-            <div className="barrel-phase__inner barrel-phase__inner--how">
+            <div className="barrel-phase__inner barrel-phase__inner--how barrel-phase__inner--grid">
               <HowItWorks embedded />
             </div>
           </div>

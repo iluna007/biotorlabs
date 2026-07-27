@@ -77,6 +77,7 @@ export default function AboutPage() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray('.about-editorial__media, .about-reveal-media').forEach((el) => {
+        if (el.classList.contains('about-reveal-media--native')) return
         const isReverse = Boolean(el.closest('.about-editorial--reverse'))
         gsap.fromTo(el,
           { x: isReverse ? -50 : 50, opacity: 0, scale: 0.96 },
@@ -385,6 +386,7 @@ export default function AboutPage() {
                   src={PROCESS_STEP_IMAGES[i]}
                   alt={step.title}
                   className="about-process-step__media"
+                  native
                 />
                 <div className="about-process-step__body">
                   <span className="about-step__num">{step.num}</span>

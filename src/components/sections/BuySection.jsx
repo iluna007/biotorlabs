@@ -111,26 +111,27 @@ export function BuySection() {
   const total = products.length
   const current = products[active]
 
-  // Sincronizar carrusel con ?product=id en la URL
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const pid = params.get('product')
-    if (!pid) return
-    const idx = products.findIndex(p => p.id === pid)
-    if (idx >= 0) setActive(idx)
-  }, [products])
-
-  useEffect(() => {
+  const syncProductUrl = useCallback((productId) => {
     if (window.location.pathname !== '/') return
     const url = new URL(window.location.href)
-    url.searchParams.set('product', products[active].id)
+    url.searchParams.set('product', productId)
     window.history.replaceState({}, '', url)
-    dispatchActiveProduct(active, products[active].id)
-  }, [active, products])
+  }, [])
+
+  // Deep link: ?product= solo si el hash apunta a #buy
+  useEffect(() => {
+    if (window.location.hash !== '#buy') return
+    const pid = new URLSearchParams(window.location.search).get('product')
+    if (!pid) return
+    const idx = products.findIndex((p) => p.id === pid)
+    if (idx >= 0) setActive(idx)
+  }, [products])
 
   const goTo = useCallback((idx, dir = 1) => {
     if (animating || idx === active) return
     setAnimating(true)
+    syncProductUrl(products[idx].id)
+    dispatchActiveProduct(idx, products[idx].id)
 
     if (cardRef.current) {
       gsap.to(cardRef.current, {
@@ -153,7 +154,7 @@ export function BuySection() {
       setActive(idx)
       setAnimating(false)
     }
-  }, [active, animating])
+  }, [active, animating, products, syncProductUrl])
 
   const prev = useCallback(() => goTo((active - 1 + total) % total, -1), [active, total, goTo])
   const next = useCallback(() => goTo((active + 1) % total, 1), [active, total, goTo])

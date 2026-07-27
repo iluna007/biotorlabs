@@ -138,10 +138,34 @@ button { font-family: inherit; }
 ::-webkit-scrollbar-thumb { background: var(--green-accent); border-radius: 2px; }
 
 /* ─── CANVAS FIJO ───────────────────────────────────────────────────────── */
-#root-canvas {
-  position: fixed; top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: 0; pointer-events: none;
+#root-canvas,
+.roots-scroll-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  z-index: 0;
+  pointer-events: none;
+  object-fit: cover;
+  object-position: center center;
+  background: transparent;
+}
+
+.page-content--webgl-visible .barrel-wrapper,
+.page-content--webgl-visible .section,
+.page-content--webgl-visible .site-nav {
+  position: relative;
+  z-index: 1;
+}
+
+.page-content--webgl-visible .barrel-blend {
+  z-index: 2;
+}
+
+.page-content--webgl-visible .barrel-overlay {
+  z-index: 3;
 }
 
 /* ─── LAYOUT ────────────────────────────────────────────────────────────── */
@@ -221,6 +245,15 @@ button { font-family: inherit; }
 
 .science-mechanism-card__icon {
   font-size: 1.15rem;
+  line-height: 1;
+}
+
+.science-mechanism-card__num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--lime);
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -1625,6 +1658,11 @@ html.light-mode .about-page__scrim {
   opacity: 0;
 }
 
+/* Proceso 01–04: imágenes nativas (WebGL queda detrás del z-index del contenido) */
+.about-reveal-media--native img {
+  opacity: 1;
+}
+
 /* Tablet/móvil: imágenes nativas (WebGL desactivado por rendimiento) */
 @media (max-width: 1024px), (prefers-reduced-motion: reduce) {
   [data-about-reveal] img {
@@ -2071,6 +2109,7 @@ html.light-mode .about-page__scrim {
 
 .about-process-step__media .about-reveal-media__frame {
   aspect-ratio: 16 / 10;
+  min-height: clamp(160px, 22vw, 240px);
 }
 
 .about-process-step__body {
@@ -2522,6 +2561,32 @@ html.light-mode .about-page__scrim {
   pointer-events: none;
 }
 
+/* Durante wipe: dejar ver el canvas WebGL (#root-canvas) detrás */
+.barrel-wrapper[data-wipe-out='1'] .barrel-sticky {
+  background: transparent;
+}
+
+.barrel-wrapper[data-wipe-out='1'] .barrel-blend {
+  background: transparent;
+}
+
+.barrel-wrapper[data-wipe-out='1'] .barrel-overlay {
+  opacity: calc(1 - min(1, var(--wipe-out, 0) * 1.35));
+}
+
+.barrel-wrapper[data-wipe-out='1'] .barrel-blend::after {
+  opacity: 0 !important;
+}
+
+.barrel-wrapper[data-model-active='1'] .barrel-sticky {
+  background: transparent;
+}
+
+.barrel-wrapper[data-model-active='1'] .barrel-blend {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Fullscreen image transitions — diagonal wipe (Corn Revolution style) */
 .barrel-blend {
   position: absolute;
@@ -2807,15 +2872,15 @@ html.light-mode .about-page__scrim {
   transition: opacity 1.2s ease 0.18s, transform 1.2s ease 0.18s;
 }
 .barrel-phase--2.is-active .section-title { opacity: 1; transform: translateY(0); }
-.barrel-phase--2 .how-step-card {
+.barrel-phase--2 .science-mechanism-card {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 1.1s ease, transform 1.1s ease;
 }
-.barrel-phase--2.is-active .how-step-card:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
-.barrel-phase--2.is-active .how-step-card:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.48s; }
-.barrel-phase--2.is-active .how-step-card:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.60s; }
-.barrel-phase--2.is-active .how-step-card:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.72s; }
+.barrel-phase--2.is-active .science-mechanism-card:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+.barrel-phase--2.is-active .science-mechanism-card:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.48s; }
+.barrel-phase--2.is-active .science-mechanism-card:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.60s; }
+.barrel-phase--2.is-active .science-mechanism-card:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.72s; }
 
 .barrel-phase--1 .stats-bar {
   opacity: 0;
@@ -2871,8 +2936,17 @@ html.light-mode .about-page__scrim {
   text-align: left;
 }
 
+.barrel-phase-content--grid {
+  max-width: 100%;
+  width: 100%;
+}
+
 .barrel-how-block {
   width: 100%;
+}
+
+.barrel-phase__inner--grid {
+  max-width: min(920px, 96vw);
 }
 
 .barrel-phase__inner--split {
